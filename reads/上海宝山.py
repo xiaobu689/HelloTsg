@@ -230,9 +230,7 @@ class SHBS():
         #     self.video_view_task()
         #     time.sleep(random.randint(20, 30))
         article_list = self.article_list()
-        for i in article_list:
-            if counter > 12:
-                break
+        for i in range(5):
             article_id = random.choice(article_list)["id"]
             print('--------------------------------------------------------------------')
             print(f'🐹随机抓取到一篇文章{article_id}，开始做任务......')
@@ -240,16 +238,14 @@ class SHBS():
             time.sleep(random.randint(20, 35))
             self.article_share(article_id)
             time.sleep(random.randint(10, 18))
-            if counter <= 5:
-                if self.isComment == '1':
-                    self.article_comment_task(article_id)
-                    time.sleep(random.randint(20, 40))
-                else:
-                    print("未开启自动评论, 如要开启，请更改环境变量配置")
-                    time.sleep(random.randint(10, 25))
-                self.article_favor_task(article_id)
-                time.sleep(random.randint(10, 20))
-            counter += 1
+            if self.isComment == '1':
+                self.article_comment_task(article_id)
+                time.sleep(random.randint(20, 40))
+            else:
+                print("未开启自动评论, 如要开启，请更改环境变量配置")
+                time.sleep(random.randint(10, 25))
+            self.article_favor_task(article_id)
+            time.sleep(random.randint(10, 20))
         self.total_score()
         self.today_score()
         self.gift_list()

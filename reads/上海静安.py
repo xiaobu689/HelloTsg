@@ -269,12 +269,10 @@ class SHJA():
             self.video_view_task()
             time.sleep(random.randint(20, 30))
         article_list = self.article_list()
-        for i in article_list:
+        for i in range(10):
             article_id = random.choice(article_list)["id"]
             print('--------------------------------------------------------------------')
             print(f'🐹随机抓取到文章{article_id}，开始做任务啦......')
-            if counter > 12:
-                break
             self.article_read_task(article_id)
             time.sleep(random.randint(20, 30))
             self.article_share_task(article_id)

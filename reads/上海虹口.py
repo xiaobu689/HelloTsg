@@ -231,9 +231,7 @@ class SHHK():
             time.sleep(random.randint(20, 30))
         article_list = self.article_list()
         # print(article_list)
-        for i in article_list:
-            if counter > 15:
-                break
+        for i in range(12):
             article_id = random.choice(article_list)["id"]
             print('--------------------------------------------------------------------')
             print(f'🐹随机抓取到一篇文章{article_id}，开始做任务......')

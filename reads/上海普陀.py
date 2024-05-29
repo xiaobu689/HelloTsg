@@ -101,7 +101,6 @@ class SHPT():
         }
         url = 'https://ptweb.shmedia.tech/media-basic-port/api/app/news/content/list'
         response = make_request(url, json_data, 'post', self.headers)
-        print("----------response=", response)
 
         return response["data"]["records"]
 

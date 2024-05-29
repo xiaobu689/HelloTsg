@@ -28,6 +28,7 @@ class SHJD():
         self.token = account_info.split('#')[0]
         self.isComment = account_info.split('#')[1]
         self.verify = False
+        self.totalScore = 0
         self.giftHeaders = {
             'Host': 'mall-api.shmedia.tech',
             'Authorization': self.token,
@@ -112,7 +113,7 @@ class SHJD():
                 print("-----------------------")
                 print(f'✅总积分：{response_json["data"]["totalScore"]}')
                 print(f'✅今日新增积分：{response_json["data"]["todayPoint"]}')
-                # print(f'✅今日签到成功，{response_json["data"]["signTitle"]}')
+                self.totalScore = response_json["data"]["totalScore"]
                 return response_json
             else:
                 print("HTTP request failed with status code:", response.status_code)
@@ -307,12 +308,8 @@ class SHJD():
             self.article_comment_add(id, comment)
 
     def gift_list(self):
-        total_score = 0
         can_exchange = 0
         msg = ''
-        response_json = self.today_score()
-        if response_json is not None and response_json['code'] == 0:
-            total_score = response_json["data"]["totalScore"]
         params = {
             'keyword': '',
             'page_no': '1',
@@ -329,10 +326,8 @@ class SHJD():
                 gift_list = response_json['data']
                 for gift in gift_list:
                     gift_points = gift["promotion"][0]["exchange"]["exchange_point"]
-                    # print(f'✅{gift["goods_id"]}: {gift["name"]}, 兑换所需积分：{gift_points}')
-                    if total_score < gift_points:
-                        msg += f'✅可兑换商品：{gift["name"]}, 所需积分：{total_score}/{gift_points}\n'
-                        # print(f'✅可兑换商品：{gift["name"]}, 所需积分：{gift_points}')
+                    if self.totalScore < gift_points:
+                        msg += f'✅可兑换商品：{gift["name"]}, 所需积分：{self.totalScore}/{gift_points}\n'
                         can_exchange += 1
                 if can_exchange <= 0:
                     print(f'😢没有可兑换商品，你太棒了，继续加油吧')
@@ -349,13 +344,11 @@ class SHJD():
         counter = 0
         self.userinfo()
         self.sign()
-        for i in range(5):
+        for i in range(10):
             self.video_view_add()
             time.sleep(random.randint(20, 30))
         article_list = self.article_list()
-        for i in article_list:
-            if counter > 1:
-                break
+        for i in range(10):
             article_id = random.choice(article_list)["id"]
             print('--------------------------------------------------------------------')
             print(f'🐹随机抓取到一篇文章{article_id}，开始做任务......')
@@ -365,16 +358,14 @@ class SHJD():
             time.sleep(random.randint(10, 20))
             self.article_share(article_id)
             time.sleep(random.randint(10, 18))
-            if counter <= 1:
-                if self.isComment == 1:
-                    self.article_comment_task(article_id)
-                    time.sleep(random.randint(20, 40))
-                else:
-                    print("未开启自动评论, 如要开启，请更改环境变量配置")
-                    time.sleep(random.randint(10, 25))
-                self.article_favor(article_id)
-                time.sleep(random.randint(10, 20))
-            counter += 1
+            if self.isComment == 1:
+                self.article_comment_task(article_id)
+                time.sleep(random.randint(20, 40))
+            else:
+                print("未开启自动评论, 如要开启，请更改环境变量配置")
+                time.sleep(random.randint(10, 25))
+            # self.article_favor(article_id)
+            # time.sleep(random.randint(10, 20))
         self.task_list()
         self.today_score()
         self.gift_list()
