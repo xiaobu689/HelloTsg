@@ -366,6 +366,7 @@ class SHJD():
                 time.sleep(random.randint(10, 25))
             # self.article_favor(article_id)
             # time.sleep(random.randint(10, 20))
+            self.task_list()
         self.task_list()
         self.today_score()
         self.gift_list()

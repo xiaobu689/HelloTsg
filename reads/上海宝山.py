@@ -246,6 +246,7 @@ class SHBS():
                 time.sleep(random.randint(10, 25))
             self.article_favor_task(article_id)
             time.sleep(random.randint(10, 20))
+        self.task_list()
         self.total_score()
         self.today_score()
         self.gift_list()

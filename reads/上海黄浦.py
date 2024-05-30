@@ -252,6 +252,7 @@ class SHHP():
                 # self.live_streaming()
             counter += 1
         # TODO 商城活跃值任务（活跃值解锁兑换卡券）
+        self.task_list()
         self.total_score()
         self.today_score()
         self.gift_list()

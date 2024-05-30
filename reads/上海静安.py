@@ -69,6 +69,25 @@ class SHJA():
         else:
             print(f'❌签到任务失败：{response}')
 
+    def total_score(self):
+        json_data = {}
+        url = 'https://jaapi.shmedia.tech/media-basic-port/api/app/personal/score/total'
+        response = make_request(url, json_data, 'post', self.headers)
+        if response and response['code'] == 0:
+            print(f'✅当前总积分：{response["data"]["score"]}')
+        else:
+            print(f'❌总积分获取失败：{response}')
+
+    def today_score(self):
+        json_data = {}
+        url = 'https://jaapi.shmedia.tech/media-basic-port/api/app/personal/score/info'
+        response = make_request(url, json_data, 'post', self.headers)
+        if response and response['code'] == 0:
+            print(f'✅今日新增积分：{response["data"]["todayIncreasePoint"]}')
+            # return response["data"]["jobs"]
+        else:
+            print(f'❌今日积分获取失败：{response}')
+
     def task_list(self):
         sign_days_str = ''
         today_scores = ''
@@ -105,7 +124,7 @@ class SHJA():
         }
         url = 'https://jaapi.shmedia.tech/media-basic-port/api/app/news/content/list'
         response = make_request(url, json_data=json_data, method='post', headers=self.headers)
-        if response:
+        if response and response['code'] == 0:
             return response['records']
         else:
             print(f'❌获取文章列表失败：{response}')
@@ -119,7 +138,7 @@ class SHJA():
         }
         url = 'https://jaapi.shmedia.tech/media-basic-port/api/app/news/content/get'
         response_get = make_request(url, json_data=json_data, method='post', headers=self.headers)
-        if response_get:
+        if response_get and response_get['code'] == 0:
             status_codes.append(response_get.get('code', None))
 
         # 扣减
@@ -129,14 +148,14 @@ class SHJA():
         }
         url = 'https://jaapi.shmedia.tech/media-basic-port/api/app/common/count/usage/inc'
         response = make_request(url, json_data=json_data, method='post', headers=self.headers)
-        if response:
+        if response and response['code'] == 0:
             status_codes.append(response.get('code', None))
 
         # 积分
         json_data = {}
         url = 'https://jaapi.shmedia.tech/media-basic-port/api/app/points/read/add'
         response = make_request(url, json_data=json_data, method='post', headers=self.headers)
-        if response:
+        if response and response['code'] == 0:
             status_codes.append(response.get('code', None))
 
         if all(code == 0 for code in status_codes):
@@ -164,14 +183,14 @@ class SHJA():
                 }
                 url = 'https://jaapi.shmedia.tech/media-basic-port/api/app/news/content/favor'
                 response_favor = make_request(url, json_data=json_data, method='post', headers=self.headers)
-                if response_favor:
+                if response_favor and response_favor['code'] == 0:
                     status_codes.append(response_favor.get('code', None))
 
                 # 积分
                 json_data = {}
                 url = 'https://jaapi.shmedia.tech/media-basic-port/api/app/points/favor/add'
                 response = make_request(url, json_data=json_data, method='post', headers=self.headers)
-                if response:
+                if response and response['code'] == 0:
                     status_codes.append(response.get('code', None))
 
                 if all(code == 0 for code in status_codes):
@@ -209,7 +228,10 @@ class SHJA():
         json_data = {'id': id}
         url = 'https://jaapi.shmedia.tech/media-basic-port/api/app/news/content/get'
         response = make_request(url, json_data, 'post', self.headers)
-        return response
+        if response and response['code'] == 0:
+            return response
+        else:
+            return None
 
     def get_gpt_comment(self, id):
         basic_news_question = '我需要你针对下面的文章，从一个民众的角度进行评论，我希望你的输出只有评论内容，没有别的无关紧要的词语，回复格式是：芝麻开门#你的评论#， 评论要日常化，字数在10-25字之间，下面是我需要你发表评论的文章内容：'
@@ -288,6 +310,8 @@ class SHJA():
                 time.sleep(random.randint(10, 20))
             counter += 1
         self.task_list()
+        self.total_score()
+        self.today_score()
         self.gift_list()
 
 

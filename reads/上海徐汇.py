@@ -161,6 +161,7 @@ class SHCN():
             print(f'🐹随机抓取到一篇文章【{i+1}】，开始做任务......')
             self.article_read(article_id)
             time.sleep(random.randint(20, 35))
+        self.task_list()
         self.total_score()
         self.today_score()
         self.gift_list()

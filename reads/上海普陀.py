@@ -239,7 +239,6 @@ class SHPT():
             time.sleep(random.randint(20, 35))
             self.article_share(article_id)
             time.sleep(random.randint(10, 18))
-            print("-------------------comment=", self.isComment)
             if self.isComment == '1':
                 self.article_comment_task(article_id)
                 time.sleep(random.randint(20, 40))
@@ -249,6 +248,7 @@ class SHPT():
             self.article_favor_task(article_id)
             time.sleep(random.randint(10, 20))
             counter += 1
+        self.task_list()
         self.total_score()
         self.today_score()
         self.gift_list()

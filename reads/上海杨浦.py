@@ -132,7 +132,6 @@ class SHYP():
         else:
             print(f'❌阅读失败，{response}')
 
-
     def article_favor(self, id):
         json_data = {'id': id}
         url = 'https://ypapi.shmedia.tech/media-basic-port/api/app/news/content/favor'
@@ -171,7 +170,6 @@ class SHYP():
             print(f'✅看片儿完成+1')
         else:
             print(f'❌看片儿失败：{response}')
-
 
     def get_gpt_comment(self, id):
         basic_news_question = '我需要你针对下面的文章，从一个民众的角度进行评论，我希望你的输出只有评论内容，没有别的无关紧要的词语，回复格式是：芝麻开门#你的评论#， 评论语气要尽可能生活化、日常化，字数一定要限制在5-15字之间，下面是我需要你发表评论的文章内容：'
@@ -230,7 +228,6 @@ class SHYP():
             self.video_view_task()
             time.sleep(random.randint(20, 30))
         article_list = self.article_list()
-        print(article_list)
         for i in article_list:
             if counter > 15:
                 break
@@ -251,6 +248,7 @@ class SHYP():
                 self.article_favor_task(article_id)
                 time.sleep(random.randint(10, 20))
             counter += 1
+        self.task_list()
         self.total_score()
         self.today_score()
         self.gift_list()

@@ -265,6 +265,7 @@ class SHCM():
                 self.article_like(article_id)
                 time.sleep(random.randint(10, 18))
             counter += 1
+        self.task_list()
         self.total_score()
         self.today_score()
         self.gift_list()
