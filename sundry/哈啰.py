@@ -14,6 +14,9 @@ cron: 26 11 * * *
 const $ = new Env("哈罗单车");
 """
 import os
+import random
+import re
+import time
 
 import requests
 
@@ -58,9 +61,9 @@ class TTCY():
         response = requests.post(url, headers=self.headers, json=json_data).json()
         # print(response)
         if response['code'] == 0 and response['data']['didSignToday']:
-            msg = f'✅签到成功, 奖励金：+{response["data"]["bountyCountToday"]}'
+            msg = f'✅签到成功, 奖励金：+{response["data"]["bountyCountToday"]}\n'
         else:
-            msg = '❌签到失败， cookie可能已失效！'
+            msg = '❌签到失败， cookie可能已失效!\n'
 
         print(msg)
         return msg
@@ -217,9 +220,14 @@ class TTCY():
 
 if __name__ == '__main__':
     env_name = 'HELLO_TOKEN'
-    token = os.getenv(env_name)
-    if not token:
+    tokenStr = os.getenv(env_name)
+    if not tokenStr:
         print(f'⛔️未获取到token变量：请检查变量 {env_name} 是否填写')
         exit(0)
-
-    TTCY(token).main()
+    tokens = re.split(r'&', tokenStr)
+    print(f"哈啰单车共获取到{len(tokens)}个账号")
+    for i, token in enumerate(tokens, start=1):
+        print(f"\n======== ▷ 第 {i} 个账号 ◁ ========")
+        TTCY(token).main()
+        print("\n随机等待30-60s进行下一个账号")
+        time.sleep(random.randint(30, 60))

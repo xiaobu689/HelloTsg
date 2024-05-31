@@ -18,6 +18,7 @@ import time
 import requests
 import json
 
+from common import make_request
 from sendNotify import send
 
 
@@ -33,34 +34,7 @@ class TPYQCIO():
             self.openid = parts[2]
             self.devid = parts[3]
             self.auto_cash_out = True
-
-    def receice(self):
-        url1 = 'https://act1.pcauto.com.cn/discount/api/series/list'
-        headers = {
-            'Host': 'act1.pcauto.com.cn',
-            'Accept': 'application/json, text/plain, */*',
-            'Sec-Fetch-Site': 'same-site',
-            'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Sec-Fetch-Mode': 'cors',
-            'Content-Type': 'application/json',
-            'Origin': 'https://www1.pcauto.com.cn',
-            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
-            'Referer': 'https://www1.pcauto.com.cn/',
-            'Content-Length': '14',  # 注意：这个值通常由库自动处理，所以通常不需要手动设置
-            'Connection': 'keep-alive',
-            'Sec-Fetch-Dest': 'empty'
-        }
-        data1 = json.dumps({"actId": "19"})
-        response1 = requests.post(url1, headers=headers, data=data1)
-        data2 = response1.json()
-        first_item = data2['data'][0]
-        brand_id = first_item['brandId']
-        brand = first_item['brand']
-        serial_group_id = first_item['serialGroupId']
-        serial_group_name = first_item['serialGroupName']
-        serial_group_pic = first_item['serialGroupPic']
-        headers = {
+        self.headers = {
             'Host': 'act1.pcauto.com.cn',
             'Accept': 'application/json, text/plain, */*',
             'Sec-Fetch-Site': 'same-site',
@@ -76,6 +50,17 @@ class TPYQCIO():
             'Cookie': self.cookie
         }
 
+    def receice(self):
+        url1 = 'https://act1.pcauto.com.cn/discount/api/series/list'
+        data1 = json.dumps({"actId": "19"})
+        response1 = requests.post(url1, headers=self.headers, data=data1)
+        data2 = response1.json()
+        first_item = data2['data'][0]
+        brand_id = first_item['brandId']
+        brand = first_item['brand']
+        serial_group_id = first_item['serialGroupId']
+        serial_group_name = first_item['serialGroupName']
+        serial_group_pic = first_item['serialGroupPic']
         playRecordId = random.randint(100000, 106271)
         print(f'本次即将尝试领取 {playRecordId} 记录的奖励')
         data = {
@@ -101,11 +86,8 @@ class TPYQCIO():
             "locationType": 4,
             "cityId": "3"
         }
-        response = requests.post(
-            'https://act1.pcauto.com.cn/discount/api/enroll/save',
-            headers=headers,
-            json=data
-        )
+        url = 'https://act1.pcauto.com.cn/discount/api/enroll/save'
+        response = requests.post(url, headers=self.headers, json=data)
         print(response.text)
         resp = response.json()
         if resp['code'] == 200 and resp['data']['code'] == 0:
@@ -133,27 +115,12 @@ class TPYQCIO():
         print(msg)
         # 定义URL和请求头
         url = 'https://act1.pcauto.com.cn/discount/api/cash/out'
-        headers = {
-            'Host': 'act1.pcauto.com.cn',
-            'Accept': 'application/json, text/plain, */*',
-            'Sec-Fetch-Site': 'same-site',
-            'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Sec-Fetch-Mode': 'cors',
-            'Content-Type': 'application/json',
-            'Origin': 'https://www1.pcauto.com.cn',
-            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
-            'Referer': 'https://www1.pcauto.com.cn/',
-            'Connection': 'keep-alive',
-            'Sec-Fetch-Dest': 'empty',
-            'Cookie': self.cookie
-        }
         data = {
             'devId': self.devid,
             'openId': self.openid,
             'amount': '0.3'
         }
-        response = requests.post(url, headers=headers, json=data)
+        response = requests.post(url, headers=self.headers, json=data)
         response_json = response.json()
         if response_json['code'] == 200:
             if response_json['data']['code'] == 0:
@@ -168,6 +135,28 @@ class TPYQCIO():
 
         return msg
 
+    # 发帖
+    def do_topic_issue(self):
+        json_data = {
+            'clubTags': [
+                '799579643900329987',
+            ],
+            'content': '坚持打卡，加油加油',
+            'title': '',
+            'themeTags': [
+                '804483405201802908',
+            ],
+            'images': [
+                {
+                    'url': 'http://img4.pcauto.com.cn/pcauto/images/community/20240531/20616066.jpg',
+                    'width': 1170,
+                    'height': 2097,
+                },
+            ],
+        }
+        url = 'https://community-gateway.pcauto.com.cn/app/topic/issue'
+        response = make_request(url, json_data=json_data, method='post', headers=self.headers)
+
     def main(self):
         title = "太平洋汽车每日抽奖"
         msg1 = self.start_receiving()
@@ -178,7 +167,7 @@ class TPYQCIO():
             msg2 = f'❌余额不足，先不提现，再攒攒吧！\n'
             print(msg2)
 
-        print(msg1+msg2)
+        print(msg1 + msg2)
         # 通知
         send(title, msg1 + msg2)
 

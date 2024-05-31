@@ -11,8 +11,8 @@
 ---------------------------------
 20240529 新增当日首次登陆、游戏成就分享
 ---------------------------------
-定时设置：每天2次就行吧，时间随意
-cron: 33 8 * * *
+定时设置：每天1次就行吧，时间随意
+cron: 0 0 * * *
 const $ = new Env("随申行");
 """
 import os
@@ -81,7 +81,7 @@ class SSX():
             'Accept': '*/*',
             'Content-Type': 'application/json',
             'X-Maas-Req-Sn': '8C4EACA9-06DD-4FAF-8CFA-1D6657F2FE68',
-            'X-Saic-LocationAccuracy': '28.780395',
+            'X-Saic-LocationAccuracy': '28.780395'
         }
 
     def getUserInfo(self):
@@ -99,7 +99,6 @@ class SSX():
 
             self.msg += msg
             print(msg)
-
 
     def receive(self):
         url = 'https://api.shmaas.net/cap/base/platform/receiveBubbleCredit'
@@ -133,13 +132,13 @@ class SSX():
                 if i["adoptionValue"] == 2:
                     self.adoptingName = i["gameName"]
                     break
-            msg = f'-------- 🐹🐹🐹任务列表🐹🐹🐹 --------\n'
+            msg = f'---------- 🐹任务列表🐹 ----------\n'
             for i in response['data']['userActivityMessages']:
                 if "用户注册" in i["name"] or "用户实名" in i["name"] or "用户首单" in i["name"] or "打车出行" in i[
                     "name"]:
                     continue
                 msg += f'✅{i["name"]}: {"已完成" if i["finishStatus"] == 1 else "未完成"}\n'
-            msg += f'-------- 🐹🐹🐹任务列表🐹🐹🐹 --------'
+            msg += f'---------- 🐹任务列表🐹 ----------'
         else:
             msg = f'❌获取任务列表信息失败， cookie可能失效：{response["errMsg"]}'
 
@@ -154,7 +153,7 @@ class SSX():
         response = make_request(url, json_data=json_data, method='post', headers=self.headers)
         if response and response['errCode'] == 0:
             for i in response['data']['gameCardInfo']:
-                if i["type"] == 2: # type 2喂养中
+                if i["type"] == 2:  # type 2喂养中
                     self.adoptingId = i["gameId"]
                     break
 
@@ -209,7 +208,6 @@ class SSX():
             'ts': '1715663958518'
         }
         requests.post(url, headers=self.gpsHeaders, data=data)
-
 
     def finish_query_address(self):
         json_data = {
@@ -314,8 +312,57 @@ class SSX():
         self.msg += msg
         print(msg)
 
+    def subway_ticket_list(self):
+        msg = f'---------- 🐹限量抢购🐹 ----------\n'
+        json_data = {
+            'productIdList': [
+                87,
+                88,
+                89,
+                90
+            ],
+            'sellPlatform': 'app',
+        }
+        url = 'https://api.shmaas.net/cap/product/queryProductInfoList'
+        response = make_request(url, json_data=json_data, method='post', headers=self.headers)
+        if response and response['errCode'] == 0:
+            for i in response['data']['productInfoList']:
+                if i["sellOut"] == 1:
+                    status = "已售罄"
+                elif i["sellOut"] == 0:
+                    status = "可兑换"
+                else:
+                    status = "其他状态"
+                msg += f'🐹【{i["productName"]}】：价格：{i["price"]}兜豆，状态：{status}\n'
+        else:
+            msg = f'❌获取地铁券失败，{response["errMsg"]}'
+
+        self.msg += msg
+        print(msg)
+
+    def my_subway_tickets(self):
+        msg = f'---------- 🐹可用地铁券🐹 ----------\n'
+        json_data = {
+            'userId': self.uid,
+            'carService': 'PUB-TRAFFIC',
+        }
+        url = 'https://api.shmaas.net/cap/base/coupon/queryAvailableCouponCardList'
+        response = make_request(url, json_data=json_data, method='post', headers=self.headers)
+        if response and response['errCode'] == 0:
+            if len(response['data']['records']) <= 0:
+                msg = f'暂无可用地铁券'
+            else:
+                for i in response['data']['records']:
+                    msg += f'🐹【{i["title"]}】：数量{i["couponCount"]}，有效期至：{i["endTime"]}\n'
+        else:
+            msg = f'❌获取地铁券失败，{response["errMsg"]}'
+
+        self.msg += msg
+        print(msg)
+
     def main(self):
         title = "随申行"
+
         self.getUserInfo()
         self.task_list()
         self.today_first_login()
@@ -337,13 +384,21 @@ class SSX():
 
         self.game_share()
         time.sleep(random.randint(5, 15))
-        #
+
         for i in range(3):
             self.lottery()
             time.sleep(random.randint(5, 15))
 
         self.receive()
         self.task_list()
+        time.sleep(random.randint(5, 10))
+
+        self.subway_ticket_list()
+        time.sleep(random.randint(5, 10))
+
+        # 可用地铁券列表
+        self.my_subway_tickets()
+        time.sleep(random.randint(5, 10))
 
         # 通知
         send(title, self.msg)
