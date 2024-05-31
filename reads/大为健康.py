@@ -3,7 +3,7 @@
 
  * 外面嘎嘎代挂的一天8R项目
 
- * 微信打开：https://hb2.hbdtxt.com/#/pages/index/video?huodong_id=1648345948&tid=1352505&store_id=131
+ * 微信打开：https://h2.hljdtxt.com/#/pages/index/video?huodong_id=1648345948&tid=1352505&store_id=131
 
  * 一个微信一天八块，先改 像老年人的头像和昵称，过十分钟再点链接 +客服 要进群，年龄装作五十岁以上的老年人
  * 然后抓两个参数如下配置，全自动奔放，每天运行一次即可，抓完不用管，自动判断自动领
@@ -32,7 +32,8 @@ import urllib3
 urllib3.disable_warnings()
 
 # 如果是三群请修改变量！比如 hb3，自己抓包看自己的请求接口是什么开头！
-groupName = "hb2"
+# groupName = "hb2"
+groupName = "h2"
 
 
 def remove_duplicates(arr):
@@ -65,14 +66,14 @@ activeIdList = remove_duplicates(load_array_from_json("大为健康-店铺ID.jso
 
 
 def send_request(pageIndex):
-    url = f"https://{groupName}.hbdtxt.com/api/index/huodong"
+    url = f"https://{groupName}.hljdtxt.com/api/index/huodong"
     headers = {
         "Authorization": "e2ccf7f8a24dca1464cec8d964e15019",
         "User-Agent": "Mozilla/5.0 (Linux; Android 9; NX629J_V1S Build/PQ3A.190705.09211555; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/91.0.4472.114 Mobile Safari/537.36 MMWEBID/2157 MicroMessenger/8.0.42.2460(0x28002A54) WeChat/arm64 Weixin NetType/WIFI Language/zh_CN ABI/arm64",
         "content-type": "application/x-www-form-urlencoded",
         "Accept": "*/*",
         "X-Requested-With": "com.tencent.mm",
-        "Referer": f"https://{groupName}.hbdtxt.com/",
+        "Referer": f"https://{groupName}.hljdtxt.com/",
         "Accept-Encoding": "gzip, deflate",
         "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
         "Cookie": "s342b0066=tu7bbcn9brab7rhosb27jomff2",
@@ -106,12 +107,12 @@ def send_request(pageIndex):
 
 # 答题领红包
 def recieveRebBag(uid, Authorization, huodong_id="1648773920"):
-    url = f"https://{groupName}.hbdtxt.com/api/index/index"
+    url = f"https://{groupName}.hljdtxt.com/api/index/index"
     headers = {
         "Authorization": Authorization,
         "User-Agent": "/5.0 (Linux; Android 9; NX629J_V1S Build/PQ3A.190705.09211555; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/91.0.4472.114 Mobile Safari/537.36 MMWEBID/2157 MicroMessenger/8.0.42.2460(0x28002A54) WeChat/arm64 Weixin NetType/WIFI Language/zh_CN ABI/arm64",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Referer": f"https://{groupName}.hbdtxt.com/",
+        "Referer": f"https://{groupName}.hljdtxt.com/",
         "Accept-Encoding": "gzip, deflate",
         "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
         "Cookie": "s342b0066=tu7bbcn9brab7rhosb27jomff2",
@@ -163,7 +164,7 @@ def recieveRebBag(uid, Authorization, huodong_id="1648773920"):
         # 打印结果
         a = f"wentilist={encoded_data}&huodong_id={huodong_id}&ids=&api_type=h5&uid={uid}"
         # print("答题提交数据：", a)
-        url1 = f"https://{groupName}.hbdtxt.com/api/index/dati"
+        url1 = f"https://{groupName}.hljdtxt.com/api/index/dati"
         response = requests.post(url1, headers=headers, data=a)
         response_data = response.json()
         if "上限" in response.text:
@@ -192,7 +193,7 @@ def recieveRebBag(uid, Authorization, huodong_id="1648773920"):
 
 
 def getUserTotalNumber(uid, token):
-    url = f"https://{groupName}.hbdtxt.com/api/index/index"
+    url = f"https://{groupName}.hljdtxt.com/api/index/index"
     response = requests.post(
         url,
         headers={
@@ -201,9 +202,9 @@ def getUserTotalNumber(uid, token):
             "Accept-Language": "zh-CN,zh;q=0.9",
             "Authorization": token,
             "Connection": "keep-alive",
-            "Host": f"{groupName}.hbdtxt.com",
-            "Origin": f"https://{groupName}.hbdtxt.com",
-            "Referer": f"https://{groupName}.hbdtxt.com/",
+            "Host": f"{groupName}.hljdtxt.com",
+            "Origin": f"https://{groupName}.hljdtxt.com",
+            "Referer": f"https://{groupName}.hljdtxt.com/",
             "Sec-Fetch-Dest": "empty",
             "Sec-Fetch-Mode": "cors",
             "Sec-Fetch-Site": "same-origin",
@@ -233,7 +234,7 @@ def getUserTotalNumber(uid, token):
 
 
 def checkRecieveNumber(uid, token):
-    url = f"https://{groupName}.hbdtxt.com/api/index/datilog"
+    url = f"https://{groupName}.hljdtxt.com/api/index/datilog"
     response = requests.post(
         url,
         headers={
@@ -242,9 +243,9 @@ def checkRecieveNumber(uid, token):
             "Accept-Language": "zh-CN,zh;q=0.9",
             "Authorization": token,
             "Connection": "keep-alive",
-            "Host": f"{groupName}.hbdtxt.com",
-            "Origin": f"https://{groupName}.hbdtxt.com",
-            "Referer": f"https://{groupName}.hbdtxt.com/",
+            "Host": f"{groupName}.hljdtxt.com",
+            "Origin": f"https://{groupName}.hljdtxt.com",
+            "Referer": f"https://{groupName}.hljdtxt.com/",
             "Sec-Fetch-Dest": "empty",
             "Sec-Fetch-Mode": "cors",
             "Sec-Fetch-Site": "same-origin",

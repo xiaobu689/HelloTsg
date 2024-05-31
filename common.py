@@ -1,5 +1,7 @@
+import datetime
 import os
 import random
+import time
 from http import HTTPStatus
 import dashscope
 import requests
@@ -44,4 +46,14 @@ def make_request(url, json_data=None, method='get', headers=None):
         # 这里可以处理错误，例如记录日志或设置全局变量
         print(f"请求错误: {e}")
         return None
+
+
+def get_current_timestamp_milliseconds():
+    # 获取当前时间
+    current_time = datetime.datetime.now()
+    # 将当前时间转换为时间戳（秒级）
+    timestamp_seconds = int(time.mktime(current_time.timetuple()))
+    # 将秒级时间戳转换为毫秒级
+    timestamp_milliseconds = timestamp_seconds * 1000 + current_time.microsecond // 1000
+    return timestamp_milliseconds
 
