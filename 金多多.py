@@ -81,11 +81,10 @@ class JDD():
         response = requests.post(url, params=params, headers=self.headers, json=json_data)
         if response and response.status_code == 200:
             response_json = response.json()
-            print(response_json)
             if response_json["result"] == 1:
-                print(f'✅浏览完成')
+                print(f'✅成功浏览商品+1')
             else:
-                print("❌签到失败")
+                print("❌浏览商品失败, ", response_json["msg"])
 
     def finish_today_task(self):
         params = {
@@ -171,20 +170,20 @@ class JDD():
 
     def main(self):
         self.signin()
-        time.sleep(random.randint(30, 60))
+        time.sleep(random.randint(15, 20))
 
         for i in range(5):
             self.view_product()
-            time.sleep(random.randint(30, 60))
+            time.sleep(random.randint(20, 40))
 
         self.finish_today_task()
         time.sleep(random.randint(15, 45))
 
         self.userinfo()
         self.coin_to_money()
-        time.sleep(random.randint(30, 60))
+        time.sleep(random.randint(20, 40))
 
-        if self.coin >= 5:
+        if int(self.coin) >= 5:
             print(f'✅余额大于5元, 满足条件，开始提现......')
             self.money_to_wx()
         else:
