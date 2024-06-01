@@ -1,14 +1,13 @@
 """
 随申行
 
-【第一次写，没有封装，纯抓包，推送不详细，凑合用】
-
 路径：随申行APP
 用途：签到、做任务、养宠物攒兜豆，兑换上海地铁优惠券
 变量名：SSX_COOKIE
 格式： 任意请求头抓 Authorization 值
 
 ---------------------------------
+20240601 抽奖活动下线
 20240529 新增当日首次登陆、游戏成就分享
 ---------------------------------
 定时设置：每天1次就行吧，时间随意
@@ -138,7 +137,6 @@ class SSX():
                     "name"]:
                     continue
                 msg += f'✅{i["name"]}: {"已完成" if i["finishStatus"] == 1 else "未完成"}\n'
-            msg += f'---------- 🐹任务列表🐹 ----------'
         else:
             msg = f'❌获取任务列表信息失败， cookie可能失效：{response["errMsg"]}'
 
@@ -312,14 +310,13 @@ class SSX():
         self.msg += msg
         print(msg)
 
-    def subway_ticket_list(self):
+    def xl_subway_ticket_list(self):
         msg = f'---------- 🐹限量抢购🐹 ----------\n'
         json_data = {
             'productIdList': [
-                87,
-                88,
-                89,
-                90
+                102,
+                104,
+                105,
             ],
             'sellPlatform': 'app',
         }
@@ -329,11 +326,11 @@ class SSX():
             for i in response['data']['productInfoList']:
                 if i["sellOut"] == 1:
                     status = "已售罄"
-                elif i["sellOut"] == 0:
+                elif i["sellOut"] == 2:
                     status = "可兑换"
                 else:
                     status = "其他状态"
-                msg += f'🐹【{i["productName"]}】：价格：{i["price"]}兜豆，状态：{status}\n'
+                msg += f'🐹【{i["productName"]}】：价格：{i["price"]}兜豆 | 状态：{status}\n'
         else:
             msg = f'❌获取地铁券失败，{response["errMsg"]}'
 
@@ -385,15 +382,16 @@ class SSX():
         self.game_share()
         time.sleep(random.randint(5, 15))
 
-        for i in range(3):
-            self.lottery()
-            time.sleep(random.randint(5, 15))
+        # 抽奖活动下线
+        # for i in range(3):
+        #     self.lottery()
+        #     time.sleep(random.randint(5, 15))
 
         self.receive()
         self.task_list()
         time.sleep(random.randint(5, 10))
 
-        self.subway_ticket_list()
+        self.xl_subway_ticket_list()
         time.sleep(random.randint(5, 10))
 
         # 可用地铁券列表

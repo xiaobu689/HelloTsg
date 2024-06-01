@@ -4,7 +4,7 @@
 抓任意包请求头 x_applet_token
 变量名: SY_token
 
-cron: 00 8,12,20 * * *
+cron: 0 8,12,20 * * *
 const $ = new Env("顺义创城抢兑");
 """
 
@@ -43,10 +43,8 @@ async def main():
         print(f'⛔️未获取到ck变量：请检查变量 {SY_token} 是否填写')
         return
 
-    # 创建多个抢购任务
-    tasks = [cashout(SY_token) for _ in range(5)]  # 假设您想并发执行10次提现
+    tasks = [cashout(SY_token) for _ in range(10)]
 
-    # 等待所有任务完成
     await asyncio.gather(*tasks)
 
 if __name__ == '__main__':
