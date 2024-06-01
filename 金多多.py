@@ -10,7 +10,8 @@ class JDD():
     name = "金多多"
 
     def __init__(self, cookie):
-        self.cookie = cookie
+        self.cookie = cookie.split('#')[0]
+        self.mid = cookie.split('#')[1]
         self.verify = False
         self.credit = 0
         self.coin = 0
@@ -65,7 +66,7 @@ class JDD():
             'i': '12',
             'uuid': '0',
             'type': '1',
-            'mid': '24109',
+            'mid': f'{self.mid}',
             'version': 'v1.1.137',
             'validate_page': '1',
             'scope': 'pass',
@@ -91,7 +92,7 @@ class JDD():
             'i': '12',
             'uuid': '0',
             'type': '1',
-            'mid': '24109',
+            'mid': f'{self.mid}',
             'version': 'v1.1.137',
             'validate_page': '1',
             'scope': 'pass',
@@ -129,7 +130,7 @@ class JDD():
             'i': '12',
             'uuid': '0',
             'type': '1',
-            'mid': '24109',
+            'mid': f'{self.mid}',
             'version': 'v1.1.137',
             'validate_page': '1',
             'route': 'plugin.love.Frontend.Modules.Love.Controllers.withdraw.index',
@@ -151,7 +152,7 @@ class JDD():
             'i': '12',
             'uuid': '0',
             'type': '1',
-            'mid': '24109',
+            'mid': f'{self.mid}',
             'version': 'v1.1.137',
             'validate_page': '1',
             'route': 'finance.balance-withdraw.withdraw',
@@ -199,7 +200,7 @@ if __name__ == '__main__':
     cookies = re.split(r'&', cookieStr)
     print(f"金多多共获取到{len(cookies)}个账号")
     for i, cookie in enumerate(cookies, start=1):
-        print(f"\n======== ▷ 第 {i+1} 个账号 ◁ ========")
+        print(f"\n======== ▷ 第 {i} 个账号 ◁ ========")
         JDD(cookie).main()
         print("\n随机等待30-60s进行下一个账号")
         time.sleep(random.randint(30, 60))
