@@ -43,7 +43,7 @@ async def main():
         print(f'⛔️未获取到ck变量：请检查变量 {SY_token} 是否填写')
         return
 
-    tasks = [cashout(SY_token) for _ in range(10)]
+    tasks = [cashout(SY_token) for _ in range(15)]
 
     await asyncio.gather(*tasks)
 

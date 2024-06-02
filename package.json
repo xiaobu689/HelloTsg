@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "got": "^14.3.0",
-    "iconv-lite": "^0.6.3"
-  }
-}
