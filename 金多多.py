@@ -1,9 +1,19 @@
+"""
+金多多
+
+抓任意包请求头 Cookie
+变量名: JDD_COOKIE
+
+cron: 30 6 * * *
+const $ = new Env("金多多");
+"""
 import os
 import random
 import re
 import time
-
 import requests
+
+from sendNotify import send
 
 
 class JDD():
@@ -15,6 +25,7 @@ class JDD():
         self.verify = False
         self.credit = 0
         self.coin = 0
+        self.msg = ''
         self.headers = {
             'Host': 'www.jindd.shop',
             'Accept': '*/*',
@@ -56,12 +67,11 @@ class JDD():
                 coin = response_json["data"]["member"]["love_show"].get("usable_data")
                 self.credit = credit
                 self.coin = coin
-                # print(credit)
-                # print(coin)
             else:
                 print("❌获取用户信息失败, ", response_json["msg"])
 
     def view_product(self):
+        msg =''
         params = {
             'i': '12',
             'uuid': '0',
@@ -82,9 +92,11 @@ class JDD():
         if response and response.status_code == 200:
             response_json = response.json()
             if response_json["result"] == 1:
-                print(f'✅成功浏览商品+1')
+                msg = f'✅成功浏览商品+1'
             else:
-                print("❌浏览商品失败, ", response_json["msg"])
+                msg = "❌浏览商品失败, ", response_json["msg"]
+        self.msg += msg
+        print(msg)
 
     def finish_today_task(self):
         params = {
@@ -101,30 +113,36 @@ class JDD():
             'goods_id': None,
         }
         url = 'https://www.jindd.shop/addons/yun_shop/api.php'
+        msg = ''
         response = requests.post(url, params=params, headers=self.headers, json=json_data)
-        print(response.json())
         if response and response.status_code == 200:
             response_json = response.json()
             if response_json["result"] == 1 or response_json["result"] == 0:
-                print(f'✅任务完成')
+                msg = f'✅每日任务完成'
             else:
-                print("❌任务完成失败")
+                msg = f'"❌每日任务失败, ", {response_json["msg"]}'
+        self.msg += msg
+        print(msg)
 
     # 签到
     def signin(self):
+        msg = ''
         response = requests.get(
             'https://www.jindd.shop/addons/yun_shop/api.php?i=12&uuid=0&type=1&mid=24109&version=v1.1.137&validate_page=1&route=plugin.sign.Frontend.Modules.Sign.Controllers.sign.sign&',
             headers=self.headers)
         if response and response.status_code == 200:
             response_json = response.json()
             if response_json["result"] == 1 or response_json["result"] == 0:
-                print(f'✅签到成功')
+                msg = f'✅账号【{self.mid}】签到成功'
             else:
-                print("❌签到失败")
+                msg = f'❌账号【{self.mid}】签到失败'
+        self.msg += msg
+        print(msg)
 
     # 元宝转换余额
     def coin_to_money(self):
-        print("开始元宝转余额......")
+        msg = ''
+        print("🐹开始元宝转余额......")
         params = {
             'i': '12',
             'uuid': '0',
@@ -138,15 +156,17 @@ class JDD():
         }
 
         response = requests.get('https://www.jindd.shop/addons/yun_shop/api.php', params=params, headers=self.headers)
-        print(response.json())
         if response and response.status_code == 200:
             response_json = response.json()
             if response_json["result"] == 1:
-                print(f'✅元宝转换余额成功, 本次转换元宝数量: {self.coin}')
+                msg = f'✅元宝转换余额成功, 本次转换元宝数量: {self.coin}'
             else:
-                print("❌元宝转换余额失败")
+                msg = f'❌元宝转换余额失败, {response_json["msg"]}'
+        self.msg += msg
+        print(msg)
 
     def money_to_wx(self):
+        msg = ''
         params = {
             'i': '12',
             'uuid': '0',
@@ -164,9 +184,11 @@ class JDD():
             response_json = response.json()
             print(response_json)
             if response_json["result"] == 1:
-                print(f'✅提现成功，本次提现金额: {self.credit}元')
+                msg = f'✅提现成功，本次提现金额: {self.credit}元'
             else:
-                print(f"❌提现失败, {response_json['msg']}")
+                msg = f'❌提现失败, {response_json["msg"]}'
+        self.msg += msg
+        print(msg)
 
     def main(self):
         self.signin()
@@ -183,11 +205,18 @@ class JDD():
         self.coin_to_money()
         time.sleep(random.randint(20, 40))
 
-        if int(self.coin) >= 5:
-            print(f'✅余额大于5元, 满足条件，开始提现......')
+        if int(float(self.credit)) >= 5:
+            msg = f'✅余额大于5元, 满足条件，开始提现......\n'
+            self.msg += msg
+            print(msg)
             self.money_to_wx()
         else:
-            print(f'❌余额:{self.coin}元, 不足5元, 不满足提现条件')
+            msg = f'❌余额:{self.credit}元, 不足5元, 不满足提现条件\n'
+            self.msg += msg
+            print(msg)
+
+        # 推送
+        send("金多多", self.msg)
 
 
 if __name__ == '__main__':
@@ -202,4 +231,4 @@ if __name__ == '__main__':
         print(f"\n======== ▷ 第 {i} 个账号 ◁ ========")
         JDD(cookie).main()
         print("\n随机等待30-60s进行下一个账号")
-        time.sleep(random.randint(30, 60))
+        time.sleep(random.randint(20, 30))
