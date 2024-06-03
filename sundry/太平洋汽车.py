@@ -20,7 +20,7 @@ import re
 import time
 import requests
 import json
-from common import make_request
+from common import make_request, txt_api
 from sendNotify import send
 from urllib3.exceptions import InsecureRequestWarning, InsecurePlatformWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -122,11 +122,10 @@ class TPYQCIO():
         if response and response.status_code == 200:
             response_json = response.json()
             list = response_json['data']["data"]
-            print(list)
             for item in list:
                 contentId = item['contentId']
                 content = item['appContent']
-                self.contentIds += int(contentId)
+                self.contentIds.append(int(contentId))
 
     # 查贴
     def my_issue_list(self):
@@ -170,22 +169,23 @@ class TPYQCIO():
     # 评论
     def do_comment(self):
         print('🐹开始评论......')
-        # 随机从content_ids中随机取一个id
         id = random.choice(self.contentIds)
+        content = txt_api()
+        if content == '':
+            content = '这沿途的风景只能边走边看，陌生人，祝你们万事顺遂'
         json_data = {
             'contentId': id,
             'contentType': 'Post',
-            'content': '城市待久了，这风景看着都心情舒畅',
+            'content': content,
         }
         url = 'https://community-gateway.pcauto.com.cn/app/social/addComment'
         response = requests.post(url, headers=self.communityHeaders, json=json_data)
         if response and response.status_code == 200:
             response_json = response.json()
             if response_json['code'] == 200:
-                print(f'✅评论成功')
-                print("----------评论id=", response_json["data"]["id"])
-                self.commentId = response_json['data']['id']
-                print("----------赋值后的self的评论id=", response_json["data"]["id"])
+                comment_id = response_json['data']['id']
+                print(f'✅评论成功, 评论ID:{comment_id}')
+                self.commentId = comment_id
             else:
                 print(f'❌评论失败：{response_json["msg"]}')
 

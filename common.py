@@ -57,3 +57,28 @@ def get_current_timestamp_milliseconds():
     timestamp_milliseconds = timestamp_seconds * 1000 + current_time.microsecond // 1000
     return timestamp_milliseconds
 
+
+def txt_api():
+    try:
+        url = 'https://v1.hitokoto.cn/'
+        params = {'c': 'd'}  # 查询参数
+        headers = {
+            'content-type': 'multipart/form-data; boundary=---011000010111000001101001'
+        }
+
+        # 发起GET请求
+        response = requests.get(url, params=params, headers=headers)
+
+        # 检查响应状态码
+        if response.status_code == 200:
+            result = response.json()
+            if 'id' in result:
+                return result['hitokoto']
+        else:
+            print(f"Error: Unexpected response status code {response.status_code}")
+
+    except requests.RequestException as e:
+        print(f"Error: {e}")
+
+    except Exception as e:
+        print(f"Error: {e}")
