@@ -248,7 +248,7 @@ class JDD():
         self.signin()
         time.sleep(random.randint(15, 20))
 
-        for i in range(1):
+        for i in range(5):
             self.view_product()
             time.sleep(random.randint(20, 40))
 

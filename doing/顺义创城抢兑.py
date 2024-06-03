@@ -13,6 +13,7 @@ import os
 import aiohttp
 import requests
 
+
 async def cashout(x_applet_token):
     headers = {
         'Host': 'admin.shunyi.wenming.city',
@@ -37,15 +38,17 @@ async def cashout(x_applet_token):
         except Exception as e:
             print(f"请求异常：{e}")
 
+
 async def main():
     SY_token = os.getenv('SY_token')
     if not SY_token:
         print(f'⛔️未获取到ck变量：请检查变量 {SY_token} 是否填写')
         return
 
-    tasks = [cashout(SY_token) for _ in range(15)]
+    tasks = [cashout(SY_token) for _ in range(10)]
 
     await asyncio.gather(*tasks)
+
 
 if __name__ == '__main__':
     asyncio.run(main())
