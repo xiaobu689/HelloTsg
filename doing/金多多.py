@@ -117,8 +117,6 @@ class JDD():
                 for good in goods_list:
                     self.goods_ids.append(good['id'])
 
-        print(self.goods_ids)
-
     def view_product(self):
         good_ids = []
         if self.goods_ids:

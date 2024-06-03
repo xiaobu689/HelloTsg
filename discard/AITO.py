@@ -136,6 +136,37 @@ class AITO:
                         print("article_url:", article_url)
                         print("article_title:", article_title)
                         print("------------------------------")
+    # 浏览助力
+    def help_task(self):
+        headers = {
+            'Host': 'aim.longwisedata.com',
+            'Accept': 'application/json, text/javascript, */*; q=0.01',
+            'X-Requested-With': 'XMLHttpRequest',
+            'Sec-Fetch-Site': 'same-origin',
+            'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
+            'Sec-Fetch-Mode': 'cors',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'Origin': 'https://aim.longwisedata.com',
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.49(0x18003132) NetType/WIFI Language/zh_CN',
+            'Referer': 'https://aim.longwisedata.com/wxauth/894536/auth1.html?code=031j8W000jObeS1SZN2002UiIJ3j8W0s&state=790443582997286912&appid=wxabafb4839d3d03b9',
+            'Connection': 'keep-alive',
+            'Sec-Fetch-Dest': 'empty',
+            'Cookie': 'acw_tc=2760774217173970366643242e4ec161aa4a34aac38a98dd3c5eacc64b97ac',
+        }
+
+        data = {
+            'lat': '',
+            'lng': '',
+            'shareId': '790443582997286912',
+            'code': '031j8W000jObeS1SZN2002UiIJ3j8W0s',
+            'state': '790443582997286912',
+            'timestamp': '20240603150330044',
+            'sig': '28ec716b8197a6b8c49da968b03881d0',
+        }
+
+        url = 'https://aim.longwisedata.com/lwmarketing-provider-wxdata/wxBrowseTaskNew'
+
+        response = requests.post(url, headers=headers, data=data)
 
     def main(self):
         title = "AIOT之声签到"
@@ -144,30 +175,30 @@ class AITO:
         if "失败" in msg1:
             print("账号信息获取失败，请检查cookie是否正确")
             return
-        # else:
-        #     msg2 = self.sign_in()
-        #     # 积分进度
-        #     msg3, integral3 = self.sign_account_info()
-        #     diff_integra=  integral3 - integral1
-        #     _msg = f'积分 + {diff_integra}'
-        #     push_msg += msg1 + msg2 + msg3 + _msg
-        #     result = self.gift_list()
-        #     first_gift_price = result["result"]["skus"][0]["price"]
-        #     tmp_msg = ''
-        #     if integral3 >= first_gift_price:
-        #         tmp_msg = f"已达标，可前往兑换奖品！\n"
-        #     else:
-        #         tmp_msg = f'{integral3}/{first_gift_price}'
-        #     push_msg += f'✅{first_gift_price}进度: {tmp_msg}\n'
-        #     push_msg += f'✅{first_gift_price}库存: {result["result"]["skus"][0]["stock"]}'
+        else:
+            msg2 = self.sign_in()
+            # 积分进度
+            msg3, integral3 = self.sign_account_info()
+            diff_integra=  integral3 - integral1
+            _msg = f'积分 + {diff_integra}'
+            push_msg += msg1 + msg2 + msg3 + _msg
+            result = self.gift_list()
+            first_gift_price = result["result"]["skus"][0]["price"]
+            tmp_msg = ''
+            if integral3 >= first_gift_price:
+                tmp_msg = f"已达标，可前往兑换奖品！\n"
+            else:
+                tmp_msg = f'{integral3}/{first_gift_price}'
+            push_msg += f'✅{first_gift_price}进度: {tmp_msg}\n'
+            push_msg += f'✅{first_gift_price}库存: {result["result"]["skus"][0]["stock"]}'
 
             # 推送
             # notify_pushPlus(title, push_msg)
 
         # 获取活动广场任务列表
-        # self.sign_task_list()
+        self.sign_task_list()
         # 获取我的转发任务列表【带转发奖励的】
-        # self.sign_my_tasklist()
+        self.sign_my_tasklist()
 
 
 if __name__ == '__main__':

@@ -1,12 +1,14 @@
 """
 太平洋汽车抽奖
 
+---------------------------------
 20240523 每日抽奖已废，新增每日开盲盒
+---------------------------------
 
 APP：太平洋汽车
 变量名：tpyqc_cookie
-格式： cookie#手机号#openid#devId
-任意请求头获取cookie, 默认手动提现，如设置自动提现进入我的钱包-瓜分现金-提现-授权微信，抓包openid和devid
+格式： cookie#account_id
+任意请求头获取cookie和account_id
 
 定时设置：
 cron: 0 0 * * *
@@ -14,10 +16,10 @@ const $ = new Env("太平洋汽车");
 """
 import os
 import random
+import re
 import time
 import requests
 import json
-
 from common import make_request
 from sendNotify import send
 from urllib3.exceptions import InsecureRequestWarning, InsecurePlatformWarning
@@ -30,16 +32,14 @@ class TPYQCIO():
 
     def __init__(self, cookie_str):
         self.msg = ''
+        parts = cookie_str.split('#')
+        cookie = parts[0]
+        self.cookie = cookie
+        self.session_id = cookie.split('; ')[2].split('=')[1]
+        self.account_id = parts[1]
         self.contentIds = []
         self.commentId = 0
-        parts = cookie_str.split('#')
-        self.auto_cash_out = False
-        self.cookie = parts[0]
-        self.phone = parts[1]
-        if len(parts) == 4:
-            self.openid = parts[2]
-            self.devid = parts[3]
-            self.auto_cash_out = True
+        self.lotteryCount = 0
         self.headers = {
             'Host': 'act1.pcauto.com.cn',
             'Accept': 'application/json, text/plain, */*',
@@ -59,7 +59,6 @@ class TPYQCIO():
             'Host': 'community-gateway.pcauto.com.cn',
             'Pc-Agent': 'PCGroup Mobile App',
             'Version': '7.1.3',
-            'Appsession': '7d30da2005b532639b5f2cd3e335cfde79654bb1',
             'Accept': '*/*',
             'appVersion': '7.1.3',
             'Accept-Language': 'zh-Hans-CN;q=1',
@@ -69,96 +68,12 @@ class TPYQCIO():
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
             'Connection': 'keep-alive',
             'Content-Type': 'application/json',
-            'Cookie': 'common_session_id=E868681D114A85801EB4AC7ED63FB6549BD9D807FE76CEAA86FB059DF81C2CA9157E2E2BD6F4ADF8AE0C982DE164FF39',
+            'Cookie': self.cookie
         }
-
-    def receice(self):
-        url1 = 'https://act1.pcauto.com.cn/discount/api/series/list'
-        data1 = json.dumps({"actId": "19"})
-        response1 = requests.post(url1, headers=self.headers, data=data1)
-        data2 = response1.json()
-        first_item = data2['data'][0]
-        brand_id = first_item['brandId']
-        brand = first_item['brand']
-        serial_group_id = first_item['serialGroupId']
-        serial_group_name = first_item['serialGroupName']
-        serial_group_pic = first_item['serialGroupPic']
-        playRecordId = random.randint(100000, 106271)
-        print(f'本次即将尝试领取 {playRecordId} 记录的奖励')
-        data = {
-            "playRecordId": playRecordId,  # 104271
-            "locationVersion": 1,
-            "locationMessage": "",
-            "phone": self.phone,
-            "pcsuv": 52792536,
-            "actId": 19,
-            "source": 2,
-            "sourceDetail": 5,
-            "currentFrom": "https://www1.pcauto.com.cn/zt/discount-topics/app-wap/index.html#/?actId=19&sourceDetail=5&isActivity=1&app_ver=7.1.2",
-            "city": "上海",
-            "seriesBOList": [
-                {
-                    "serialGroupPic": serial_group_pic,
-                    "brand": brand,
-                    "brandId": brand_id,
-                    "serialGroupId": serial_group_id,
-                    "serialGroupName": serial_group_name
-                }
-            ],
-            "locationType": 4,
-            "cityId": "3"
-        }
-        url = 'https://act1.pcauto.com.cn/discount/api/enroll/save'
-        response = requests.post(url, headers=self.headers, json=data)
-        print(response.text)
-        resp = response.json()
-        if resp['code'] == 200 and resp['data']['code'] == 0:
-            msg = f'领取成功\n'
-        else:
-            msg = f'领取失败, {resp["data"]["msg"]}\n'
-        return msg
-
-    def start_receiving(self):
-        msg = '开始领取红包......\n'
-        print(msg)
-        while True:
-            msg += self.receice()
-            if "领取成功" in msg:
-                print("✅领取成功，退出循环\n")
-                msg += "✅领取成功，退出循环\n"
-                break
-            sleep_time = random.randint(15, 45)
-            print(f"❌本次领取失败，{sleep_time} 秒后进行下一次尝试......\n")
-            time.sleep(sleep_time)
-        return msg
-
-    def cashOut(self):
-        msg = "开始提现......\n"
-        print(msg)
-        # 定义URL和请求头
-        url = 'https://act1.pcauto.com.cn/discount/api/cash/out'
-        data = {
-            'devId': self.devid,
-            'openId': self.openid,
-            'amount': '0.3'
-        }
-        response = requests.post(url, headers=self.headers, json=data)
-        response_json = response.json()
-        if response_json['code'] == 200:
-            if response_json['data']['code'] == 0:
-                msg1 = f'✅提现成功：{response_json["data"]["msg"]}'
-                msg += msg1
-            elif response_json['data']['code'] == 3:
-                msg2 = f'❌提现失败：余额不足0.3，再攒攒吧'
-                msg += msg2
-        else:
-            msg3 = f'❌提现失败：{response_json["msg"]}'
-            msg += msg3
-
-        return msg
 
     # 发帖
     def do_topic_issue(self):
+        print('开始发帖......')
         msg = ''
         json_data = {
             'clubTags': [
@@ -192,23 +107,9 @@ class TPYQCIO():
         print(msg)
 
     def content_list(self):
-        headers = {
-            'Host': 'community-gateway.pcauto.com.cn',
-            'Accept': '*/*',
-            'Appsession': '7d30da2005b532639b5f2cd3e335cfde79654bb1',
-            'Version': '7.1.4',
-            'appVersion': '7.1.4',
-            'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
-            'App': 'PCAUTO_INFO_IOS',
-            'platform': 'PCAUTO_INFO_IOS',
-            'traceId': 'R7465',
-            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
-            'Connection': 'keep-alive',
-            'Pc-Agent': 'PCGroup Mobile App',
-            'Cookie': 'common_session_id=E868681D114A85801EB4AC7ED63FB6549BD9D807FE76CEAA86FB059DF81C2CA9157E2E2BD6F4ADF8AE0C982DE164FF39',
-        }
+        current_time_millis = int(time.time() * 1000)
         params = {
-            'firstPageTime': '1717179455000',
+            'firstPageTime': current_time_millis,
             'id': '1',
             'isSuperior': 'false',
             'orderType': '0',
@@ -217,7 +118,7 @@ class TPYQCIO():
             'tagType': 'Club',
         }
         url = 'https://community-gateway.pcauto.com.cn/app/tags/contentList'
-        response = requests.get(url, params=params, headers=headers)
+        response = requests.get(url, params=params, headers=self.communityHeaders)
         if response and response.status_code == 200:
             response_json = response.json()
             list = response_json['data']["data"]
@@ -225,33 +126,33 @@ class TPYQCIO():
             for item in list:
                 contentId = item['contentId']
                 content = item['appContent']
-
+                self.contentIds += int(contentId)
 
     # 查贴
-    def issue_list(self):
+    def my_issue_list(self):
         params = {
-            'accountId': '52792536',
-            'sessionId': 'E868681D114A85801EB4AC7ED63FB6549BD9D807FE76CEAA86FB059DF81C2CA9157E2E2BD6F4ADF8AE0C982DE164FF39',
+            'accountId': self.account_id,
+            'sessionId': self.session_id,
             'pageNo': '1',
             'pageSize': '10',
         }
-
-        response = requests.get('https://community-gateway.pcauto.com.cn/app/user/personContent', params=params, headers=self.communityHeaders)
+        response = requests.get('https://community-gateway.pcauto.com.cn/app/user/personContent', params=params,
+                                headers=self.communityHeaders)
         if response and response.status_code == 200:
             response_json = response.json()
             list = response_json['data']["data"]
             for item in list:
                 self.contentIds.append(item['contentId'])
-            # print("self.contentids=",self.contentIds)
         else:
             print('❌获取发帖列表失败，请检查网络')
 
     # 删帖
     def delete_issue(self):
+        print('🐹开始删帖......')
         if len(self.contentIds) == 0:
-            print("没有帖子可以删除")
+            print("🐹没有帖子可以删除")
             return
-        print(f'发现{len(self.contentIds)}篇帖子，开始删除......')
+        print(f'🐹发现{len(self.contentIds)}篇帖子，开始删除......')
         for contentId in self.contentIds:
             json_data = {
                 'contentId': contentId,
@@ -266,9 +167,13 @@ class TPYQCIO():
                 else:
                     print(f'❌删除帖子{contentId}失败：{response_json["msg"]}')
 
+    # 评论
     def do_comment(self):
+        print('🐹开始评论......')
+        # 随机从content_ids中随机取一个id
+        id = random.choice(self.contentIds)
         json_data = {
-            'contentId': 807919694839284780,
+            'contentId': id,
             'contentType': 'Post',
             'content': '城市待久了，这风景看着都心情舒畅',
         }
@@ -278,12 +183,16 @@ class TPYQCIO():
             response_json = response.json()
             if response_json['code'] == 200:
                 print(f'✅评论成功')
+                print("----------评论id=", response_json["data"]["id"])
+                self.commentId = response_json['data']['id']
+                print("----------赋值后的self的评论id=", response_json["data"]["id"])
             else:
                 print(f'❌评论失败：{response_json["msg"]}')
 
     def delete_comment(self):
+        print('🐹开始删评论......')
         if self.commentId == 0:
-            print("没有评论可以删除")
+            print("🐹没有评论可以删除")
             return
         json_data = {
             'id': self.commentId
@@ -297,52 +206,98 @@ class TPYQCIO():
             else:
                 print(f'❌删除评论{self.commentId}失败：{response_json["msg"]}')
 
-    def lottery(self):
-        headers = {
-            'Host': 'community-gateway.pcauto.com.cn',
-            'Accept': 'application/json, text/plain, */*',
-            'Sec-Fetch-Site': 'same-site',
-            'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
-            'Sec-Fetch-Mode': 'cors',
-            'Cookie': 'sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%2218fcde0d3c711cf-00fb5d5704d89958-774c1151-329160-18fcde0d3c82846%22%2C%22first_id%22%3A%22%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMThmY2RlMGQzYzcxMWNmLTAwZmI1ZDU3MDRkODk5NTgtNzc0YzExNTEtMzI5MTYwLTE4ZmNkZTBkM2M4Mjg0NiJ9%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%22%2C%22value%22%3A%22%22%7D%2C%22%24device_id%22%3A%2218fcde0d3c711cf-00fb5d5704d89958-774c1151-329160-18fcde0d3c82846%22%7D; u4ad=10ehi2gv; channel=11496; pcsuv=1717146016471.a.717876525; pcuvdata=lastAccessTime=1717146015611|visits=1; sajssdk_2015_cross_new_user=1; common_session_id=E868681D114A85801EB4AC7ED63FB6549BD9D807FE76CEAA86FB059DF81C2CA9157E2E2BD6F4ADF8AE0C982DE164FF39',
-            'Origin': 'https://m.pcauto.com.cn',
-            'SessionId': 'E868681D114A85801EB4AC7ED63FB6549BD9D807FE76CEAA86FB059DF81C2CA9157E2E2BD6F4ADF8AE0C982DE164FF39',
-            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148/PCAutoApp',
-            'Referer': 'https://m.pcauto.com.cn/',
-            'Connection': 'keep-alive',
-            'Access-Control-Allow-Origin-Type': '*',
-            'Sec-Fetch-Dest': 'empty',
-        }
-        url = 'https://community-gateway.pcauto.com.cn/app/lottery/lottery'
-        response = requests.get(url, headers=headers)
+    def share_task(self):
+        print('🐹开始分享......')
+        url = 'https://community-gateway.pcauto.com.cn/app/lottery/share/record'
+        response = requests.post(url, headers=self.communityHeaders)
         if response and response.status_code == 200:
             response_json = response.json()
             if response_json['code'] == 200:
-                print(f'✅{response_json["data"]["title"]}, 奖品：{response_json["data"]["rewardName"]}')
+                print(f'✅分享成功')
+            else:
+                print(f'❌分享失败：{response_json["msg"]}')
+
+    def lottery(self):
+        print('🐹开始抽奖......')
+        if self.lotteryCount == 0:
+            print("❌没有抽奖次数")
+            return
+        url = 'https://community-gateway.pcauto.com.cn/app/lottery/lottery'
+        response = requests.post(url, headers=self.communityHeaders)
+        if response and response.status_code == 200:
+            response_json = response.json()
+            if response_json['code'] == 200:
+                print(f'✅{response_json["data"]["title"]} | {response_json["data"]["rewardName"]}')
             else:
                 print(f'❌抽奖失败：{response_json["msg"]}')
 
+    def my_piece_list(self):
+        json_data = {
+            'date': None,
+            'pageNo': 1,
+            'pageSize': 10,
+        }
+        url = 'https://community-gateway.pcauto.com.cn/app/lottery/piece/list'
+        response = requests.post(url, headers=self.communityHeaders, json=json_data)
+        if response and response.status_code == 200:
+            response_json = response.json()
+            if response_json['code'] == 200:
+                remain_pieces = response_json["data"]["pieceRecordStatistic"]["remain"]
+                self.lotteryCount = remain_pieces // 3
+                print(f'✅碎片：{remain_pieces} | ✅抽奖次数：{self.lotteryCount}')
 
-
-
+    def my_reward_list(self):
+        params = {
+            'type': 'real',
+            'pageNo': '1',
+            'pageSize': '10',
+        }
+        url = 'https://community-gateway.pcauto.com.cn/app/lottery/my/reward'
+        response = requests.get(url, params=params, headers=self.communityHeaders)
+        if response and response.status_code == 200:
+            response_json = response.json()
+            if response_json['code'] == 200:
+                rewards = response_json["data"]["data"]
+                if len(rewards) == 0:
+                    print('❌还没有获得奖励')
+                else:
+                    for reward in rewards:
+                        print('--------------------')
+                        print('🐹🐹🐹奖品列表🐹🐹🐹')
+                        print('--------------------')
+                        print(f'✅{reward["name"]}')
 
     def main(self):
-        # title = "太平洋汽车每日抽奖"
-        # msg1 = self.start_receiving()
-        # if self.auto_cash_out:
-        #     time.sleep(random.randint(15, 20))
-        #     msg2 = self.cashOut()
-        # else:
-        #     msg2 = f'❌余额不足，先不提现，再攒攒吧！\n'
-        #     print(msg2)
-        #
-        # print(msg1 + msg2)
-
-        # self.do_topic_issue()
-
-        # self.issue_list()
-
         self.content_list()
+        time.sleep(random.randint(15, 25))
+
+        # 发帖
+        self.do_topic_issue()
+        time.sleep(random.randint(30, 60))
+
+        # 评论
+        self.do_comment()
+        time.sleep(random.randint(15, 35))
+
+        # 分享
+        self.share_task()
+        time.sleep(random.randint(15, 35))
+
+        # 抽奖
+        self.my_piece_list()
+        self.lottery()
+        time.sleep(random.randint(15, 45))
+
+        # 删贴|删评论
+        self.my_issue_list()
+        time.sleep(random.randint(15, 25))
+        self.delete_issue()
+
+        time.sleep(random.randint(15, 25))
+        self.delete_comment()
+
+        self.my_reward_list()
+        time.sleep(random.randint(15, 25))
 
         # 通知
         # send(title, msg1 + msg2)
@@ -350,9 +305,14 @@ class TPYQCIO():
 
 if __name__ == '__main__':
     env_name = 'tpyqc_cookie'
-    cookie = os.getenv(env_name)
-    cookie = 'pcsuv=1715211510009.a.33360290; channel=10927; common_session_id=E868681D114A85801EB4AC7ED63FB6549BD9D807FE76CEAA86FB059DF81C2CA9157E2E2BD6F4ADF8AE0C982DE164FF39; pcuvdata=lastAccessTime=1715211507667; sajssdk_2015_cross_new_user=1; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%2218f5a92964aa07-0270717f313bc4c-774c1151-329160-18f5a92964baf9%22%2C%22first_id%22%3A%22%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMThmNWE5Mjk2NGFhMDctMDI3MDcxN2YzMTNiYzRjLTc3NGMxMTUxLTMyOTE2MC0xOGY1YTkyOTY0YmFmOSJ9%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%22%2C%22value%22%3A%22%22%7D%2C%22%24device_id%22%3A%2218f5a92964aa07-0270717f313bc4c-774c1151-329160-18f5a92964baf9%22%7D#1055239575#oFOGvjhieYfIbabUXNZHLaZNsXRE#7d30da2005b532639b5f2cd3e335cfde79654bb1'
-    if not cookie:
+    cookies = os.getenv(env_name)
+    if not cookies:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)
-    TPYQCIO(cookie).main()
+    cookies = re.split(r'&', cookies)
+    print(f"太平洋汽车共获取到{len(cookies)}个账号")
+    for i, cookie in enumerate(cookies, start=1):
+        print(f"\n======== ▷ 第 {i} 个账号 ◁ ========")
+        TPYQCIO(cookie).main()
+        print("\n随机等待30-60s进行下一个账号")
+        time.sleep(random.randint(30, 60))
