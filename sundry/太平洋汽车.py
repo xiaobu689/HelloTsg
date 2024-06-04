@@ -1,14 +1,16 @@
 """
-太平洋汽车抽奖
+太平洋汽车
 
 ---------------------------------
-20240523 每日抽奖已废，新增每日开盲盒
+20240604 每日抽奖活动结束，新增每日攒碎片开盲盒，可中实物、卡券
+20240523 每日抽奖必得现金，自动抽奖自动提现
 ---------------------------------
 
 APP：太平洋汽车
 变量名：tpyqc_cookie
 格式： cookie#account_id
-任意请求头获取cookie和account_id
+任意请求头获取 cookie 和 account_id
+多账号格式：cookie1#accountId1&cookie2#accountId2
 
 定时设置：
 cron: 0 0 * * *
@@ -40,6 +42,7 @@ class TPYQCIO():
         self.contentIds = []
         self.commentId = 0
         self.lotteryCount = 0
+        self.myIsues = []
         self.headers = {
             'Host': 'act1.pcauto.com.cn',
             'Accept': 'application/json, text/plain, */*',
@@ -135,24 +138,28 @@ class TPYQCIO():
             'pageNo': '1',
             'pageSize': '10',
         }
-        response = requests.get('https://community-gateway.pcauto.com.cn/app/user/personContent', params=params,
-                                headers=self.communityHeaders)
+        url = 'https://community-gateway.pcauto.com.cn/app/user/personContent'
+        response = requests.get(url, params=params, headers=self.communityHeaders)
         if response and response.status_code == 200:
             response_json = response.json()
-            list = response_json['data']["data"]
-            for item in list:
-                self.contentIds.append(item['contentId'])
+            if response_json['code'] == 200:
+                list = response_json['data']["data"]
+                if len(list) == 0:
+                    print('🐹空空如也，没有发帖')
+                    return
+                for item in list:
+                    self.myIsues.append(item['contentId'])
         else:
             print('❌获取发帖列表失败，请检查网络')
 
     # 删帖
     def delete_issue(self):
         print('🐹开始删帖......')
-        if len(self.contentIds) == 0:
+        if len(self.myIsues) == 0:
             print("🐹没有帖子可以删除")
             return
-        print(f'🐹发现{len(self.contentIds)}篇帖子，开始删除......')
-        for contentId in self.contentIds:
+        print(f'🐹发现{len(self.myIsues)}篇帖子，开始删除......')
+        for contentId in self.myIsues:
             json_data = {
                 'contentId': contentId,
                 'contentType': 'Post',
@@ -262,9 +269,7 @@ class TPYQCIO():
                     print('❌还没有获得奖励')
                 else:
                     for reward in rewards:
-                        print('--------------------')
-                        print('🐹🐹🐹奖品列表🐹🐹🐹')
-                        print('--------------------')
+                        print('---------🐹🐹🐹奖品列表🐹🐹🐹---------')
                         print(f'✅{reward["name"]}')
 
     def main(self):
@@ -285,8 +290,9 @@ class TPYQCIO():
 
         # 抽奖
         self.my_piece_list()
+        time.sleep(random.randint(15, 20))
         self.lottery()
-        time.sleep(random.randint(15, 45))
+        time.sleep(random.randint(15, 20))
 
         # 删贴|删评论
         self.my_issue_list()
