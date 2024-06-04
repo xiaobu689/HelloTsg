@@ -160,15 +160,15 @@ class CST():
 
         json_data = {
             'deviceSystem': 'ios',
-            'appId': 'wx624dc2cce62f7008',
-            'cityCode': '310000',
+            'appId': self.appId,
+            'cityCode': self.cityCode,
             'channelCode': 'defaultChannel',
             'traceId': 1717438571187,
             'recordNo': self.recordNo,
             'openId': 'o4VjT5Az0RxdUIz6-sBCjVDBpRd0',
             'unionId': 'ohmdTt1TSce70l1uL1U2DGcZmGVU',
             'supplier': 'SH_SHS_M',
-            'supplierId': '310000',
+            'supplierId': self.cityCode,
             'sign': 'd949d54c44220a09edc06970f81191db',
         }
         url = 'https://cvg.17usoft.com/marketingbff/saveMoneyZone/completeTask'
