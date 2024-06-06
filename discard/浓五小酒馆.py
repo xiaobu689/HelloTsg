@@ -9,6 +9,9 @@
 cron: 33 8 * * *
 const $ = new Env("浓五小酒馆");
 """
+print("已废")
+exit(0)
+
 import os
 import requests
 

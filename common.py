@@ -58,27 +58,25 @@ def get_current_timestamp_milliseconds():
     return timestamp_milliseconds
 
 
-def txt_api():
+def daily_one_word():
     try:
-        url = 'https://v1.hitokoto.cn/'
-        params = {'c': 'd'}  # 查询参数
-        headers = {
-            'content-type': 'multipart/form-data; boundary=---011000010111000001101001'
-        }
-
-        # 发起GET请求
-        response = requests.get(url, params=params, headers=headers)
-
-        # 检查响应状态码
-        if response.status_code == 200:
-            result = response.json()
-            if 'id' in result:
-                return result['hitokoto']
+        urls = [
+            "https://api.xygeng.cn/openapi/one",
+            "https://v1.hitokoto.cn",
+        ]
+        url = random.choice(urls)
+        response = requests.get(url)
+        if response and response.status_code == 200:
+            response_json = response.json()
+            if url == "https://api.xygeng.cn/openapi/one":
+                return response_json['data']['content']
+            elif url == "https://v1.hitokoto.cn":
+                return response_json['hitokoto']
+            else:
+                return None
         else:
-            print(f"Error: Unexpected response status code {response.status_code}")
-
+            # print(f"Error: Received status code {response.status_code}")
+            return None
     except requests.RequestException as e:
-        print(f"Error: {e}")
-
-    except Exception as e:
-        print(f"Error: {e}")
+        # print("Error fetching the daily one word:", e)
+        return None

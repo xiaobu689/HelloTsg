@@ -75,8 +75,8 @@ class CST():
 
     def sign(self):
         json_data = {}
-        response = requests.post('https://wx.17u.cn/wxmpsign/sign/saveSignInfo',  headers=self.signHeaders,
-                                 json=json_data)
+        url = 'https://wx.17u.cn/wxmpsign/sign/saveSignInfo'
+        response = requests.post(url, headers=self.signHeaders, json=json_data)
         if response and response.status_code == 200:
             response_json = response.json()
             if response_json['code'] == 200:
@@ -98,9 +98,8 @@ class CST():
                 coupons = response_json['data']["skuInfos"]
                 for coupon in coupons:
                     if coupon["baseInfo"]["threeLevelCategoryName"] == "公交地铁":
-                        print(f'✅{coupon["baseInfo"]["skuTitle"]} | {coupon["baseInfo"]["sill"]} | {coupon["buttonInfo"]["content"]}')
-
-# ------------------------------------------------------------------------------
+                        print(
+                            f'✅{coupon["baseInfo"]["skuTitle"]} | {coupon["baseInfo"]["sill"]} | {coupon["buttonInfo"]["content"]}')
 
     def user_mileage_info(self):
         json_data = {}
@@ -110,7 +109,8 @@ class CST():
             response_json = response.json()
             print(response_json)
             if response_json['code'] == 200:
-                print(f'✅当前可用里程：{response_json["data"]["remainMileageTitle"]} | 价值：{response_json["data"]["deductionPrice"]}元')
+                print(
+                    f'✅当前可用里程：{response_json["data"]["remainMileageTitle"]} | 价值：{response_json["data"]["deductionPrice"]}元')
 
     def task_list(self):
         headers = {
@@ -148,6 +148,7 @@ class CST():
                     self.recordNo = task["recordNo"]
                     print(self.taskCode)
                     print(self.recordNo)
+
     def complete_task(self):
         headers = {
             'Host': 'cvg.17usoft.com',
@@ -206,7 +207,8 @@ class CST():
         response = make_request(url, json_data=json_data, method='post', headers=headers)
         print(response)
         if response and response["code"] == 1000:
-            print(f'✅领取成功 | 金币：{response["data"]["awardAmount"]} | 价值：{response["data"]["awardDeductionAmount"]}元')
+            print(
+                f'✅领取成功 | 金币：{response["data"]["awardAmount"]} | 价值：{response["data"]["awardDeductionAmount"]}元')
         else:
             print(f'❌领取失败')
 
@@ -215,6 +217,10 @@ class CST():
         self.coupon_list()
         self.user_mileage_info()
         self.task_list()
+        # 看视频
+        self.complete_task()
+        self.receive_rewards()
+
 
 
 if __name__ == '__main__':
@@ -225,7 +231,7 @@ if __name__ == '__main__':
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)
     tokens = re.split(r'&', tokenStr)
-    print(f"上海嘉定共获取到{len(tokens)}个账号")
+    print(f"城市通共获取到{len(tokens)}个账号")
     for i, token in enumerate(tokens, start=1):
         print(f"\n======== ▷ 第 {i} 个账号 ◁ ========")
         CST(token).main()

@@ -6,6 +6,10 @@
 cron: 40 6 * * *
 const $ = new Env("华为AITO");
 """
+
+print("已废")
+exit(0)
+
 import datetime
 import os
 

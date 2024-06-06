@@ -22,9 +22,10 @@ import re
 import time
 import requests
 import json
-from common import make_request, txt_api
+from common import make_request, daily_one_word
 from sendNotify import send
 from urllib3.exceptions import InsecureRequestWarning, InsecurePlatformWarning
+
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
 
@@ -74,6 +75,49 @@ class TPYQCIO():
             'Cookie': self.cookie
         }
 
+    def login(self):
+        url = 'https://mrobot.pcauto.com.cn/auto_passport3_back_intf/passport3/rest/login_new.jsp'
+        json_data = {
+            'password': 123456,
+            'username': 'admin',
+        }
+        response = requests.post(url, headers=self.signHeaders, data=json_data)
+        if response.status_code == 200:
+            try:
+                result = response.json()
+                if result['status'] == 0:
+                    self.ck = result['common_session_id']
+                    print(f"\n 账号登录: ✅ ，{result['message']}")
+                else:
+                    print(f"\n 账号登录: ❌ ，原因是：{result['msg']}")
+            except Exception as e:
+                print(f"\n 信息异常: ❌ ，{e}")
+        else:
+            print(f"\n 登录请求失败，状态码：{response.status_code}")
+
+    def get_member_info(self, task, timeout=2000):
+        url = 'https://mrobot.pcauto.com.cn/xsp/s/auto/info/nocache/task/getLoginUserInfo.xsp'
+        headers = {
+            'Host': 'mrobot.pcauto.com.cn',
+            'Cookie': f"common_session_id={self.ck}",
+        }
+        response = requests.post(url, headers=headers, timeout=timeout)
+        if response.status_code == 200:
+            try:
+                result = response.json()
+                if task == 1:
+                    print(f"\n 会员信息: ✅ ，会员：{result['userName']}，当前 {result['goldCount']} 积分")
+                elif task == 2:
+                    print(f"\n 积分查询: ✅ ，签到后有积分 {result['goldCount']}")
+                else:
+                    print(f"\n 积分查询: ❌ ，原因是：{result}")
+            except json.JSONDecodeError as e:
+                print(f"JSON解析错误：{e}")
+            except Exception as e:
+                print(f"查询会员信息异常：{response.text}，原因：{e}")
+        else:
+            print(f"请求失败，状态码：{response.status_code}")
+
     # 发帖
     def do_topic_issue(self):
         print('开始发帖......')
@@ -100,7 +144,7 @@ class TPYQCIO():
         if response and response.status_code == 200:
             response_json = response.json()
             if response_json['code'] == 200:
-                msg = f'✅发帖成功'
+                msg = f'✅发帖帖子【{response_json["data"]}】成功'
             else:
                 msg = f'❌发帖失败：{response_json["msg"]}'
         else:
@@ -127,7 +171,6 @@ class TPYQCIO():
             list = response_json['data']["data"]
             for item in list:
                 contentId = item['contentId']
-                content = item['appContent']
                 self.contentIds.append(int(contentId))
 
     # 查贴
@@ -143,14 +186,12 @@ class TPYQCIO():
         if response and response.status_code == 200:
             response_json = response.json()
             if response_json['code'] == 200:
-                list = response_json['data']["data"]
-                if len(list) == 0:
+                issue_list = response_json['data']["data"]
+                if len(issue_list) == 0:
                     print('🐹空空如也，没有发帖')
                     return
-                for item in list:
-                    self.myIsues.append(item['contentId'])
-        else:
-            print('❌获取发帖列表失败，请检查网络')
+                for item in issue_list:
+                    self.myIsues.append(item["issueId"])
 
     # 删帖
     def delete_issue(self):
@@ -159,9 +200,9 @@ class TPYQCIO():
             print("🐹没有帖子可以删除")
             return
         print(f'🐹发现{len(self.myIsues)}篇帖子，开始删除......')
-        for contentId in self.myIsues:
+        for issueId in self.myIsues:
             json_data = {
-                'contentId': contentId,
+                'contentId': issueId,
                 'contentType': 'Post',
             }
             url = 'https://community-gateway.pcauto.com.cn/app/user/delete/content'
@@ -169,15 +210,15 @@ class TPYQCIO():
             if response and response.status_code == 200:
                 response_json = response.json()
                 if response_json['code'] == 200:
-                    print(f'✅删除帖子{contentId}成功')
+                    print(f'✅删除帖子【{issueId}】成功')
                 else:
-                    print(f'❌删除帖子{contentId}失败：{response_json["msg"]}')
+                    print(f'❌删除帖子【{issueId}失败】：{response_json["msg"]}')
 
     # 评论
     def do_comment(self):
         print('🐹开始评论......')
         id = random.choice(self.contentIds)
-        content = txt_api()
+        content = daily_one_word()
         if content == '':
             content = '这沿途的风景只能边走边看，陌生人，祝你们万事顺遂'
         json_data = {
@@ -229,14 +270,15 @@ class TPYQCIO():
         if self.lotteryCount == 0:
             print("❌没有抽奖次数")
             return
-        url = 'https://community-gateway.pcauto.com.cn/app/lottery/lottery'
-        response = requests.post(url, headers=self.communityHeaders)
-        if response and response.status_code == 200:
-            response_json = response.json()
-            if response_json['code'] == 200:
-                print(f'✅{response_json["data"]["title"]} | {response_json["data"]["rewardName"]}')
-            else:
-                print(f'❌抽奖失败：{response_json["msg"]}')
+        for i in range(self.lotteryCount):
+            url = 'https://community-gateway.pcauto.com.cn/app/lottery/lottery'
+            response = requests.post(url, headers=self.communityHeaders)
+            if response and response.status_code == 200:
+                response_json = response.json()
+                if response_json['code'] == 200:
+                    print(f'✅第{i + 1}次 | {response_json["data"]["title"]} | {response_json["data"]["rewardName"]}')
+                else:
+                    print(f'❌抽奖失败：{response_json["msg"]}')
 
     def my_piece_list(self):
         json_data = {
@@ -265,11 +307,11 @@ class TPYQCIO():
             response_json = response.json()
             if response_json['code'] == 200:
                 rewards = response_json["data"]["data"]
+                print('---------🐹🐹🐹奖品列表🐹🐹🐹---------')
                 if len(rewards) == 0:
                     print('❌还没有获得奖励')
                 else:
                     for reward in rewards:
-                        print('---------🐹🐹🐹奖品列表🐹🐹🐹---------')
                         print(f'✅{reward["name"]}')
 
     def main(self):
@@ -278,7 +320,7 @@ class TPYQCIO():
 
         # 发帖
         self.do_topic_issue()
-        time.sleep(random.randint(30, 60))
+        time.sleep(random.randint(10, 15))
 
         # 评论
         self.do_comment()
@@ -296,7 +338,7 @@ class TPYQCIO():
 
         # 删贴|删评论
         self.my_issue_list()
-        time.sleep(random.randint(15, 25))
+        time.sleep(random.randint(5, 15))
         self.delete_issue()
 
         time.sleep(random.randint(15, 25))
@@ -312,6 +354,7 @@ class TPYQCIO():
 if __name__ == '__main__':
     env_name = 'tpyqc_cookie'
     cookies = os.getenv(env_name)
+    cookies = 'pcsuv=1715211510009.a.33360290; channel=10927; common_session_id=E868681D114A85801EB4AC7ED63FB6549BD9D807FE76CEAA86FB059DF81C2CA9157E2E2BD6F4ADF8AE0C982DE164FF39; pcuvdata=lastAccessTime=1715211507667; sajssdk_2015_cross_new_user=1; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%2218f5a92964aa07-0270717f313bc4c-774c1151-329160-18f5a92964baf9%22%2C%22first_id%22%3A%22%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMThmNWE5Mjk2NGFhMDctMDI3MDcxN2YzMTNiYzRjLTc3NGMxMTUxLTMyOTE2MC0xOGY1YTkyOTY0YmFmOSJ9%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%22%2C%22value%22%3A%22%22%7D%2C%22%24device_id%22%3A%2218f5a92964aa07-0270717f313bc4c-774c1151-329160-18f5a92964baf9%22%7D#52792536'
     if not cookies:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)
