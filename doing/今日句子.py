@@ -261,8 +261,6 @@ class JRJZ():
 if __name__ == '__main__':
     env_name = 'JRJZ_TOKEN'
     tokenStr = os.getenv(env_name)
-    # tokenStr = 'AVZXVwgAAARUDgVTVFcAVwVWDgdTBgoGAlMBXVVUVAE='
-    tokenStr = 'CwEHVw5WUlwCXVtWVAFWCwcKDgNXBwEFBwZVC1RXUFU='
     if not tokenStr:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)
