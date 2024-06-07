@@ -225,7 +225,7 @@ class JRJZ():
                 if token != self.token:
                     print(f'账号{token[:8]} | 开始助力......')
                     jrjz_instance = JRJZ(token)
-                    # 分享回调
+                    # 长按图片识别调用
                     jrjz_instance.sentence_share_callback(sid)
                     time.sleep(random.randint(20, 30))
                     # 点赞

@@ -7,10 +7,9 @@
 ---------------------------------
 
 APP：太平洋汽车
-变量名：tpyqc_cookie
-格式： cookie#account_id
-任意请求头获取 cookie 和 account_id
-多账号格式：cookie1#accountId1&cookie2#accountId2
+
+变量名：tpyqc_data
+格式： 账号#密码，多号用 & 隔开
 
 定时设置：
 cron: 0 0 * * *
@@ -30,16 +29,17 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
 
 
-class TPYQCIO():
+class TPYQC():
     name = "太平洋汽车抽奖"
 
-    def __init__(self, cookie_str):
+    def __init__(self, account_info):
+        username, password = account_info.split('#')
+        self.username = username
+        self.password = password
+        self.account_id = 0
         self.msg = ''
-        parts = cookie_str.split('#')
-        cookie = parts[0]
-        self.cookie = cookie
-        self.session_id = cookie.split('; ')[2].split('=')[1]
-        self.account_id = parts[1]
+        self.cookie = ''
+        self.session_id = ''
         self.contentIds = []
         self.commentId = 0
         self.lotteryCount = 0
@@ -74,49 +74,41 @@ class TPYQCIO():
             'Content-Type': 'application/json',
             'Cookie': self.cookie
         }
+        self.loginHeaders = {
+            'Host': 'mrobot.pcauto.com.cn',
+            'Pc-Agent': 'PCGroup Mobile App',
+            'Accept': '*/*',
+            'Version': '7.1.4',
+            'appVersion': '7.1.4',
+            'Accept-Language': 'zh-cn',
+            'App': 'PCAUTO_INFO_IOS',
+            'platform': 'PCAUTO_INFO_IOS',
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
+            'Connection': 'keep-alive',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
+        }
 
     def login(self):
+        data = {
+            'appName': 'PCAUTO_APP',
+            'auto_login': '90',
+            'password': self.password,
+            'username': self.username,
+        }
         url = 'https://mrobot.pcauto.com.cn/auto_passport3_back_intf/passport3/rest/login_new.jsp'
-        json_data = {
-            'password': 123456,
-            'username': 'admin',
-        }
-        response = requests.post(url, headers=self.signHeaders, data=json_data)
-        if response.status_code == 200:
-            try:
-                result = response.json()
-                if result['status'] == 0:
-                    self.ck = result['common_session_id']
-                    print(f"\n 账号登录: ✅ ，{result['message']}")
-                else:
-                    print(f"\n 账号登录: ❌ ，原因是：{result['msg']}")
-            except Exception as e:
-                print(f"\n 信息异常: ❌ ，{e}")
-        else:
-            print(f"\n 登录请求失败，状态码：{response.status_code}")
-
-    def get_member_info(self, task, timeout=2000):
-        url = 'https://mrobot.pcauto.com.cn/xsp/s/auto/info/nocache/task/getLoginUserInfo.xsp'
-        headers = {
-            'Host': 'mrobot.pcauto.com.cn',
-            'Cookie': f"common_session_id={self.ck}",
-        }
-        response = requests.post(url, headers=headers, timeout=timeout)
-        if response.status_code == 200:
-            try:
-                result = response.json()
-                if task == 1:
-                    print(f"\n 会员信息: ✅ ，会员：{result['userName']}，当前 {result['goldCount']} 积分")
-                elif task == 2:
-                    print(f"\n 积分查询: ✅ ，签到后有积分 {result['goldCount']}")
-                else:
-                    print(f"\n 积分查询: ❌ ，原因是：{result}")
-            except json.JSONDecodeError as e:
-                print(f"JSON解析错误：{e}")
-            except Exception as e:
-                print(f"查询会员信息异常：{response.text}，原因：{e}")
-        else:
-            print(f"请求失败，状态码：{response.status_code}")
+        response = requests.post(url, headers=self.loginHeaders, data=data)
+        if response and response.status_code == 200:
+            response_json = response.json()
+            if response_json['status'] == 0:
+                self.session = response_json['session']
+                self.account_id = response_json['userId']
+                common_session_id = response_json["common_session_id"]
+                self.cookie = f'common_session_id={common_session_id};'
+                self.headers['Cookie'] = self.cookie
+                self.communityHeaders['Cookie'] = self.cookie
+                print(f"账号【{self.account_id}】登录成功\n")
+            else:
+                self.msg += f"账号 {self.account_id} 登录失败，原因 {response_json['msg']}\n"
 
     # 发帖
     def do_topic_issue(self):
@@ -315,10 +307,14 @@ class TPYQCIO():
                         print(f'✅{reward["name"]}')
 
     def main(self):
+        self.login()
+        time.sleep(random.randint(15, 25))
+
         self.content_list()
         time.sleep(random.randint(15, 25))
 
         # 发帖
+        print('🐹开始发帖......self.cookie=', self.cookie)
         self.do_topic_issue()
         time.sleep(random.randint(10, 15))
 
@@ -340,7 +336,6 @@ class TPYQCIO():
         self.my_issue_list()
         time.sleep(random.randint(5, 15))
         self.delete_issue()
-
         time.sleep(random.randint(15, 25))
         self.delete_comment()
 
@@ -352,16 +347,15 @@ class TPYQCIO():
 
 
 if __name__ == '__main__':
-    env_name = 'tpyqc_cookie'
-    cookies = os.getenv(env_name)
-    cookies = 'pcsuv=1715211510009.a.33360290; channel=10927; common_session_id=E868681D114A85801EB4AC7ED63FB6549BD9D807FE76CEAA86FB059DF81C2CA9157E2E2BD6F4ADF8AE0C982DE164FF39; pcuvdata=lastAccessTime=1715211507667; sajssdk_2015_cross_new_user=1; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%2218f5a92964aa07-0270717f313bc4c-774c1151-329160-18f5a92964baf9%22%2C%22first_id%22%3A%22%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMThmNWE5Mjk2NGFhMDctMDI3MDcxN2YzMTNiYzRjLTc3NGMxMTUxLTMyOTE2MC0xOGY1YTkyOTY0YmFmOSJ9%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%22%2C%22value%22%3A%22%22%7D%2C%22%24device_id%22%3A%2218f5a92964aa07-0270717f313bc4c-774c1151-329160-18f5a92964baf9%22%7D#52792536'
-    if not cookies:
+    env_name = 'tpyqc_data'
+    account_infos_str = os.getenv(env_name)
+    if not account_infos_str:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)
-    cookies = re.split(r'&', cookies)
-    print(f"太平洋汽车共获取到{len(cookies)}个账号")
-    for i, cookie in enumerate(cookies, start=1):
+    account_infos = re.split(r'&', account_infos_str)
+    print(f"太平洋汽车共获取到{len(account_infos)}个账号")
+    for i, account_info in enumerate(account_infos, start=1):
         print(f"\n======== ▷ 第 {i} 个账号 ◁ ========")
-        TPYQCIO(cookie).main()
+        TPYQC(account_info).main()
         print("\n随机等待30-60s进行下一个账号")
         time.sleep(random.randint(30, 60))
