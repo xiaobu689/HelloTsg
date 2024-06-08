@@ -1,32 +1,23 @@
-"""
-今日句子
+print("已废")
+exit(0)
 
-抓任意包请求头 token
-变量名: JRJZ_TOKEN
-
-cron: 35 7 * * *
-const $ = new Env("今日句子");
-"""
 import os
 import random
 import re
+import threading
 import time
+import logging
 import requests
-from bs4 import BeautifulSoup
 from urllib3.exceptions import InsecureRequestWarning, InsecurePlatformWarning
-from common import qianwen_messages, make_request, daily_one_word
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
 
-
-class JRJZ():
-    name = "今日句子"
-
+class JRJZ:
     def __init__(self, token):
         self.token = token
-        self.openid = ''
         self.money = 0
+        self.openid = ''
         self.headers = {
             'authority': 'api.juzi.co',
             'accept': '*/*',
@@ -102,18 +93,10 @@ class JRJZ():
                 money = f'{response_json["data"]["member"]["money"]}'
                 self.money = money
                 self.openid = response_json['data']["member"]["openid"]
-                print("----------------self.openid=", self.openid)
                 print(f'🐹昵称：{response_json["data"]["member"]["nickname"]}')
                 print(f'🐶余额：{response_json["data"]["member"]["money"]}')
                 print(f'🐱句子数量：{response_json["data"]["member"]["juzi_count"]}')
                 print(f'---------------------------')
-
-    def sentence_list(self):
-        response = requests.get('https://api.juzi.co/index/getLikesAndAlbum', headers=self.headers)
-        if response and response.status_code == 200:
-            response_json = response.json()
-            if response_json['code'] == 200:
-                print(response_json['data'])
 
     def person_first_sentence(self):
         params = {
@@ -147,36 +130,8 @@ class JRJZ():
             response_json = response.json()
             if response_json['code'] == 200:
                 print(f'❤️对句子{sid}点了赞 | {response_json["msg"]}')  # 喜欢成功
-
-    def sentence_comment(self, sid):
-        quote = daily_one_word()
-        if quote is not None:
-            data = {
-                'content': quote,
-                'pid': '0',
-                'sid': sid,
-            }
-            url = 'https://api.juzi.co/sentence/addComments'
-            response = requests.post(url, headers=self.headers, data=data)
-            if response and response.status_code == 200:
-                response_json = response.json()
-                if response_json['code'] == 200:
-                    print(f'对句子{sid}做了评论 | {response_json["msg"]}')
-
-    def sentence_share(self, sid, share_user_id):
-        params = {
-            'openid': sid,  # 句子详情的openid | '165fccff78fb3d6021f279ced2d5cf93'
-            'share': share_user_id,  # 发起分享的用户openid | 'd37850c6d0383eac5edeba21b6e89cf4'
-        }
-        response = requests.get('https://api.juzi.co/sentence/makePic', params=params, headers=self.headers)
-        print(response.text)
-
-    def sentence_detail(self, sid):
-        params = {
-            'openid': sid,  # 句子详情的openid # '4225a8430480a2176a6ffeb36c3caf17'
-        }
-        response = requests.get('https://api.juzi.co/sentence/detail', params=params, headers=self.headers)
-        print(response.text)
+        else:
+            print(f'❌对句子{sid}点赞失败 | {response.text}')
 
     def sentence_share_callback(self, sid):
         # https://api.juzi.co/sentence/makePic?openid=165fccff78fb3d6021f279ced2d5cf93&share=d37850c6d0383eac5edeba21b6e89cf4
@@ -186,12 +141,12 @@ class JRJZ():
             'provider': 'weixin',
             'sentence_id': sid,  # 句子信息的openid  # '4225a8430480a2176a6ffeb36c3caf17'
         }
-        print("------------1111111111111data=", self.openid)
+        print("------------1111111111111data=", data)
         response = requests.post('https://api.juzi.co//sentence/picShareCallback', headers=self.headers, data=data)
         print(response.text)
         if response and response.status_code == 200:
             response_json = response.json()
-            if response_json['code'] == 200:
+            if response_json['code'] == 200 and response_json["msg"] == "ok":
                 print(f'分享回调成功 | {response_json["msg"]}')
 
     def cashout(self):
@@ -210,73 +165,75 @@ class JRJZ():
             else:
                 print(f'提现失败 | {response_json["msg"]}')
 
-    def assist(self, tokens):
-        """
-        1、分享句子奖励详情：一个新用户访问奖励随机0.3元左右，老用户奖励随机0.05元左右（24小时算一次老用户访问，可多次奖励）
-        2、点赞奖励详情：对别人发布的"句子/自建专辑"点赞（喜欢），奖励金币随机0.05元左右/个，每天可奖励和点赞1次
-           自己发布的"句子/自建专辑”，被用户点赞（喜欢），奖励金币随机0.3元左右/个，无数量限制（每月只能收到同一个用户一次奖励）
-        """
-        sentence_openids = []
-        for token in tokens:
+    def assist_user(self, sid, token):
+        try:
             jrjz_instance = JRJZ(token)
             jrjz_instance.my_info()
-            first_sentence = jrjz_instance.person_first_sentence()
-            if first_sentence:
-                sentence_openids.append(jrjz_instance.openid)
+            jrjz_instance.sentence_share_callback(sid)
+            time.sleep(random.randint(20, 30))
+            jrjz_instance.sentence_like(sid)
+            time.sleep(random.randint(30, 60))
+            logging.info(f"账号{token[:8]} 助力完成")
+        except Exception as e:
+            logging.error(f"账号{token[:8]} 发生错误：{e}")
 
+    def assist_all_users(self, sentence_openids, tokens):
+        threads = []
         for sid in sentence_openids:
+            print("第一篇文章sid=", sid)
             for token in tokens:
                 if token != self.token:
-                    print("----------token=", token)
-                    print(f'账号{token[:8]} | 开始助力......')
-                    jrjz_instance = JRJZ(token)
-                    # 长按图片识别调用
-                    jrjz_instance.sentence_share_callback(sid)
-                    time.sleep(random.randint(20, 30))
-                    # 点赞
-                    jrjz_instance.sentence_like(sid)
-                    time.sleep(random.randint(30, 60))
-                    # 评论
-                    # jrjz_instance.sentence_comment(sid)
-                    # time.sleep(random.randint(30, 60))
-                else:
-                    print(f'🦘当前助力池只有自己 | 跳过')
+                    print(f"第一个用户开始给本账号助力")
+                    t = threading.Thread(target=self.assist_user, args=(sid, token))
+                    threads.append(t)
+                    t.start()
+        for t in threads:
+            t.join()
 
     def main(self):
-        """
-        1、发布句子奖励标准：发布句子且审核通过随机0.3元左右，每天奖励1条
-        """
-        # self.sentence_detail()
         self.person_first_sentence()
         self.my_info()
-        time.sleep(random.randint(15, 30))
+        # time.sleep(random.randint(15, 30))
 
         # 发布句子
-        self.write_sentence()
-        time.sleep(random.randint(30, 50))
-
-        # 提现
+        # self.write_sentence()
+        # time.sleep(random.randint(30, 50))
         if float(self.money) >= 3.0:
             self.cashout()
         else:
             print(f'---------------------------')
             print(f'💰余额不足，跳过提现 | 当前金额：{self.money}元')
 
-
 if __name__ == '__main__':
     env_name = 'JRJZ_TOKEN'
     tokenStr = os.getenv(env_name)
+    tokenStr = 'AVZXVwgAAARUDgVTVFcAVwVWDgdTBgoGAlMBXVVUVAE=&CwEHVw5WUlwCXVtWVAFWCwcKDgNXBwEFBwZVC1RXUFU='
     if not tokenStr:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)
     tokens = re.split(r'&', tokenStr)
     print(f"今日句子共获取到{len(tokens)}个账号")
+    jrjz_instances = []
     for i, token in enumerate(tokens, start=1):
         print(f"\n======== ▷ 第 {i} 个账号 ◁ ========")
         jrjz_instance = JRJZ(token)
         jrjz_instance.main()
-        # if i == len(tokens):
-        #     jrjz_instance.assist(tokens)
+        jrjz_instances.append(jrjz_instance)
         print("\n随机等待30-60s进行下一个账号")
-        time.sleep(random.randint(30, 60))
-        print("----------------------------------")
+        # time.sleep(random.randint(30, 60))
+
+    # 获取所有用户的第一篇文章
+    sentence_openids = []
+    for jrjz_instance in jrjz_instances:
+        first_sentence = jrjz_instance.person_first_sentence()
+        if first_sentence:
+            sentence_openids.append(first_sentence)
+
+    print("获取到了所有用户的第一篇文章sentence_openids=", sentence_openids)
+
+    # 为所有用户助力
+    for jrjz_instance in jrjz_instances:
+        print("开始为所有用户助力")
+        jrjz_instance.assist_all_users(sentence_openids, tokens)
+
+    print("所有账号助力完成")

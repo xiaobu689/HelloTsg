@@ -314,7 +314,6 @@ class TPYQC():
         time.sleep(random.randint(15, 25))
 
         # 发帖
-        print('🐹开始发帖......self.cookie=', self.cookie)
         self.do_topic_issue()
         time.sleep(random.randint(10, 15))
 
