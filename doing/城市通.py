@@ -15,7 +15,7 @@ import requests
 from bs4 import BeautifulSoup
 from urllib3.exceptions import InsecureRequestWarning, InsecurePlatformWarning
 
-from common import qianwen_messages, make_request
+from common import qianwen_messages, make_request, get_current_timestamp_milliseconds
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
@@ -32,6 +32,8 @@ class CST():
         self.appId = 'wx624dc2cce62f7008'
         self.cityCode = '310000'
         self.activityCode = ''
+        self.openId = 'o4VjT5Az0RxdUIz6-sBCjVDBpRd0'
+        self.unionId = 'ohmdTt1TSce70l1uL1U2DGcZmGVU'
         self.taskCode = ''
         self.recordNo = ''
         self.headers = {
@@ -121,18 +123,19 @@ class CST():
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.49(0x18003132) NetType/4G Language/zh_CN',
             'Referer': 'https://servicewechat.com/wx624dc2cce62f7008/415/page-frame.html',
         }
+        traceId = get_current_timestamp_milliseconds()
         json_data = {
             'deviceSystem': 'ios',
             'appId': self.appId,
             'cityCode': self.cityCode,
             'channelCode': 'defaultChannel',
-            'traceId': 1717424218658,
+            'traceId': traceId,
             'activityKey': 'sqzq_rw',
-            'openId': 'o4VjT5Az0RxdUIz6-sBCjVDBpRd0',
-            'unionId': 'ohmdTt1TSce70l1uL1U2DGcZmGVU',
+            'openId': self.openId,
+            'unionId': self.unionId,
             'supplier': 'SH_SHS_M',
-            'supplierId': '310000',
-            'sign': '619fdd6180f41f6bbe6087713eb7fabe',
+            'supplierId': self.cityCode,
+            'sign': '619fdd6180f41f6bbe6087713eb7fab',
         }
         url = 'https://cvg.17usoft.com/marketingbff/saveMoneyZone/userQueryTaskList'
         response = make_request(url, json_data=json_data, method='post', headers=headers)
@@ -213,7 +216,7 @@ class CST():
             print(f'❌领取失败')
 
     def main(self):
-        # self.sign()
+        self.sign()
         self.coupon_list()
         self.user_mileage_info()
         self.task_list()

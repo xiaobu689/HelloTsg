@@ -102,19 +102,19 @@ def userinfo():
     import requests
     headers = {
         'authority': 'koplus.icoke.cn',
-        # 'accept': '*/*',
-        # 'accept-language': 'zh-CN,zh;q=0.9',
+        'accept': '*/*',
+        'accept-language': 'zh-CN,zh;q=0.9',
         'authorization': 'MP d9e030641ccb48afa39e3dffee515a29',
         # 'content-type': 'application/json',
         'referer': 'https://servicewechat.com/wxa5811e0426a94686/388/page-frame.html',
-        # 'sec-fetch-dest': 'empty',
-        # 'sec-fetch-mode': 'cors',
-        # 'sec-fetch-site': 'cross-site',
-        # 'sv': '10',
+        'sec-fetch-dest': 'empty',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'cross-site',
+        'sv': '10',
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a1b) XWEB/9129',
-        # 'x-sg-signature': '454899d991f1b1729ff70808042b538c1b39ae3feecb9a4783d74b46b20a46a5',
-        # 'x-sg-timestamp': '1717684599776',
-        # 'xweb_xhr': '1',
+        'x-sg-signature': '454899d991f1b1729ff70808042b538c1b39ae3feecb9a4783d74b46b20a46a5',
+        'x-sg-timestamp': '1717684599776',
+        'xweb_xhr': '1',
     }
     response = requests.get('https://koplus.icoke.cn/cre-bff/wechat/profile', headers=headers)
     print(response.text)

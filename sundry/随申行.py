@@ -7,6 +7,7 @@
 格式： 任意请求头抓 Authorization 值
 
 ---------------------------------
+20240610 新增每日签到、浏览商场任务
 20240601 抽奖活动下线
 20240529 新增当日首次登陆、游戏成就分享
 ---------------------------------
@@ -330,7 +331,7 @@ class SSX():
                     status = "可兑换"
                 else:
                     status = "其他状态"
-                msg += f'🐹【{i["productName"]}】：价格：{i["price"]}兜豆 | 状态：{status}\n'
+                msg += f'🐹{i["productName"]} | {i["price"]}兜豆 | {status}\n'
         else:
             msg = f'❌获取地铁券失败，{response["errMsg"]}'
 
@@ -346,13 +347,54 @@ class SSX():
         url = 'https://api.shmaas.net/cap/base/coupon/queryAvailableCouponCardList'
         response = make_request(url, json_data=json_data, method='post', headers=self.headers)
         if response and response['errCode'] == 0:
-            if len(response['data']['records']) <= 0:
-                msg = f'暂无可用地铁券'
-            else:
+            print("==========111111data=", response["data"])
+            if 'records' in response['data']:
                 for i in response['data']['records']:
                     msg += f'🐹【{i["title"]}】：数量{i["couponCount"]}，有效期至：{i["endTime"]}\n'
+            else:
+                msg = f'暂无可用地铁券'
+
         else:
             msg = f'❌获取地铁券失败，{response["errMsg"]}'
+
+        self.msg += msg
+        print(msg)
+
+    def query_mall(self):
+        json_data = {
+            'sourceId': 'activityPlay66e9b9acf94d0293',
+            'taskId': 11,
+            'browseAddress': '',
+        }
+        url = 'https://api.shmaas.net/actbizgtw/v1/report/browse'
+        response = requests.post(url, headers=self.headers, json=json_data)
+        if response and response.status_code == 200:
+            response_json = response.json()
+            if response_json['errCode'] == 0:
+                msg = f'✅浏览成功\n'
+            else:
+                msg = f'❌浏览失败，{response_json["errMsg"]}\n'
+        else:
+            msg = f'❌浏览失败\n'
+
+        self.msg += msg
+        print(msg)
+
+    def ssx_sign(self):
+        json_data = {
+            'sourceId': 'activityPlay66e9b9acf94d0293',
+            'taskId': 10,
+        }
+        url = 'https://api.shmaas.net/actbizgtw/v1/report/sign'
+        response = requests.post(url, headers=self.headers, json=json_data)
+        if response and response.status_code == 200:
+            response_json = response.json()
+            if response_json['errCode'] == 0:
+                msg = f'✅签到成功'
+            elif response_json['errCode'] == -196502:
+                msg = f'❌签到失败，{response_json["errMsg"]}'
+        else:
+            msg = f'❌签到失败'
 
         self.msg += msg
         print(msg)
@@ -362,6 +404,7 @@ class SSX():
 
         self.getUserInfo()
         self.task_list()
+
         self.today_first_login()
         time.sleep(random.randint(7, 15))
 
@@ -383,13 +426,19 @@ class SSX():
         time.sleep(random.randint(5, 15))
 
         # 抽奖活动下线
-        # for i in range(3):
-        #     self.lottery()
-        #     time.sleep(random.randint(5, 15))
+        for i in range(3):
+            self.lottery()
+            time.sleep(random.randint(5, 15))
 
         self.receive()
         self.task_list()
         time.sleep(random.randint(5, 10))
+
+        self.ssx_sign()
+        time.sleep(random.randint(5, 10))
+
+        self.query_mall()
+        time.sleep(random.randint(15, 20))
 
         self.xl_subway_ticket_list()
         time.sleep(random.randint(5, 10))

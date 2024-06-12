@@ -46,7 +46,6 @@ class JRJZ():
             print("💩开始获取句子......")
             time.sleep(random.randint(30, 55))
             quote = daily_one_word()
-            print(f'💩句子: {quote}')
             if not quote:
                 continue
             data = {'juzi': quote}
@@ -65,7 +64,6 @@ class JRJZ():
                 print(f'✅-----句子不重复，可以发布-----✅')
                 return quote  # 返回不重复的句子
             else:
-                print(f'🤡句子重复 | 重复数量{len(sentences)} | 继续查找......')
                 continue
 
     def write_sentence(self):
@@ -182,7 +180,7 @@ class JRJZ():
         # https://api.juzi.co/sentence/makePic?openid=165fccff78fb3d6021f279ced2d5cf93&share=d37850c6d0383eac5edeba21b6e89cf4
         data = {
             'user_openid': self.openid,  # 分享者的openid， url中share对应的值
-            #'code': '0e3scs200mechS12rE300dxRKi1scs2e',
+            'code': '0e3scs200mechS12rE300dxRKi1scs2e',
             'provider': 'weixin',
             'sentence_id': sid,  # 句子信息的openid  # '4225a8430480a2176a6ffeb36c3caf17'
         }

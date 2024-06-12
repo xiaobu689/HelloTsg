@@ -71,5 +71,5 @@ def task_list():
 
 
 if __name__ == '__main__':
-    # sign()
+    sign()
     task_list()
