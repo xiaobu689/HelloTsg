@@ -57,11 +57,11 @@ class TTCY():
 
 
 if __name__ == '__main__':
-    # env_name = 'TTCY_COOKIE'
-    # cookie = os.getenv(env_name)
-    # # if not cookie:
-    # #     print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
-    # #     exit(0)
-    token = ''
+    # # env_name = 'TTCY_COOKIE'
+    # # cookie = os.getenv(env_name)
+    # # # if not cookie:
+    # # #     print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
+    # # #     exit(0)
+    # token = ''
 
     TTCY().main()

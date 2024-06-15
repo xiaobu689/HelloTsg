@@ -78,7 +78,7 @@ class SHJD():
             if response.status_code == 200:
                 response_json = response.json()
                 print("----------------------------")
-                print(f'🧑‍✈️账号：{response_json["data"]["mobile"]}')
+                print(f'🧑✈️‍账号：{response_json["data"]["mobile"]}')
                 print(f'🧑‍✈️积分：{response_json["data"]["score"]}')
                 print("----------------------------")
             else:
@@ -358,7 +358,7 @@ class SHJD():
             time.sleep(random.randint(10, 20))
             self.article_share(article_id)
             time.sleep(random.randint(10, 18))
-            if self.isComment == 1:
+            if self.isComment == '1':
                 self.article_comment_task(article_id)
                 time.sleep(random.randint(20, 40))
             else:

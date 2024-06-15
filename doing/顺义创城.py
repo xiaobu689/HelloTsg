@@ -68,7 +68,7 @@ class SYCC():
         )
         if response and response.status_code == 200:
             response_json = response.json()
-            print(response_json["result"])
+            # print(response_json["result"])
 
     def user_info(self):
         response = requests.get('https://admin.shunyi.wenming.city/jeecg-boot/applet/user/userInfo',
@@ -126,7 +126,7 @@ class SYCC():
         if response.status_code == 200:
             response_json = response.json()
             if response_json['code'] == 200:
-                print("✅操作成功")
+                print("✅点赞积分增加成功")
 
     def share_add_score(self):
         params = {
@@ -154,7 +154,6 @@ class SYCC():
             response_json = response.json()
             if response_json['code'] == 200:
                 list = response_json["result"]["records"]
-                print(list)
 
     def view_add_score(self):
         time = random.randint(20000, 30000)
@@ -165,7 +164,6 @@ class SYCC():
         }
         response = requests.get('https://admin.shunyi.wenming.city/jeecg-boot/applet/user/addScore', params=params,
                                 headers=self.headers)
-        print(response.text)
         if response.status_code == 200:
             response_json = response.json()
             if response_json['code'] == 200:
@@ -178,6 +176,7 @@ class SYCC():
         }
         response = requests.get('https://admin.shunyi.wenming.city/jeecg-boot/applet/user/addScore', params=params,
                                 headers=self.headers)
+        print("消消乐第一关：", response.text)
 
     def game_xxk_2(self):
         params = {
@@ -186,6 +185,7 @@ class SYCC():
         }
         response = requests.get('https://admin.shunyi.wenming.city/jeecg-boot/applet/user/addScore', params=params,
                                 headers=self.headers)
+        print("消消乐第二关：", response.text)
 
     def game_xxk_3(self):
         params = {
@@ -194,6 +194,7 @@ class SYCC():
         }
         response = requests.get('https://admin.shunyi.wenming.city/jeecg-boot/applet/user/addScore', params=params,
                                 headers=self.headers)
+        print("消消乐第三关：", response.text)
 
     def game_xxk_task(self):
         self.game_xxk_1()
@@ -209,6 +210,7 @@ class SYCC():
         }
         response = requests.get('https://admin.shunyi.wenming.city/jeecg-boot/applet/user/addScore', params=params,
                                 headers=self.headers)
+        print("拼图第一关：", response.text)
 
     def game_pintu_2(self):
         params = {
@@ -217,6 +219,7 @@ class SYCC():
         }
         response = requests.get('https://admin.shunyi.wenming.city/jeecg-boot/applet/user/addScore', params=params,
                                 headers=self.headers)
+        print("拼图第二关：", response.text)
 
     def game_pintu_3(self):
         params = {
@@ -225,6 +228,7 @@ class SYCC():
         }
         response = requests.get('https://admin.shunyi.wenming.city/jeecg-boot/applet/user/addScore', params=params,
                                 headers=self.headers)
+        print("拼图第三关：", response.text)
 
     def game_pintu_task(self):
         self.game_pintu_1()
@@ -236,7 +240,6 @@ class SYCC():
     def dzsyhfq_task(self):
         response = requests.get('https://admin.shunyi.wenming.city/jeecg-boot/applet/choiceDrawSetting/results',
                                 headers=self.headers)
-        print(response.text)
         if response.status_code == 200:
             response_json = response.json()
             if response_json['code'] == 200 and "ticket" in response_json['result']:
@@ -244,7 +247,7 @@ class SYCC():
                 award = response_json['result']['award']
                 ticket = response_json['result']['ticket']
                 userId = self.userId
-                print(f"✅抽奖 | {award}")
+                print(f"🐹抽奖 | {award}")
                 #
                 json_data = {
                     'createBy': userId,
@@ -257,7 +260,7 @@ class SYCC():
                     json=json_data,
                 )
                 if response.status_code == 200:
-                    print(f"操作成功 | {award} 已入账")
+                    print(f"领取成功 | {award} 已入账")
         else:
             print("未知错误，赶紧看看吧，", response.text)
 
@@ -266,12 +269,12 @@ class SYCC():
         self.issue_list()
         self.sign()
         time.sleep(random.randint(15, 35))
-        for i in range(2):
-            self.issue_like()
-            self.like_add_score()
-            time.sleep(random.randint(20, 30))
         self.article_list()
         for i in range(3):
+            if i <= 1:
+                self.issue_like()
+                self.like_add_score()
+                time.sleep(random.randint(20, 30))
             self.view_add_score()
             time.sleep(random.randint(20, 30))
         self.game_xxk_task()

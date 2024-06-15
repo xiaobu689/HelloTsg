@@ -1,6 +1,10 @@
 """
 城市通
 
+--------------------------
+20240614 自己坐地铁用的，没啥毛，没做封装提取，别拉取，仅适合自己使用
+--------------------------
+
 抓任意包请求头 token
 变量名: CST_TOKEN
 
@@ -111,7 +115,6 @@ class CST():
         response = requests.post(url, headers=self.headers, json=json_data)
         if response and response.status_code == 200:
             response_json = response.json()
-            print(response_json)
             if response_json['code'] == 200:
                 print(
                     f'✅当前可用里程：{response_json["data"]["remainMileageTitle"]} | 价值：{response_json["data"]["deductionPrice"]}元')
@@ -186,7 +189,7 @@ class CST():
             response_json = response.json()
             if response_json['code'] == 1000:
                 self.recordNo = response_json['data']['recordNo']
-                print(f'✅任务领取成功 | ✅任务ID{self.recordNo}')
+                print(f'✅任务领取成功 | 任务ID: {self.recordNo}')
 
     def complete_task(self):
         import requests
@@ -214,7 +217,6 @@ class CST():
 
         response = requests.post('https://cvg.17usoft.com/marketingbff/saveMoneyZone/completeTask', headers=headers,
                                  json=json_data)
-        print(response.text)
         if response and response.status_code == 200:
             response_json = response.json()
             if response_json and response_json["code"] == 1000:
@@ -247,7 +249,6 @@ class CST():
         }
         url = 'https://cvg.17usoft.com/marketingbff/saveMoneyZone/receiveAward'
         response = make_request(url, json_data=json_data, method='post', headers=headers)
-        print(response)
         if response and response["code"] == 1000:
             print(
                 f'✅领取成功 | 金币：{response["data"]["awardAmount"]} | 价值：{response["data"]["awardDeductionAmount"]}元')
@@ -255,14 +256,12 @@ class CST():
             print(f'❌领取失败')
 
     def coin_task(self):
-        import requests
         headers = {
             'Host': 'cvg.17usoft.com',
             'Connection': 'keep-alive',
-            # 'Content-Length': '259',
             'content-type': 'application/json',
             'Labrador-Token': '6ee05193-0f17-47ec-9965-f2bc713b9b3b',
-            # 'Accept-Encoding': 'gzip,compress,br,deflate',
+            'Accept-Encoding': 'gzip,compress,br,deflate',
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.49(0x18003133) NetType/WIFI Language/zh_CN',
             'Referer': 'https://servicewechat.com/wx624dc2cce62f7008/416/page-frame.html',
         }
@@ -280,7 +279,6 @@ class CST():
         }
         response = requests.post('https://cvg.17usoft.com/cst/activity/center/activity/taskFlow', headers=headers,
                                  json=json_data)
-        print(response.text)
         # 检查是否有响应
         if not response or response.status_code != 200:
             print("response err")
@@ -292,21 +290,21 @@ class CST():
             for task in tasks:
                 taskCode = task["taskCode"]
                 if task["taskName"] == "CST会员看视频任务":
+                    print(f'\n🐶开始视频观看任务......')
                     for i in range(10):
-                        print(f'✅开始第{i + 1}个视频任务......')
                         coinRecordNo = self.coin_task_complate(taskCode)
                         time.sleep(random.randint(30, 40))
                         self.coin_task_receive(taskCode, coinRecordNo)
                         time.sleep(random.randint(15, 20))
                 elif task["taskName"] == "CST会员公交订单任务":
-                    print("✅开始公交订单任务......")
+                    print("\n🐱开始公交订单任务......")
                     coinRecordNo = self.coin_task_complate(taskCode)
                     time.sleep(random.randint(30, 40))
                     self.coin_task_receive(taskCode, coinRecordNo)
                     time.sleep(random.randint(30, 40))
 
                 elif task["taskName"] == "CST会员抽奖任务":
-                    print("✅开始抽奖任务......")
+                    print("\n🐹开始抽奖任务......")
                     # 金币抽奖
                     response_json = self.lucky_draw()
                     time.sleep(random.randint(30, 40))
@@ -319,17 +317,15 @@ class CST():
                     time.sleep(random.randint(30, 40))
 
                 elif task["taskName"] == "CST会员酒店浏览任务":
-                    print("✅开始浏览任务......")
+                    print("\n✈️开始浏览任务......")
                     coinRecordNo = self.coin_task_complate(taskCode)
                     time.sleep(random.randint(30, 40))
                     self.coin_task_receive(taskCode, coinRecordNo)
                     time.sleep(random.randint(30, 40))
-
         else:
             return
 
     def coin_task_complate(self, taskCode):
-        import requests
         headers = {
             'Host': 'cvg.17usoft.com',
             'Connection': 'keep-alive',
@@ -368,7 +364,6 @@ class CST():
             return None
 
     def coin_task_receive(self, coinTaskCode, coinRecordNo):
-        import requests
         headers = {
             'Host': 'cvg.17usoft.com',
             'Connection': 'keep-alive',
@@ -485,17 +480,18 @@ class CST():
         if response and response.status_code == 200:
             response_json = response.json()
             if response_json and response_json["code"] == 1000:
-                print(f'金币抽奖奖励领取成功')
+                print(f'✅金币抽奖奖励领取成功')
 
     def main(self):
-        self.coupon_list()
         self.user_mileage_info()
+        self.coupon_list()
         self.task_list()
 
         # 签到
         self.sign()
         time.sleep(random.randint(30, 40))
 
+        print(f"\n============ ▷ 开始积分任务 ◁ ===========\n")
         # 领积分任务、看视频
         self.receive_task()
         for i in range(5):
@@ -504,6 +500,7 @@ class CST():
         self.receive_rewards()
         time.sleep(random.randint(30, 40))
 
+        print(f"\n============ ▷ 开始金币任务 ◁ ===========\n")
         # 领金币任务、看视频
         self.coin_task()
 
@@ -511,7 +508,6 @@ class CST():
 if __name__ == '__main__':
     env_name = 'CST_TOKEN'
     tokenStr = os.getenv(env_name)
-    # tokenStr = 'ohmdTt1TSce70l1uL1U2DGcZmGVU#iH3PGf9ZucSMMEYi4keylA=='
     if not tokenStr:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)

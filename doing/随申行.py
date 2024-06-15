@@ -347,7 +347,6 @@ class SSX():
         url = 'https://api.shmaas.net/cap/base/coupon/queryAvailableCouponCardList'
         response = make_request(url, json_data=json_data, method='post', headers=self.headers)
         if response and response['errCode'] == 0:
-            print("==========111111data=", response["data"])
             if 'records' in response['data']:
                 for i in response['data']['records']:
                     msg += f'🐹【{i["title"]}】：数量{i["couponCount"]}，有效期至：{i["endTime"]}\n'
@@ -389,9 +388,9 @@ class SSX():
         response = requests.post(url, headers=self.headers, json=json_data)
         if response and response.status_code == 200:
             response_json = response.json()
-            if response_json['errCode'] == 0:
+            if response_json['errCode'] == 0 or response_json['errCode'] == -196502:
                 msg = f'✅签到成功'
-            elif response_json['errCode'] == -196502:
+            else:
                 msg = f'❌签到失败，{response_json["errMsg"]}'
         else:
             msg = f'❌签到失败'
@@ -419,26 +418,18 @@ class SSX():
         self.finish_query_address()
         time.sleep(random.randint(5, 10))
 
-        self.sign()
-        time.sleep(random.randint(5, 15))
-
         self.game_share()
         time.sleep(random.randint(5, 15))
-
-        # 抽奖活动下线
-        for i in range(3):
-            self.lottery()
-            time.sleep(random.randint(5, 15))
-
-        self.receive()
-        self.task_list()
-        time.sleep(random.randint(5, 10))
 
         self.ssx_sign()
         time.sleep(random.randint(5, 10))
 
         self.query_mall()
         time.sleep(random.randint(15, 20))
+
+        self.receive()
+        self.task_list()
+        time.sleep(random.randint(5, 10))
 
         self.xl_subway_ticket_list()
         time.sleep(random.randint(5, 10))

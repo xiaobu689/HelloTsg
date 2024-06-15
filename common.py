@@ -86,6 +86,7 @@ def daily_one_word():
 
 # 随机一句网易云热评
 def get_163music_comments():
+    comments = []
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36',
     }
@@ -125,4 +126,6 @@ def get_163music_comments():
             # 使用正则表达式替换特殊字符为空字符串
             clean_text = special_char_pattern.sub('', hot_comment)
 
-            return clean_text
+            comments.append(clean_text)
+
+    return comments

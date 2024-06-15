@@ -1,13 +1,14 @@
 /*
-日期: 2023/1/31 17:00
+来源 : github@AutMan7 https://github.com/AutMan7/AM.git
+日期: 2023/1/25 20:30
 
-APP：掌上天津极速版
-HOST:bbs.zaitianjin.net
-export zstjhd='userId&salf'
+小程序:喜茶GO
+域名：vip.heytea.com
+请求头：Authorization:XXXXXXX
+export xchd='XXXXXXX'
 */
-const $ = new Env('掌上天津极速版');
+const $ = new Env('喜茶');
 const axios = require('axios');
-const CryptoJS = require('crypto-js');
 let request = require("request");
 request = request.defaults({
     jar: true
@@ -18,13 +19,13 @@ const {
 const Notify = 1; //0为关闭通知，1为打开通知,默认为1
 const debug = 0; //0为关闭调试，1为打开调试,默认为0
 
-let zstjhd = ($.isNode() ? process.env.zstjhd : $.getdata("zstjhd")) || ""
-let zstjhdArr = [];
+let xchd = ($.isNode() ? process.env.xchd : $.getdata("xchd")) || ""
+let xchdArr = [];
 let data = '';
 let msg = '';
 var hours = new Date().getMonth();
 
-var timestamp = Math.round(new Date().getTime()/1000).toString();
+var timestamp = Math.round(new Date().getTime()).toString();
 !(async () => {
     if (typeof $request !== "undefined") {
         await GetRewrite();
@@ -39,23 +40,19 @@ var timestamp = Math.round(new Date().getTime()/1000).toString();
 
 
 
-            log(`\n============ 微信公众号：福利社 ============`)
-            log(`\n=================== 共找到 ${zstjhdArr.length} 个账号 ===================`)
+            log(`\n============ 微信公众号：AutMan福利社 ============`)
+            log(`\n=================== 共找到 ${xchdArr.length} 个账号 ===================`)
             if (debug) {
-                log(`【debug】 这是你的全部账号数组:\n ${zstjhdArr}`);
+                log(`【debug】 这是你的全部账号数组:\n ${xchdArr}`);
             }
-            for (let index = 0; index < zstjhdArr.length; index++) {
+            for (let index = 0; index < xchdArr.length; index++) {
 
                 let num = index + 1
                 addNotifyStr(`\n==== 开始【第 ${num} 个账号】====\n`, true)
 
-                zstjhd = zstjhdArr[index];  
-                uid =  zstjhd.split('&')[0] 
-                salf =  zstjhd.split('&')[1]         
+                xchd = xchdArr[index];
 
-await sign()
-await signinfo()
-
+await checkin()
 }
             //await SendMsg(msg);
         }
@@ -63,27 +60,33 @@ await signinfo()
 })()
 .catch((e) => log(e))
     .finally(() => $.done())
-async function signinfo() {
- t = timestamp  
- macs =  genmac()
- mac = encodeURIComponent(macs)   
-
- s ='brand=OPPO&client=android&deviceInfo=OPPO_PCAM00_2021040100_10&interfaceVersion=v2.8&lat=30.1&lng=114.2&mac='+macs+'&model=PCAM00&privacyStatus=1&region=天津市&salf='+salf+'&timestamp='+t+'&uid='+uid+'&userId='+uid+'&version=2.8.4&versionCode=154'
- s = encode(s)
- 
- signs = CryptoJS.HmacSHA1(s, '1s_vsegymTasdgKxiKvRz5vDlyzmc92A_H6A8zg6I').toString().toUpperCase()
+async function checkin() {
     return new Promise((resolve) => {
         var options = {
   method: 'POST',
-  url: 'https://bbs.zaitianjin.net/zstj/v2.8/index.php',
+  url: 'https://vip.heytea.com/api/service-member/vip/task/award/114',
   headers: {
-'Content-Type': 'application/x-www-form-urlencoded',
-'Host': 'bbs.zaitianjin.net',
-'Connection': 'Keep-Alive',
-'Accept-Encoding': 'gzip',
-'User-Agent': 'okhttp/4.9.3'
+    Host: 'vip.heytea.com',
+    Connection: 'keep-alive',
+    'X-version': '4.9.4',
+    'GTM-Zone': 'GMT+8:00',
+    'Accept-Language': 'zh-CN',
+    Authorization: xchd,
+    Client: '1',
+    'Content-Type': 'application/json',
+    Region: '1',
+    Accept: 'application/prs.heytea.v1+json',
+    xweb_xhr: '1',
+    'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 MicroMessenger/7.0.4.501 NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF',
+    'X-client': 'weapp',
+    version: '4.9.4',
+    'Sec-Fetch-Site': 'cross-site',
+    'Sec-Fetch-Mode': 'cors',
+    'Sec-Fetch-Dest': 'empty',
+    Referer: 'https://servicewechat.com/wx696a42df4f2456d3/825/page-frame.html',
+    'Accept-Encoding': 'gzip, deflate',
   },
-data: 'c=User&lng=114.2&privacyStatus=1&sign='+signs+'&interfaceVersion=v2.8&version=2.8.4&userId='+uid+'&m=signInfo&mac='+mac+'&versionCode=154&deviceInfo=OPPO_PCAM00_2021040100_10&uid='+uid+'&client=android&model=PCAM00&region=%E5%A4%A9%E6%B4%A5%E5%B8%82&salf='+salf+'&brand=OPPO&lat=30.1&timestamp='+t
+  data: {}
 };
     if (debug) {
             log(`\n【debug】=============== 这是  请求 url ===============`);
@@ -96,21 +99,14 @@ data: 'c=User&lng=114.2&privacyStatus=1&sign='+signs+'&interfaceVersion=v2.8&ver
                     log(`\n\n【debug】===============这是 返回data==============`);
                     log(JSON.stringify(response.data));
                 }
-                if(data.code == 1){
-                log('签到天数: '+data.data.signDays)   
-                
-                log('累计签到天数: '+data.data.signAllDays)
-               
-                log('今日是否签到: '+data.data.signStatue)    
-                
-                log('连续签到7天奖励: '+data.data.signData)
-           
-                }else log(data.codemsg)
+ if(data.code == 0){
+                    log('score:'+data.data.score)
+ }else log(data.message)
 
-                    
-                
+
+
             } catch (e) {
-                log(`异常：${data}，原因：${data.codemsg}`)
+                log(`异常：${data}，原因：${data.message}`)
             }
         }).catch(function(error) {
             console.error(error);
@@ -120,77 +116,23 @@ data: 'c=User&lng=114.2&privacyStatus=1&sign='+signs+'&interfaceVersion=v2.8&ver
         });
     })
 
-} 
-async function sign() {
- t = timestamp  
- macs =  genmac()
- mac = encodeURIComponent(macs)   
-
- s ='brand=OPPO&client=android&deviceInfo=OPPO_PCAM00_2021040100_10&interfaceVersion=v2.8&lat=30.1&lng=114.2&mac='+macs+'&model=PCAM00&privacyStatus=1&region=天津市&salf='+salf+'&timestamp='+t+'&uid='+uid+'&userId='+uid+'&version=2.8.4&versionCode=154'
- s = encode(s)
- 
- signs = CryptoJS.HmacSHA1(s, '1s_vsegymTasdgKxiKvRz5vDlyzmc92A_H6A8zg6I').toString().toUpperCase()
-    return new Promise((resolve) => {
-        var options = {
-  method: 'POST',
-  url: 'https://bbs.zaitianjin.net/zstj/v2.8/index.php',
-  headers: {
-'Content-Type': 'application/x-www-form-urlencoded',
-'Host': 'bbs.zaitianjin.net',
-'Connection': 'Keep-Alive',
-'Accept-Encoding': 'gzip',
-'User-Agent': 'okhttp/4.9.3'
-  },
-
-data: 'c=Credit&lng=114.2&privacyStatus=1&sign='+signs+'&interfaceVersion=v2.8&version=2.8.4&userId='+uid+'&m=sign&mac='+mac+'&versionCode=154&deviceInfo=OPPO_PCAM00_2021040100_10&uid='+uid+'&client=android&model=PCAM00&region=%E5%A4%A9%E6%B4%A5%E5%B8%82&salf='+salf+'&brand=OPPO&lat=30.1&timestamp='+t
-
-};
-    if (debug) {
-            log(`\n【debug】=============== 这是  请求 url ===============`);
-            log(JSON.stringify(options));
-        }
-        axios.request(options).then(async function(response) {
-            try {
-                 data = response.data;
-                if (debug) {
-                    log(`\n\n【debug】===============这是 返回data==============`);
-                    log(JSON.stringify(response.data));
-                }
-                if(data.code == 1){
-                log(data.codemsg)
-           
-                }else log(data.codemsg)
-
-                    
-                
-            } catch (e) {
-                log(`异常：${data}，原因：${data.codemsg}`)
-            }
-        }).catch(function(error) {
-            console.error(error);
-        }).then(res => {
-            //这里处理正确返回
-            resolve();
-        });
-    })
-
-} 
+}
 async function Envs() {
-    if (zstjhd) {
-        if (zstjhd.indexOf("@") != -1) {
-            zstjhd.split("@").forEach((item) => {
+    if (xchd) {
+        if (xchd.indexOf("@") != -1) {
+            xchd.split("@").forEach((item) => {
 
-                zstjhdArr.push(item);
+                xchdArr.push(item);
             });
-        } else if (zstjhd.indexOf("\n") != -1) {
-            zstjhd.split("\n").forEach((item) => {
-                zstjhdArr.push(item);
+        } else if (xchd.indexOf("\n") != -1) {
+            xchd.split("\n").forEach((item) => {
+                xchdArr.push(item);
             });
         } else {
-            zstjhdArr.push(zstjhd);
+            xchdArr.push(xchd);
         }
     } else {
-        log(`\n 【${$.name}】：未填写变量 zstjhd`)
+        log(`\n 【${$.name}】：未填写变量 xchd`)
         return;
     }
 
@@ -203,19 +145,6 @@ function addNotifyStr(str, is_log = true) {
     msg += `${str}\n`
 }
 
-
-function encode(str){
-//var b = new Buffer(str);
-var b = Buffer.from(str);
-var s = b.toString('base64');
-var s = s.replace(/\//g,'_')
-return s
-}
-
-
-
-
-function genmac(){var ran1=ran1=Math.floor(Math.random()*256);ran1=ran1.toString(16).toUpperCase();if(ran1.length==1)ran1="0"+ran1;var ran2=Math.floor(Math.random()*256);ran2=ran2.toString(16).toUpperCase();if(ran2.length==1)ran2="0"+ran2;var ran3=Math.floor(Math.random()*256);ran3=ran3.toString(16).toUpperCase();if(ran3.length==1)ran3="0"+ran3;var ran4=Math.floor(Math.random()*256);ran4=ran4.toString(16).toUpperCase();if(ran4.length==1)ran4="0"+ran4;var ran5=Math.floor(Math.random()*256);ran5=ran5.toString(16).toUpperCase();if(ran5.length==1)ran5="0"+ran5;var ran6=Math.floor(Math.random()*256);ran6=ran6.toString(16).toUpperCase();if(ran6.length==1)ran6="0"+ran6;var res="";res=ran1+":"+ran2+":"+ran3+":"+ran4+":"+ran5+":"+ran6;return res;}
 // ============================================发送消息============================================ \\
 async function SendMsg(message) {
     if (!message)
@@ -231,6 +160,11 @@ async function SendMsg(message) {
     } else {
         log(message);
     }
+}
+var MD5=function(string){function RotateLeft(lValue,iShiftBits){return(lValue<<iShiftBits)|(lValue>>>(32-iShiftBits));}function AddUnsigned(lX,lY){var lX4,lY4,lX8,lY8,lResult;lX8=(lX&0x80000000);lY8=(lY&0x80000000);lX4=(lX&0x40000000);lY4=(lY&0x40000000);lResult=(lX&0x3FFFFFFF)+(lY&0x3FFFFFFF);if(lX4&lY4){return(lResult^0x80000000^lX8^lY8);}if(lX4|lY4){if(lResult&0x40000000){return(lResult^0xC0000000^lX8^lY8);}else{return(lResult^0x40000000^lX8^lY8);}}else{return(lResult^lX8^lY8);}}function F(x,y,z){return(x&y)|((~x)&z);}function G(x,y,z){return(x&z)|(y&(~z));}function H(x,y,z){return(x^y^z);}function I(x,y,z){return(y^(x|(~z)));}function FF(a,b,c,d,x,s,ac){a=AddUnsigned(a,AddUnsigned(AddUnsigned(F(b,c,d),x),ac));return AddUnsigned(RotateLeft(a,s),b);}function GG(a,b,c,d,x,s,ac){a=AddUnsigned(a,AddUnsigned(AddUnsigned(G(b,c,d),x),ac));return AddUnsigned(RotateLeft(a,s),b);}function HH(a,b,c,d,x,s,ac){a=AddUnsigned(a,AddUnsigned(AddUnsigned(H(b,c,d),x),ac));return AddUnsigned(RotateLeft(a,s),b);}function II(a,b,c,d,x,s,ac){a=AddUnsigned(a,AddUnsigned(AddUnsigned(I(b,c,d),x),ac));return AddUnsigned(RotateLeft(a,s),b);}function ConvertToWordArray(string){var lWordCount;var lMessageLength=string.length;var lNumberOfWords_temp1=lMessageLength+8;var lNumberOfWords_temp2=(lNumberOfWords_temp1-(lNumberOfWords_temp1%64))/64;var lNumberOfWords=(lNumberOfWords_temp2+1)*16;var lWordArray=Array(lNumberOfWords-1);var lBytePosition=0;var lByteCount=0;while(lByteCount<lMessageLength){lWordCount=(lByteCount-(lByteCount%4))/4;lBytePosition=(lByteCount%4)*8;lWordArray[lWordCount]=(lWordArray[lWordCount]|(string.charCodeAt(lByteCount)<<lBytePosition));lByteCount++;}lWordCount=(lByteCount-(lByteCount%4))/4;lBytePosition=(lByteCount%4)*8;lWordArray[lWordCount]=lWordArray[lWordCount]|(0x80<<lBytePosition);lWordArray[lNumberOfWords-2]=lMessageLength<<3;lWordArray[lNumberOfWords-1]=lMessageLength>>>29;return lWordArray;}function WordToHex(lValue){var WordToHexValue="",WordToHexValue_temp="",lByte,lCount;for(lCount=0;lCount<=3;lCount++){lByte=(lValue>>>(lCount*8))&255;WordToHexValue_temp="0"+lByte.toString(16);WordToHexValue=WordToHexValue+WordToHexValue_temp.substr(WordToHexValue_temp.length-2,2);}return WordToHexValue;}function Utf8Encode(string){string=string.replace(/\r\n/g,"\n");var utftext="";for(var n=0;n<string.length;n++){var c=string.charCodeAt(n);if(c<128){utftext+=String.fromCharCode(c);}else if((c>127)&&(c<2048)){utftext+=String.fromCharCode((c>>6)|192);utftext+=String.fromCharCode((c&63)|128);}else{utftext+=String.fromCharCode((c>>12)|224);utftext+=String.fromCharCode(((c>>6)&63)|128);utftext+=String.fromCharCode((c&63)|128);}}return utftext;}var x=Array();var k,AA,BB,CC,DD,a,b,c,d;var S11=7,S12=12,S13=17,S14=22;var S21=5,S22=9,S23=14,S24=20;var S31=4,S32=11,S33=16,S34=23;var S41=6,S42=10,S43=15,S44=21;string=Utf8Encode(string);x=ConvertToWordArray(string);a=0x67452301;b=0xEFCDAB89;c=0x98BADCFE;d=0x10325476;for(k=0;k<x.length;k+=16){AA=a;BB=b;CC=c;DD=d;a=FF(a,b,c,d,x[k+0],S11,0xD76AA478);d=FF(d,a,b,c,x[k+1],S12,0xE8C7B756);c=FF(c,d,a,b,x[k+2],S13,0x242070DB);b=FF(b,c,d,a,x[k+3],S14,0xC1BDCEEE);a=FF(a,b,c,d,x[k+4],S11,0xF57C0FAF);d=FF(d,a,b,c,x[k+5],S12,0x4787C62A);c=FF(c,d,a,b,x[k+6],S13,0xA8304613);b=FF(b,c,d,a,x[k+7],S14,0xFD469501);a=FF(a,b,c,d,x[k+8],S11,0x698098D8);d=FF(d,a,b,c,x[k+9],S12,0x8B44F7AF);c=FF(c,d,a,b,x[k+10],S13,0xFFFF5BB1);b=FF(b,c,d,a,x[k+11],S14,0x895CD7BE);a=FF(a,b,c,d,x[k+12],S11,0x6B901122);d=FF(d,a,b,c,x[k+13],S12,0xFD987193);c=FF(c,d,a,b,x[k+14],S13,0xA679438E);b=FF(b,c,d,a,x[k+15],S14,0x49B40821);a=GG(a,b,c,d,x[k+1],S21,0xF61E2562);d=GG(d,a,b,c,x[k+6],S22,0xC040B340);c=GG(c,d,a,b,x[k+11],S23,0x265E5A51);b=GG(b,c,d,a,x[k+0],S24,0xE9B6C7AA);a=GG(a,b,c,d,x[k+5],S21,0xD62F105D);d=GG(d,a,b,c,x[k+10],S22,0x2441453);c=GG(c,d,a,b,x[k+15],S23,0xD8A1E681);b=GG(b,c,d,a,x[k+4],S24,0xE7D3FBC8);a=GG(a,b,c,d,x[k+9],S21,0x21E1CDE6);d=GG(d,a,b,c,x[k+14],S22,0xC33707D6);c=GG(c,d,a,b,x[k+3],S23,0xF4D50D87);b=GG(b,c,d,a,x[k+8],S24,0x455A14ED);a=GG(a,b,c,d,x[k+13],S21,0xA9E3E905);d=GG(d,a,b,c,x[k+2],S22,0xFCEFA3F8);c=GG(c,d,a,b,x[k+7],S23,0x676F02D9);b=GG(b,c,d,a,x[k+12],S24,0x8D2A4C8A);a=HH(a,b,c,d,x[k+5],S31,0xFFFA3942);d=HH(d,a,b,c,x[k+8],S32,0x8771F681);c=HH(c,d,a,b,x[k+11],S33,0x6D9D6122);b=HH(b,c,d,a,x[k+14],S34,0xFDE5380C);a=HH(a,b,c,d,x[k+1],S31,0xA4BEEA44);d=HH(d,a,b,c,x[k+4],S32,0x4BDECFA9);c=HH(c,d,a,b,x[k+7],S33,0xF6BB4B60);b=HH(b,c,d,a,x[k+10],S34,0xBEBFBC70);a=HH(a,b,c,d,x[k+13],S31,0x289B7EC6);d=HH(d,a,b,c,x[k+0],S32,0xEAA127FA);c=HH(c,d,a,b,x[k+3],S33,0xD4EF3085);b=HH(b,c,d,a,x[k+6],S34,0x4881D05);a=HH(a,b,c,d,x[k+9],S31,0xD9D4D039);d=HH(d,a,b,c,x[k+12],S32,0xE6DB99E5);c=HH(c,d,a,b,x[k+15],S33,0x1FA27CF8);b=HH(b,c,d,a,x[k+2],S34,0xC4AC5665);a=II(a,b,c,d,x[k+0],S41,0xF4292244);d=II(d,a,b,c,x[k+7],S42,0x432AFF97);c=II(c,d,a,b,x[k+14],S43,0xAB9423A7);b=II(b,c,d,a,x[k+5],S44,0xFC93A039);a=II(a,b,c,d,x[k+12],S41,0x655B59C3);d=II(d,a,b,c,x[k+3],S42,0x8F0CCC92);c=II(c,d,a,b,x[k+10],S43,0xFFEFF47D);b=II(b,c,d,a,x[k+1],S44,0x85845DD1);a=II(a,b,c,d,x[k+8],S41,0x6FA87E4F);d=II(d,a,b,c,x[k+15],S42,0xFE2CE6E0);c=II(c,d,a,b,x[k+6],S43,0xA3014314);b=II(b,c,d,a,x[k+13],S44,0x4E0811A1);a=II(a,b,c,d,x[k+4],S41,0xF7537E82);d=II(d,a,b,c,x[k+11],S42,0xBD3AF235);c=II(c,d,a,b,x[k+2],S43,0x2AD7D2BB);b=II(b,c,d,a,x[k+9],S44,0xEB86D391);a=AddUnsigned(a,AA);b=AddUnsigned(b,BB);c=AddUnsigned(c,CC);d=AddUnsigned(d,DD);}var temp=WordToHex(a)+WordToHex(b)+WordToHex(c)+WordToHex(d);return temp.toLowerCase();}
+function randomString(m) {
+    for (var e = m > 0 && void 0 !== m ? m : 21, t = ""; t.length < e;) t += Math.random().toString(36).slice(2);
+    return t.slice(0, e)
 }
 
 function Env(t, e) {
@@ -606,4 +540,4 @@ function Env(t, e) {
             this.log("", `🔔${this.name}, 结束! 🕛 ${s} 秒`), this.log(), (this.isSurge() || this.isQuanX() || this.isLoon()) && $done(t)
         }
     }(t, e)
-}   
+}

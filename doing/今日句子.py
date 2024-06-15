@@ -43,10 +43,10 @@ class JRJZ():
 
     def get_no_repeat_sentence(self):
         while True:
-            print("💩开始获取句子......")
-            time.sleep(random.randint(30, 55))
-            # quote = daily_one_word()
-            quote = get_163music_comments
+            time.sleep(random.randint(20, 30))
+            quote = daily_one_word()
+            # quote = get_163music_comments
+            time.sleep(20000)
             if not quote:
                 continue
             data = {'juzi': quote}
@@ -62,15 +62,14 @@ class JRJZ():
 
             sentences = response_json.get('data', [])
             if len(sentences) <= 0:
-                print(f'✅-----句子不重复，可以发布-----✅')
-                return quote  # 返回不重复的句子
+                return quote
             else:
                 continue
 
     def write_sentence(self):
         quote = self.get_no_repeat_sentence()
         if quote is not None:
-            print("🐹开始发布句子......")
+            print(f"🐹开始发布句子: {quote}")
             json_data = {
                 'juzi': quote,
                 'original': 'false',
@@ -114,23 +113,13 @@ class JRJZ():
         else:
             return None
 
-
-
-
-    def sentence_list(self):
-        response = requests.get('https://api.juzi.co/index/getLikesAndAlbum', headers=self.headers)
-        if response and response.status_code == 200:
-            response_json = response.json()
-            if response_json['code'] == 200:
-                print(response_json['data'])
-
     def person_first_sentence(self, openid):
         params = {
             'openid': openid,  # 用户的openid
             'page': '1',
         }
         try:
-            response = requests.get('https://api.juzi.co/member/index', params=params, headers=self.headers,)
+            response = requests.get('https://api.juzi.co/member/index', params=params, headers=self.headers, )
             response.raise_for_status()
             response_json = response.json()
             if response_json['code'] != 200:
@@ -148,17 +137,16 @@ class JRJZ():
 
     def sentence_like(self, sid, nickName):
         data = {
-            'sid': sid,  # '6625938'
+            'sid': sid,
         }
         response = requests.post('https://api.juzi.co/sentence/slike', headers=self.headers, data=data)
         if not response or response.status_code != 200:
             return
         response_json = response.json()
         if response_json['code'] == 200:
-            print(f'❤️【{nickName}】对句子【{sid}】点了赞 | {response_json["msg"]}')  # 喜欢成功
+            print(f'❤️【{nickName}】对句子【{sid}】点了赞 | {response_json["msg"]}')
         else:
-            print("点赞出现异常: ", response_json["msg"])
-
+            print("❌点赞失败 | ", response_json["msg"])
 
     def sentence_comment(self, sid):
         quote = daily_one_word()
@@ -226,6 +214,8 @@ class JRJZ():
         2、分享被浏览
         3、发布新句子
         """
+        # 用户是否点赞字典
+        users_liked = {token: False for token in tokens}
         sentence_openids = []
         for token in tokens:
             jrjz_instance = JRJZ(token)
@@ -236,21 +226,30 @@ class JRJZ():
         for sid in sentence_openids:
             print(f"\n======== ▷ EveryBody开始为句子【{sid}】助力 ◁ ========")
             for token in tokens:
-                jrjz_instance = JRJZ(token)
-                nickName, openid = jrjz_instance.my_info()
+                if token != self.token:
+                    if not users_liked[token]:
+                        jrjz_instance = JRJZ(token)
+                        nickName, openid = jrjz_instance.my_info()
 
-                # 长按图片识别调用
-                # jrjz_instance.sentence_share_callback(sid)
-                # time.sleep(random.randint(20, 30))
+                        # 长按图片识别浏览
+                        # jrjz_instance.sentence_share_callback(sid)
+                        # time.sleep(random.randint(20, 30))
 
-                # 点赞
-                jrjz_instance.sentence_like(sid, nickName)
-                time.sleep(random.randint(5, 15))
+                        # 点赞|每个用户每天只能给其他人点赞一次
+                        jrjz_instance.sentence_like(sid, nickName)
+                        users_liked[token] = True
+                        time.sleep(random.randint(5, 15))
+                    else:
+                        print(f'✈️【{nickName}】今天已经点过赞了, 跳过')
+                        continue
+                else:
+                    print(f'✈️自己不能给自己点赞, 跳过')
 
     def main(self):
         """
         1、发布句子奖励标准：发布句子且审核通过随机0.3元左右，每天奖励1条
         """
+        # 基本信息
         self.my_info()
         time.sleep(random.randint(15, 30))
 
@@ -269,7 +268,7 @@ class JRJZ():
 if __name__ == '__main__':
     env_name = 'JRJZ_TOKEN'
     tokenStr = os.getenv(env_name)
-    # tokenStr = 'AVZXVwgAAARUDgVTVFcAVwVWDgdTBgoGAlMBXVVUVAE=&CwEHVw5WUlwCXVtWVAFWCwcKDgNXBwEFBwZVC1RXUFU=&DgJXVAoABQcCW1MFVVFQBAVSD1VSAFtUVAYOXlpZUQY=&DwBXXFhWUFYBC1QAAVdVVgAHX1JXVAtTW1MADlsHAQw=&WwFSBg1RUQNTC1VWUVVQA1ELC1BVVQEJUFNTDlsFWwA=&WlFTUQkCAgADDwEEVgdTUgBVXwJSBwwDAFdSCVVQVFE='
+    tokenStr = 'AVZXVwgAAARUDgVTVFcAVwVWDgdTBgoGAlMBXVVUVAE=&CwEHVw5WUlwCXVtWVAFWCwcKDgNXBwEFBwZVC1RXUFU=&DgJXVAoABQcCW1MFVVFQBAVSD1VSAFtUVAYOXlpZUQY=&DwBXXFhWUFYBC1QAAVdVVgAHX1JXVAtTW1MADlsHAQw=&WwFSBg1RUQNTC1VWUVVQA1ELC1BVVQEJUFNTDlsFWwA=&WlFTUQkCAgADDwEEVgdTUgBVXwJSBwwDAFdSCVVQVFE='
     if not tokenStr:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)

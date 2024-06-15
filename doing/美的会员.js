@@ -1,16 +1,15 @@
 /**
- * cron 27 19 * * *  wx_midea.js
+ * cron 27 11 * * *
  * Show:每天运行一次
- * @author:https://github.com/smallfawn/QLScriptPublic
+ * 多账号使用 @分隔
  * 变量名:wx_midea
  * 变量值:https://mvip.midea.cn/next/mucuserinfo/getmucuserinfo headers中的COOKIE
- * scriptVersionNow = "0.0.1";
  */
 
 const $ = new Env("微信小程序 - 美的会员");
 const notify = $.isNode() ? require('./sendNotify') : '';
 let ckName = "wx_midea";
-let envSplitor = ["@", "\n"]; //多账号分隔符
+let envSplitor = ["@"]; //多账号分隔符
 let strSplitor = "&"; //多变量分隔符
 let userIdx = 0;
 let userList = [];
