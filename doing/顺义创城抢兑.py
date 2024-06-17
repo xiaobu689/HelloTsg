@@ -8,6 +8,9 @@ cron: 0 8,12,20 * * *
 const $ = new Env("顺义创城抢兑");
 """
 
+print("转移至服务器")
+exit(0)
+
 import asyncio
 import os
 import aiohttp

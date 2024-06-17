@@ -124,8 +124,9 @@ class SHJA():
         }
         url = 'https://jaapi.shmedia.tech/media-basic-port/api/app/news/content/list'
         response = make_request(url, json_data=json_data, method='post', headers=self.headers)
+        print(response)
         if response and response['code'] == 0:
-            return response['records']
+            return response["data"]["records"]
         else:
             print(f'❌获取文章列表失败：{response}')
             return None
@@ -286,10 +287,10 @@ class SHJA():
     def main(self):
         counter = 0
         self.userinfo()
-        self.sign()
-        for i in range(5):
-            self.video_view_task()
-            time.sleep(random.randint(20, 30))
+        # self.sign()
+        # for i in range(5):
+        #     self.video_view_task()
+        #     time.sleep(random.randint(20, 30))
         article_list = self.article_list()
         for i in range(10):
             article_id = random.choice(article_list)["id"]
@@ -318,6 +319,7 @@ class SHJA():
 if __name__ == '__main__':
     env_name = 'SHJA_TOKEN'
     tokenStr = os.getenv(env_name)
+    tokenStr = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1MWU4MTI2ODQ5MDE0ZDFiOWFjMTUzMGEzNDQ3ODg5OTQ0NzQ7MzEwMTA2IiwiaWF0IjoxNzE2MTQ0NzM5LCJleHAiOjI3NTI5NDQ3Mzl9.nIKZe0brX3t8ww-O8lAVU17XIoPQ5qoHZy2fwrIEz1r52tprZG07AwLzUSODTgf7OGZ1nW7oyxziLA7Fb3RxKg#0'
     if not tokenStr:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)

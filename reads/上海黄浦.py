@@ -103,7 +103,6 @@ class SHHP():
         }
         url = 'https://hpapi.shmedia.tech/media-basic-port/api/app/news/content/list'
         response = make_request(url, json_data, 'post', self.headers)
-
         return response["data"]["records"]
 
     def article_read_points_add(self):

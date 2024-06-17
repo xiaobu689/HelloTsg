@@ -1,7 +1,11 @@
 """
 城市通
 
+* 每日视频 | 30积分，地铁抵扣0.3元 | 可叠加
+* 每日签到领里程 | 400里程兑2元地铁券 | 每日1次
+
 --------------------------
+20240616 金币任务，暂时没啥兑的，活动入口也突然消失了，金币可正常增加，防内测，暂时不做
 20240614 自己坐地铁用的，没啥毛，没做封装提取，别拉取，仅适合自己使用
 --------------------------
 
@@ -439,7 +443,6 @@ class CST():
 
     def lucky_draw_receive(self, response_json):
         import requests
-
         headers = {
             'Host': 'wxxcx.17u.cn',
             'Connection': 'keep-alive',
@@ -450,7 +453,6 @@ class CST():
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.49(0x18003133) NetType/WIFI Language/zh_CN',
             'Referer': 'https://servicewechat.com/wx624dc2cce62f7008/416/page-frame.html',
         }
-
         if response_json is None:
             return
 
@@ -500,9 +502,9 @@ class CST():
         self.receive_rewards()
         time.sleep(random.randint(30, 40))
 
-        print(f"\n============ ▷ 开始金币任务 ◁ ===========\n")
+        # print(f"\n============ ▷ 开始金币任务 ◁ ===========\n")
         # 领金币任务、看视频
-        self.coin_task()
+        # self.coin_task()
 
 
 if __name__ == '__main__':

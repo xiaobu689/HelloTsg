@@ -351,10 +351,10 @@ class SSX():
                 for i in response['data']['records']:
                     msg += f'🐹【{i["title"]}】：数量{i["couponCount"]}，有效期至：{i["endTime"]}\n'
             else:
-                msg = f'暂无可用地铁券'
+                msg += f'暂无可用地铁券'
 
         else:
-            msg = f'❌获取地铁券失败，{response["errMsg"]}'
+            msg += f'❌获取地铁券失败，{response["errMsg"]}'
 
         self.msg += msg
         print(msg)
@@ -424,8 +424,8 @@ class SSX():
         self.ssx_sign()
         time.sleep(random.randint(5, 10))
 
-        self.query_mall()
-        time.sleep(random.randint(15, 20))
+        # self.query_mall()
+        # time.sleep(random.randint(15, 20))
 
         self.receive()
         self.task_list()

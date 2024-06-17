@@ -173,11 +173,10 @@ class TCLX():
         }
 
         response = requests.post('https://wx.17u.cn/wxmpsign/home/receiveIncome', headers=self.headers, json=json_data)
-        print("222222222222222222222:", response.text)
         if response.status_code == 200:
             response_json = response.json()
-            if response_json["code"] == 200:
-                print(response_json["msg"])
+            if response_json["code"] == 200 and response_json["msg"] == "ok":
+                print("✅领取成功")
             else:
                 print("领取失败", response_json["msg"])
         else:
@@ -185,35 +184,12 @@ class TCLX():
 
     # 签到悬浮气泡
     def suspend_integral_list(self):
-        type_ids = []
-        import requests
-        # headers = {
-        #     'authority': 'wx.17u.cn',
-        #     'accept': '*/*',
-        #     'accept-language': 'zh-CN,zh;q=0.9',
-        #     'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406131758|996956',
-        #     'content-type': 'application/json',
-        #     'referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/637/page-frame.html',
-        #     'sec-fetch-dest': 'empty',
-        #     'sec-fetch-mode': 'cors',
-        #     'sec-fetch-site': 'cross-site',
-        #     'tc-mall-platform-code': 'WX_MP',
-        #     'tc-mall-user-token': 'ZfOeS2YX9IStsHx-3-C4u55HGG4a1VzUdjSidLoEmxnzdrLYBr8gIjaaVSgeSx66TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYxKFClixfwReI3NErOq2H1vXMPagVCgb5Gzg8Q1yt0o8A**4641',
-        #     'tcprivacy': '1',
-        #     'tcreferer': 'page%2FAC%2Fsign%2Fmsindex%2Fmsindex',
-        #     'tcsectk': 'ZfOeS2YX9IStsHx-3-C4u55HGG4a1VzUdjSidLoEmxnzdrLYBr8gIjaaVSgeSx66TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYxKFClixfwReI3NErOq2H1vXMPagVCgb5Gzg8Q1yt0o8A**4641',
-        #     'tcxcxversion': '6.5.3',
-        #     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a1b) XWEB/9129',
-        #     'xweb_xhr': '1',
-        # }
-
         json_data = {
             'version': 1,
             'channelCode': '',
         }
 
         response = requests.post('https://wx.17u.cn/wxmpsign/home/bubble', headers=self.headers, json=json_data)
-        print(response.text)
         if not response and response.status_code != 200:
             return None
         response_json = response.json()
@@ -556,7 +532,7 @@ class TCLX():
             'Host': 'wx.17u.cn',
             'Connection': 'keep-alive',
             # 'Content-Length': '0',
-            'TC-USER-TOKEN': 'ZfOeS2YX9IStsHx-3-C4ux8WftW6_Br0e5xW-d8mZPtXkBHXUZDXeSoGbNlas6RSTNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYyi6W-aaYyfsoPofh1F229BzIxTLYIifeLuVpa06qKbZA**4641',
+            'TC-USER-TOKEN': self.token,
             'TCxcxVersion': '6.5.5',
             'TC-PLATFORM-CODE': 'WX_MP',
             'TC-OS-TYPE': '1',
@@ -564,7 +540,7 @@ class TCLX():
             'content-type': 'application/json',
             'TCReferer': 'page%2Factivetemplate%2FzqLite%2Findex',
             'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406142203|668468',
-            'TCSecTk': 'ZfOeS2YX9IStsHx-3-C4ux8WftW6_Br0e5xW-d8mZPtXkBHXUZDXeSoGbNlas6RSTNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYyi6W-aaYyfsoPofh1F229BzIxTLYIifeLuVpa06qKbZA**4641',
+            'TCSecTk': self.token,
             # 'Accept-Encoding': 'gzip,compress,br,deflate',
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.49(0x18003134) NetType/4G Language/zh_CN',
             'Referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/639/page-frame.html',
@@ -583,7 +559,7 @@ class TCLX():
         headers = {
             'Host': 'wx.17u.cn',
             'Connection': 'keep-alive',
-            'TC-USER-TOKEN': 'ZfOeS2YX9IStsHx-3-C4ux8WftW6_Br0e5xW-d8mZPtXkBHXUZDXeSoGbNlas6RSTNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYyi6W-aaYyfsoPofh1F229BzIxTLYIifeLuVpa06qKbZA**4641',
+            'TC-USER-TOKEN': self.token,
             'TCxcxVersion': '6.5.5',
             'TC-PLATFORM-CODE': 'WX_MP',
             'TC-OS-TYPE': '1',
@@ -591,8 +567,8 @@ class TCLX():
             'content-type': 'application/json',
             'TCReferer': 'page%2Factivetemplate%2FzqLite%2Findex',
             'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406142203|959903',
-            'TCSecTk': 'ZfOeS2YX9IStsHx-3-C4ux8WftW6_Br0e5xW-d8mZPtXkBHXUZDXeSoGbNlas6RSTNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYyi6W-aaYyfsoPofh1F229BzIxTLYIifeLuVpa06qKbZA**4641',
-            # 'Accept-Encoding': 'gzip,compress,br,deflate',
+            'TCSecTk': self.token,
+            'Accept-Encoding': 'gzip,compress,br,deflate',
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.49(0x18003134) NetType/4G Language/zh_CN',
             'Referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/639/page-frame.html',
         }
@@ -708,12 +684,12 @@ class TCLX():
     def main(self):
         self.user_info()
         self.point_info()
-        #
-        print(f"\n======== ▷ 签到 | 抽奖 ◁ ========")
+
+        print(f"\n======== ▷ 签到抽奖任务 ◁ ========")
         self.sign()
         time.sleep(random.randint(30, 40))
-        #
-        # # TODO 添加桌面进入，抽奖次数+1
+
+        # TODO 添加桌面进入，抽奖次数+1
         # self.lottery()
         # time.sleep(random.randint(30, 40))
 
@@ -727,6 +703,7 @@ class TCLX():
         # 天天领钱-每日签到【未实现】
         # self.sign_cash()
 
+        print(f"\n======== ▷ 悬浮气泡任务 ◁ ========")
         # 悬浮倒计时领钱
         while True:
             self.receive_giftBox_cash()
@@ -736,15 +713,17 @@ class TCLX():
             elif self.nextGiftBoxSeconds == -1:
                 print("今日领取已达上限，明天再来吧")
                 break
+            else:
+                break
 
-        time.sleep(random.randint(10, 15))
-        self.more_daily_cash_task()
+        # time.sleep(random.randint(10, 15))
+        # self.more_daily_cash_task()
 
 
 if __name__ == '__main__':
     env_name = 'TCLX_TOKEN'
     tokenStr = os.getenv(env_name)
-    tokenStr = 'ZfOeS2YX9IStsHx-3-C4u4fTrtXlRG1_f_pRnViPpI7n6KV-QONKvRbj9bIkp6BVTNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYyNE_7tixBUSW-8TijJDsmDPARjvsy5bvURR_QdbSiC_Q**4641'
+    tokenStr = 'ZfOeS2YX9IStsHx-3-C4u2V1eYDi03wbVoTDcqcIjPy5QcHX_ijtiG12PqsFFP89TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYyUAbD5ssyzet5H_8XMpwAv2XSslFv0jFPUniEOyJLf3Q**4641'
     if not tokenStr:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)

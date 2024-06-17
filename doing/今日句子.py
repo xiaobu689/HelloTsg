@@ -46,30 +46,27 @@ class JRJZ():
             time.sleep(random.randint(20, 30))
             quote = daily_one_word()
             # quote = get_163music_comments
-            time.sleep(20000)
             if not quote:
                 continue
             data = {'juzi': quote}
             url = 'https://api.juzi.co/sentence/repeatedList'
             response = requests.post(url, headers=self.headers, data=data)
-
             if response.status_code != 200:
                 continue
-
             response_json = response.json()
             if response_json['code'] != 200:
                 continue
-
             sentences = response_json.get('data', [])
-            if len(sentences) <= 0:
+            if len(sentences) <= 0 and len(quote) >= 10:
                 return quote
             else:
+                print(f"⛔️句子重复， 已有{len(sentences)}人发布，跳过......")
                 continue
 
     def write_sentence(self):
         quote = self.get_no_repeat_sentence()
+        print(f"🐹开始发布句子: {quote}")
         if quote is not None:
-            print(f"🐹开始发布句子: {quote}")
             json_data = {
                 'juzi': quote,
                 'original': 'false',
@@ -103,13 +100,11 @@ class JRJZ():
             nickName = response_json["data"]["member"]["nickname"]
             self.money = money
             self.openid = openid
-
-            return nickName, openid
-            # print("----------------self.openid=", self.openid)
             # print(f'🐹昵称：{response_json["data"]["member"]["nickname"]}')
             # print(f'🐶余额：{response_json["data"]["member"]["money"]}')
             # print(f'🐱句子数量：{response_json["data"]["member"]["juzi_count"]}')
             # print(f'---------------------------')
+            return nickName, openid
         else:
             return None
 
@@ -254,6 +249,7 @@ class JRJZ():
         time.sleep(random.randint(15, 30))
 
         # 发布句子
+        print("开始发布句子......")
         self.write_sentence()
         time.sleep(random.randint(30, 50))
 
@@ -281,5 +277,5 @@ if __name__ == '__main__':
         if i == len(tokens):
             jrjz_instance.assist(tokens)
         print("\n【日常任务】随机等待30-60s进行下一个账号")
-        time.sleep(random.randint(30, 60))
+        time.sleep(random.randint(10, 30))
         print("----------------------------------")

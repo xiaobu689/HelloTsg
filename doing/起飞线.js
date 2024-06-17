@@ -729,11 +729,9 @@ async function task_water(task_id) {
                     log(data)
                 }
                 if (data.data.code = 10000) {
-
                     addNotifyStr(data.data.msg)
                 } else
                     addNotifyStr(data.data.msg)
-
             } catch (e) {
                 addNotifyStr(`异常：${data}，原因：${data.msg}`)
             }
