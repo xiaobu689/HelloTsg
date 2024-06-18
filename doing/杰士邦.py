@@ -2,7 +2,7 @@
 杰士邦
 
 抓任意包请求头 Access-Token
-变量名: DLS_TOKEN
+变量名: JSB_TOKEN
 
 cron: 35 6 * * *
 const $ = new Env("杰士邦");
@@ -46,7 +46,7 @@ class JSB():
         response_json = response.json()
         if response_json['code'] == 0:
             print(
-                f'🐶{response_json["data"]["userInfo"]["mobile"]} | 💰{response_json["data"]["userInfo"]["points_total"]}积分')
+                f'🐶{response_json["data"]["userInfo"]["mobile"]} | 💰{response_json["data"]["userInfo"]["points_total"]}积分\n')
 
     def sign(self):
         response = requests.get('https://vip.ixiliu.cn/mp/sign/applyV2', headers=self.headers)
@@ -67,9 +67,8 @@ class JSB():
 
 
 if __name__ == '__main__':
-    env_name = 'JRJZ_TOKEN'
+    env_name = 'JSB_TOKEN'
     tokenStr = os.getenv(env_name)
-    tokenStr = '3zxdbrWcW4TnJYlhAMcj-6HMm2CakP4Y8l69AkNPpYGul--Uz_RYXLp70hbveHcE'
     if not tokenStr:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)

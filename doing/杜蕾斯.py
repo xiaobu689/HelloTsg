@@ -46,7 +46,7 @@ class DLS():
         response_json = response.json()
         if response_json['code'] == 0:
             print(
-                f'🐶{response_json["data"]["userInfo"]["mobile"]} | 💰{response_json["data"]["userInfo"]["points_total"]}积分')
+                f'🐶{response_json["data"]["userInfo"]["mobile"]} | 💰{response_json["data"]["userInfo"]["points_total"]}积分\n')
 
     def sign(self):
         response = requests.get('https://vip.ixiliu.cn/mp/sign/applyV2', headers=self.headers)
@@ -67,9 +67,8 @@ class DLS():
 
 
 if __name__ == '__main__':
-    env_name = 'JRJZ_TOKEN'
+    env_name = 'DLS_TOKEN'
     tokenStr = os.getenv(env_name)
-    tokenStr = 'EEDZBBRdedaI7X923_vXdDYRyM6LMIPaer3MhaQhBmutxR8h164IHDC3lFiT7gFn'
     if not tokenStr:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)

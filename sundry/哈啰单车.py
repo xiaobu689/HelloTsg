@@ -171,7 +171,7 @@ class TTCY():
         response = requests.post(url, headers=self.headers, json=json_data)
         if response and response.status_code == 200:
             response_json = response.json()
-            if response_json['code'] == 0:
+            if response_json['codbe'] == 0:
                 print(f"领取视频任务成功")
 
     def receive_award(self):

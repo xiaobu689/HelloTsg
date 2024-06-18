@@ -106,7 +106,7 @@ class TPYQC():
                 self.cookie = f'common_session_id={common_session_id};'
                 self.headers['Cookie'] = self.cookie
                 self.communityHeaders['Cookie'] = self.cookie
-                print(f"账号【{self.account_id}】登录成功\n")
+                print(f"账号【{self.username}】登录成功\n")
             else:
                 self.msg += f"账号 {self.account_id} 登录失败，原因 {response_json['msg']}\n"
 
@@ -299,12 +299,14 @@ class TPYQC():
             response_json = response.json()
             if response_json['code'] == 200:
                 rewards = response_json["data"]["data"]
-                print('---------🐹🐹🐹奖品列表🐹🐹🐹---------')
+                msg = f'---------🐹🐹🐹【{self.username}】奖品列表🐹🐹🐹---------'
                 if len(rewards) == 0:
-                    print('❌还没有获得奖励')
+                    msg += '❌还没有获得奖励'
                 else:
                     for reward in rewards:
-                        print(f'✅{reward["name"]}')
+                        msg += f'✅{reward["name"]}'
+
+        self.msg += msg
 
     def main(self):
         self.login()
@@ -313,25 +315,23 @@ class TPYQC():
         self.content_list()
         time.sleep(random.randint(15, 25))
 
-        # 发帖
+        print(f"\n======== ▷ 发帖 | 评论 | 分享 ◁ ========")
         self.do_topic_issue()
         time.sleep(random.randint(10, 15))
 
-        # 评论
         self.do_comment()
         time.sleep(random.randint(15, 35))
 
-        # 分享
         self.share_task()
         time.sleep(random.randint(15, 35))
 
-        # 抽奖
+        print(f"\n======== ▷ 抽奖 ◁ ========")
         self.my_piece_list()
         time.sleep(random.randint(15, 20))
         self.lottery()
         time.sleep(random.randint(15, 20))
 
-        # 删贴|删评论
+        print(f"\n======== ▷ 删帖 | 删评论 ◁ ========")
         self.my_issue_list()
         time.sleep(random.randint(5, 15))
         self.delete_issue()
@@ -342,7 +342,7 @@ class TPYQC():
         time.sleep(random.randint(15, 25))
 
         # 通知
-        # send(title, msg1 + msg2)
+        send("太平洋汽车", self.msg)
 
 
 if __name__ == '__main__':
@@ -353,6 +353,7 @@ if __name__ == '__main__':
         exit(0)
     account_infos = re.split(r'&', account_infos_str)
     print(f"太平洋汽车共获取到{len(account_infos)}个账号")
+
     for i, account_info in enumerate(account_infos, start=1):
         print(f"\n======== ▷ 第 {i} 个账号 ◁ ========")
         TPYQC(account_info).main()

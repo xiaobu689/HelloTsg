@@ -445,7 +445,6 @@ class SSX():
 if __name__ == '__main__':
     env_name = 'SSX_COOKIE'
     cookie = os.getenv(env_name)
-    cookie = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJDYjE4NDM3ZGM3ZjZiNDVjMTgxOWMyNWQ5OGJmOGE0ZmMiLCJkZXZpY2VJZCI6IjYzM0VCNDFENUVFQzQxQjFCQTkwRTk0QzBBMzdEMUQ2IiwiZXhwaXJlSW4iOjE3MzEwMjg4Nzg3NDcsImNyZWF0ZVRpbWUiOjE3MTU0NzY4Nzg3NDcsInBsYXRmb3JtQ29kZSI6ImlvcyIsImFwcElkIjoibWFhc19jYXIiLCJjaGFubmVsQ29kZSI6Im1hYXMiLCJhY2NvdW50TmFtZSI6IjE3OCoqKio5NTY1IiwiYWNjb3VudFR5cGUiOiIxIiwicHJvZHVjdElkIjo1LCJvcGVuSWQiOiIiLCJlayI6IiIsImNsaWVudElkIjoiMTUwMTQ4OTYxNjcwMzA3MDIwOCIsInVpZFR5cGUiOjEsInRhZyI6Mn0.LG5oHBgdxQul7YgrJHOyf7FLlIQ39R_hLmz_TGaUfKHyhIy2FOgLluQ5KD17gwBg_QqdlIstxr3Gjioye3D1kk8ZfuedOiojaiM-531VbfhwsEdlPeKL4Y0flUswYWgukjgQ0l-dXLBLV6FG8ytywYC3bBhUS3_J3RGmZctFvyk#Cb18437dc7f6b45c1819c25d98bf8a4fc'
     if not cookie:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)
