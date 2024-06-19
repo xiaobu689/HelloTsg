@@ -41,7 +41,9 @@ async def cashout(x_applet_token):
     }
     url = 'https://admin.shunyi.wenming.city/jeecg-boot/applet/award/exchangeAward'
     start_time = time.time()  # 记录开始发送请求的时间
-    body = '{"awardIds":["1788826595521810434"],"phone":"17854279565"}'
+    # 1562334019131645953|2元
+    # 1788826595521810434|1元
+    body = '{"awardIds":["1562334019131645953"],"phone":"17854279565"}'
     async with aiohttp.ClientSession(headers=headers) as session:
         try:
             async with session.post(url, data=body) as response:
