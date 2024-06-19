@@ -1,11 +1,11 @@
 """
-杰士邦
+卡夫亨
 
-抓任意包请求头 Access-Token
-变量名: JSB_TOKEN
+抓任意包请求头 token
+变量名: KFH_TOKEN
 
-cron: 35 6 * * *
-const $ = new Env("杰士邦");
+cron: 50 5 * * *
+const $ = new Env("卡夫亨");
 """
 import os
 import random
@@ -15,6 +15,7 @@ import requests
 from urllib3.exceptions import InsecureRequestWarning, InsecurePlatformWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
+share_records = []
 
 
 class JSB():
@@ -37,6 +38,7 @@ class JSB():
             'Content-Type': 'application/x-www-form-urlencoded',
             'Sec-Fetch-Dest': 'empty',
         }
+
     def user_info(self):
         url = 'https://kraftheinzcrm-uat.kraftheinz.net.cn/crm/public/index.php/api/v1/getUserInfo'
         response = requests.get(url, headers=self.headers)
@@ -49,8 +51,10 @@ class JSB():
             score = response_json['data']['memberInfo']['score']
             phone = response_json['data']['memberInfo']['phone']
             print(f'🐶{nickname} | 🐱{phone} | 💰{score}积分')
+
     def sign(self):
-        response = requests.post('https://fscrm.kraftheinz.net.cn/crm/public/index.php/api/v1/dailySign', headers=self.headers)
+        response = requests.post('https://fscrm.kraftheinz.net.cn/crm/public/index.php/api/v1/dailySign',
+                                 headers=self.headers)
         if not response or response.status_code != 200:
             print("签到异常：", response.text)
             return
@@ -91,36 +95,30 @@ class JSB():
         if response_json["error_code"] == 0:
             code_url = response_json['data']['code_url'].replace("https://kraftheinzcrm-uat.kraftheinz.net.cn/?", "")
             print(f"获取分享文章链接成功: {code_url}")
-            self.sharecodes.append(code_url)
+            share_records.append(code_url)
 
     def help(self, tokens):
-        print("----------------tokens=", tokens)
         try:
             if len(tokens) == 1:
                 print("账号不足2个,自己不能给自己助力")
                 return
             for i in range(len(tokens)):
-                print("--------22222i=", i)
-                print("---------33333=", self.sharecodes[(i + 1) % len(self.sharecodes)])
-
-                print("------------------222222=", self.sharecodes[(i + 1) % len(tokens)])
                 url = {
                     'url': 'https://kraftheinzcrm-uat.kraftheinz.net.cn/crm/public/index.php/api/v1/recordScoreShare',
                     'headers': {
                         'Host': 'kraftheinzcrm-uat.kraftheinz.net.cn',
                         'token': tokens[i]
                     },
-                    'body': self.sharecodes[(i + 1) % len(tokens)]
+                    'body': share_records[(i + 1) % len(tokens)]
                 }
-                print("--------111111111url=", url)
                 response = requests.post(url['url'], headers=url['headers'], data=url['body'])
-                print("------------222222222222response=", response.text)
                 result = response.json()
+                print(result)
                 if response and response.status_code == 200 and result.get('error_code') == 0:
                     if i + 1 == len(tokens):
                         print(f"账号最后一位助力首账号成功: {result['msg']}")
                     else:
-                        print(f"账号 {i + 2} 被助力成功: {result['msg']}")
+                        print(f"账号{i + 2}被助力成功: {result['msg']}")
                 else:
                     print("内部互助失败")
                 time.sleep(1)
@@ -130,26 +128,24 @@ class JSB():
     def main(self):
         self.user_info()
         self.sign()
-        # self.share_cookbook_task()
-
+        time.sleep(random.randint(15, 30))
+        self.share_cookbook_task()
 
 
 if __name__ == '__main__':
-    env_name = 'JSB_TOKEN'
+    env_name = 'KFH_TOKEN'
     tokenStr = os.getenv(env_name)
-    tokenStr = '67b35f0dcd6db28a784f231d3ca03dea&c83c2a8116eb6e9ce60f3bd43b44467a'
     if not tokenStr:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)
     tokens = re.split(r'&', tokenStr)
-    print(f"杰士邦共获取到{len(tokens)}个账号")
+    print(f"卡夫亨共获取到{len(tokens)}个账号")
 
     for i, token in enumerate(tokens, start=1):
         print(f"\n======== ▷ 第 {i} 个账号 ◁ ========")
         jsb = JSB(token)
         jsb.main()
         print("\n随机等待30-60s进行下一个账号")
-        # time.sleep(random.randint(30, 60))
-        print("----------------------------------")
+        time.sleep(random.randint(30, 60))
         if i == len(tokens):
             jsb.help(tokens)

@@ -22,7 +22,10 @@ import requests
 
 class AITO:
     def __init__(self, token):
-        self.token = token
+        self.token = '3925ee2a883653d45e7cd2d0ab01d10e'
+        self.timestamp = 17187846598
+        self.sig = '5113bce32376978d3acc14ad09443dab'
+        self.uUrl = f'token={self.token}&timestamp={self.timestamp}&sig={self.sig}'
         self.headers = {
             'Host': 'aim.longwisedata.com',
             'Sec-Fetch-Site': 'same-origin',
@@ -37,7 +40,7 @@ class AITO:
 
     def sign_account_info(self):
         message = ''
-        url = 'https://aim.longwisedata.com/lwmarketing_user_api/selectPersonInfoOne?token=0935a6ee0205880cfa36c049a4ceb38c&timestamp=1716279435019&sig=025cc4e7ebda0cba452c9e2c075d162a'
+        url = f'https://aim.longwisedata.com/lwmarketing_user_api/selectPersonInfoOne?{self.uUrl}'
         response = requests.get(url, headers=self.headers).json()
         print(response)
         data = response
@@ -64,9 +67,9 @@ class AITO:
         # 签到
         url = 'https://aim.longwisedata.com/lwmarketing_user_api/taskSquare/signIn/signIn'
         data = {
-            'token': '0935a6ee0205880cfa36c049a4ceb38',
-            'timestamp': '1716279435019',
-            'sig': '025cc4e7ebda0cba452c9e2c075d162a'
+            'token': self.token,
+            'timestamp': self.timestamp,
+            'sig': self.sig
         }
 
         response = requests.post(url, headers=self.headers, data=data)
@@ -82,7 +85,7 @@ class AITO:
         return message
 
     def sign_task_list(self):
-        url = 'https://aim.longwisedata.com/lwmarketing_user_api/taskList?token=0935a6ee0205880cfa36c049a4ceb38c&timestamp=1716279435019&sig=025cc4e7ebda0cba452c9e2c075d162a&pageNum=1&pageSize=10'
+        url = f'https://aim.longwisedata.com/lwmarketing_user_api/taskList?{self.uUrl}&pageNum=1&pageSize=10'
         response = requests.get(url, headers=self.headers)
         # print(response.text)
         data = response.json()
@@ -101,9 +104,9 @@ class AITO:
                     # 领取任务
                     url = 'https://aim.longwisedata.com/lwmarketing_user_api/taskForward/receiveTask'
                     data = {
-                        'token': '0935a6ee0205880cfa36c049a4ceb38',
-                        'timestamp': '1716279435019',
-                        'sig': '025cc4e7ebda0cba452c9e2c075d162a',
+                        'token': self.token,
+                        'timestamp': self.timestamp,
+                        'sig': self.sig,
                         'taskId': task_id,
                         'taskType': task_type
                     }
@@ -114,7 +117,7 @@ class AITO:
             print("Failed to get task list.")  # {"result":"0","msg":"success"}
 
     def sign_my_tasklist(self):
-        url = 'https://aim.longwisedata.com/lwmarketing_user_api/myTaskList?token=431d27a0ddb0aa1959c40af487aa4da9&timestamp=1714828633254&sig=fe0ca62a0b3ae9f4dce0e224fa3a257f&pageNum=1&pageSize=10&type=2'
+        url = f'https://aim.longwisedata.com/lwmarketing_user_api/myTaskList?{self.uUrl}&pageNum=1&pageSize=10&type=2'
         response = requests.get(url, headers=self.headers)
         data = response.json()
         # print(response.text)

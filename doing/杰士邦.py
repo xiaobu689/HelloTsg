@@ -62,7 +62,6 @@ class JSB():
     def main(self):
         self.user_info()
         time.sleep(random.randint(15, 30))
-
         self.sign()
 
 

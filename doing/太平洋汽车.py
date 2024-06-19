@@ -29,6 +29,9 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
 
 
+# 在类外部创建一个空字典来存储奖品信息
+user_rewards_summary = []
+
 class TPYQC():
     name = "太平洋汽车抽奖"
 
@@ -299,15 +302,14 @@ class TPYQC():
             response_json = response.json()
             if response_json['code'] == 200:
                 rewards = response_json["data"]["data"]
-                msg = f'---------🐹🐹🐹【{self.username}】奖品列表🐹🐹🐹---------'
+                msg = f'---------🐹【{self.username}】奖品列表 🐹---------\n'
                 if len(rewards) == 0:
                     msg += '❌还没有获得奖励'
                 else:
                     for reward in rewards:
-                        msg += f'✅{reward["name"]}'
-
-        print(msg)
-        self.msg += msg
+                        msg += f'✅{reward["name"]}\n'
+                # 更新奖品信息字典
+                user_rewards_summary.append(msg)
 
     def main(self):
         self.login()
@@ -342,9 +344,6 @@ class TPYQC():
         self.my_reward_list()
         time.sleep(random.randint(15, 25))
 
-        # 通知
-        send("太平洋汽车", self.msg)
-
 
 if __name__ == '__main__':
     env_name = 'tpyqc_data'
@@ -359,4 +358,11 @@ if __name__ == '__main__':
         print(f"\n======== ▷ 第 {i} 个账号 ◁ ========")
         TPYQC(account_info).main()
         print("\n随机等待30-60s进行下一个账号")
-        time.sleep(random.randint(30, 60))
+        # time.sleep(random.randint(30, 60))
+
+    # 打印每个用户的奖品列表
+    for item_msg in user_rewards_summary:
+        print(item_msg)
+
+    send("太平洋汽车", user_rewards_summary)
+

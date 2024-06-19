@@ -24,11 +24,10 @@ async def trigger_at_specific_millisecond(hour, minute, second, millisecond):
         if current_time >= target_time:
             print(f"目标时间已到达: {now.hour}:{now.minute}:{now.second}.{now.microsecond // 1000}")
             break
-        else:
-            print(f"当前时间: {now.hour}:{now.minute}:{now.second}.{now.microsecond // 1000}")
+        # else:
+        #     print(f"当前时间: {now.hour}:{now.minute}:{now.second}.{now.microsecond // 1000}")
         await asyncio.sleep(0)  # 让出控制权给其他任务
 
-# TODO
 
 async def cashout(x_applet_token):
     headers = {
@@ -81,7 +80,7 @@ async def main():
     else:
         print("⚠️ 当前时间不在抢购时间段内。")
         return
-    await trigger_at_specific_millisecond(target_hour, 59, 59, 600)
+    await trigger_at_specific_millisecond(target_hour, 59, 59, 700)
 
     tasks = [cashout(SY_token) for _ in range(10)]
     results = await asyncio.gather(*tasks)
@@ -90,7 +89,7 @@ async def main():
         messages.append(result)
 
     # 消息推送
-    send("顺义创城提现执行结果通知", "\n".join(messages))
+    send("顺义创城枪兑失败通知", "\n".join(messages))
 
 
 if __name__ == '__main__':

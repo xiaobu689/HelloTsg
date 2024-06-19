@@ -23,7 +23,7 @@ requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
 
 
 class TCLX():
-    name = "城市通"
+    name = "同程旅行"
 
     def __init__(self, token):
         self.token = token
@@ -172,18 +172,22 @@ class TCLX():
         list = self.suspend_integral_list()
         if list:
             for item in list:
+                print(item)
                 # 昨日收益
-                if item["type"] == 3 and item["state"] == 1:
+                #  and item["state"] == 1
+                if item["type"] == 3:
                     print("✈️开始领取昨日收益......")
                     self.receive_suspend_integral(item["type"], "", item["incomeId"])
                     time.sleep(random.randint(30, 40))
                 # 首页来访
-                elif item["type"] == 12 and item["state"] == 1:
+                #  and item["state"] == 0
+                elif item["type"] == 12:
                     print("✈️开始领取首页来访收益......")
                     self.receive_suspend_integral(item["type"], "travelCenter", item["incomeId"])
                     time.sleep(random.randint(30, 40))
                 # 桌面奖励
-                elif item["type"] == 2 and item["state"] == 1:
+                #  and item["state"] == 1
+                elif item["type"] == 2:
                     print("✈️开始领取桌面奖励......")
                     self.check_isbind()
                     self.is_from_desktop()
@@ -584,7 +588,6 @@ class TCLX():
             'TCReferer': 'page%2Factivetemplate%2FzqLite%2Findex',
             'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406152314|133517',
             'TCSecTk': 'ZfOeS2YX9IStsHx-3-C4u-Vll9e0_IVt1BpAitp2Voj9WUQGcQitwJy63OYL_5axTNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYw6w6FBZirMoxxq3tyInFcafRJgWKwv0yc2TXq9CkmpeA**4641',
-            # 'Accept-Encoding': 'gzip,compress,br,deflate',
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.49(0x18003135) NetType/4G Language/zh_CN',
             'Referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/639/page-frame.html',
         }
@@ -635,8 +638,8 @@ class TCLX():
         time.sleep(random.randint(30, 40))
 
         # TODO 添加桌面进入，抽奖次数+1
-        # self.lottery()
-        # time.sleep(random.randint(30, 40))
+        self.lottery()
+        time.sleep(random.randint(30, 40))
 
         self.suspend_integral_task()
         time.sleep(random.randint(15, 30))
@@ -646,12 +649,7 @@ class TCLX():
         self.more_integral_daily_task()
 
         # 天天领钱-每日签到【未实现】
-        # self.sign_cash()
-
-
-        self.check_isbind()
-        self.add_desktop()
-        self.is_from_desktop()
+        self.sign_cash()
 
         print(f"\n======== ▷ 悬浮气泡任务 ◁ ========")
         # 悬浮倒计时领钱
@@ -666,14 +664,14 @@ class TCLX():
             else:
                 break
 
-        # time.sleep(random.randint(10, 15))
-        # self.more_daily_cash_task()
+        time.sleep(random.randint(10, 15))
+        self.more_daily_cash_task()
 
 
 if __name__ == '__main__':
     env_name = 'TCLX_TOKEN'
     tokenStr = os.getenv(env_name)
-    tokenStr = 'ZfOeS2YX9IStsHx-3-C4uxbmAms8Bwph9r2lmbVUD-eFW-PtV2ue9FyE2o2YihOuTNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYwt4YZL_Qpw_L7XjlVDqkhJs3wYZfKsfi2TEqA_NwPplw**4641'
+    # tokenStr = 'ZfOeS2YX9IStsHx-3-C4u-VCXnmjNxMw0HyA02Uy6GCqGRpLSjAOyIdA0d-Hb4fPTNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYxcPAEzfRYtlpHBJjtiq-Gnzf67SD673GygFrHQiOtmUw**4641'
     if not tokenStr:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)

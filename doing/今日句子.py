@@ -4,7 +4,7 @@
 抓任意包请求头 token
 变量名: JRJZ_TOKEN
 
-cron: 35 7 * * *
+cron: 35 7,17 * * *
 const $ = new Env("今日句子");
 """
 import os
@@ -15,7 +15,6 @@ import requests
 from bs4 import BeautifulSoup
 from urllib3.exceptions import InsecureRequestWarning, InsecurePlatformWarning
 from common import qianwen_messages, make_request, daily_one_word, get_163music_comments
-
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
 
@@ -264,7 +263,6 @@ class JRJZ():
 if __name__ == '__main__':
     env_name = 'JRJZ_TOKEN'
     tokenStr = os.getenv(env_name)
-    tokenStr = 'AVZXVwgAAARUDgVTVFcAVwVWDgdTBgoGAlMBXVVUVAE=&CwEHVw5WUlwCXVtWVAFWCwcKDgNXBwEFBwZVC1RXUFU=&DgJXVAoABQcCW1MFVVFQBAVSD1VSAFtUVAYOXlpZUQY=&DwBXXFhWUFYBC1QAAVdVVgAHX1JXVAtTW1MADlsHAQw=&WwFSBg1RUQNTC1VWUVVQA1ELC1BVVQEJUFNTDlsFWwA=&WlFTUQkCAgADDwEEVgdTUgBVXwJSBwwDAFdSCVVQVFE='
     if not tokenStr:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)
