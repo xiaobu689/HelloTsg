@@ -36,19 +36,19 @@ def TCLX():
         'aesOpenId': 'xTVUJzgpAYKjXXDHQ9w2STLUZDXT6SkXQQ1qem5oRHQ=',
         'aesUnionId': 'CHDyxVWD2s1Mr/hQARDcr6yrm5jhknIXNLG3Qf2Pqs8=',
     }
-    url = 'https://wx.17u.cn/wechatmypubapi/myInfo/memberInfo'
+    url = 'https://wx.17u.cn/appapi/wxUserInfo/getUserInfo'
     response = requests.post(url, headers=headers, json=json_data)
     if not response and response.status_code != 200:
         print("请求异常：", response.text)
-        send("同程旅行", "请求异常：" + response.text)
+        send("同程旅行测活", "请求异常：" + response.text)
         return
     response_json = response.json()
     if response_json["retCode"] == 0:
         print(f'🐱账户: {response_json["retObj"]["nickName"]}')
     else:
-
-        send("同程旅行", "获取用户信息失败：" + response_json["retMsg"])
+        send("同程旅行测活检测", "获取用户信息失败，CK已失效")
         print("获取用户信息失败：", response_json["retMsg"])
+
 
 if __name__ == '__main__':
     TCLX()
