@@ -278,8 +278,6 @@ class HRJ():
     def main(self):
         self.user_info()
         self.point_info()
-        # time.sleep(random.randint(15, 30))
-        #
         self.sign()
 
 

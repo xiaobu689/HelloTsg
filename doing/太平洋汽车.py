@@ -306,6 +306,7 @@ class TPYQC():
                     for reward in rewards:
                         msg += f'✅{reward["name"]}'
 
+        print(msg)
         self.msg += msg
 
     def main(self):

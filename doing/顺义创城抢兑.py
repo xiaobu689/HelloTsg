@@ -2,7 +2,7 @@
 顺义创城抢兑
 
 抓任意包请求头 x_applet_token
-变量名: SY_token
+变量名: SYCC_TOKEN
 
 cron: 58 7,11,19 * * *
 const $ = new Env("顺义创城抢兑");
@@ -67,7 +67,7 @@ async def cashout(x_applet_token):
 
 
 async def main():
-    SY_token = os.getenv('SY_token')
+    SY_token = os.getenv('SYCC_TOKEN')
     if not SY_token:
         print(f'⛔️未获取到ck变量：请检查变量 {SY_token} 是否填写')
         return

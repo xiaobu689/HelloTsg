@@ -18,9 +18,6 @@ import time
 import requests
 from bs4 import BeautifulSoup
 from urllib3.exceptions import InsecureRequestWarning, InsecurePlatformWarning
-
-from common import qianwen_messages, make_request, get_current_timestamp_milliseconds
-
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
 
@@ -52,14 +49,6 @@ class TCLX():
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.49(0x18003134) NetType/WIFI Language/zh_CN',
             'Referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/638/page-frame.html',
         }
-        # self.headers = {
-        #     'authority': 'wx.17u.cn',
-        #     'content-type': 'application/json',
-        #     'referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/637/page-frame.html',
-        #     'sectoken': token,
-        #     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a1b) XWEB/9129',
-        # }
-
     def sign(self):
         json_data = {}
         url = 'https://wx.17u.cn/wxmpsign/sign/saveSignInfo'
@@ -105,7 +94,6 @@ class TCLX():
             'authority': 'tcmobileapi.17usoft.com',
             'accept': '*/*',
             'accept-language': 'zh-CN,zh;q=0.9',
-            # 'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406131704|018475',
             'content-type': 'application/json',
             'referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/637/page-frame.html',
             'sec-fetch-dest': 'empty',
@@ -118,7 +106,7 @@ class TCLX():
             'tc-mall-user-token': self.token,
             'tcprivacy': '1',
             'tcreferer': 'page%2Fhome%2Fmallassist%2Fmallhome%2Fmall',
-            # 'tcsectk': self.token,
+            'tcsectk': self.token,
             'tcxcxversion': '6.5.3',
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a1b) XWEB/9129',
             'xweb_xhr': '1',
@@ -144,26 +132,6 @@ class TCLX():
             print("获取积分信息失败：", response_json["msg"])
 
     def receive_suspend_integral(self, type, channelCode, incomeId):
-        # headers = {
-        #     'authority': 'wx.17u.cn',
-        #     'accept': '*/*',
-        #     'accept-language': 'zh-CN,zh;q=0.9',
-        #     'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406131744|565557',
-        #     'content-type': 'application/json',
-        #     'referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/637/page-frame.html',
-        #     'sec-fetch-dest': 'empty',
-        #     'sec-fetch-mode': 'cors',
-        #     'sec-fetch-site': 'cross-site',
-        #     'tc-mall-platform-code': 'WX_MP',
-        #     'tc-mall-user-token': 'ZfOeS2YX9IStsHx-3-C4u55HGG4a1VzUdjSidLoEmxnzdrLYBr8gIjaaVSgeSx66TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYxKFClixfwReI3NErOq2H1vXMPagVCgb5Gzg8Q1yt0o8A**4641',
-        #     'tcprivacy': '1',
-        #     'tcreferer': 'page%2FAC%2Fsign%2Fmsindex%2Fmsindex',
-        #     'tcsectk': 'ZfOeS2YX9IStsHx-3-C4u55HGG4a1VzUdjSidLoEmxnzdrLYBr8gIjaaVSgeSx66TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYxKFClixfwReI3NErOq2H1vXMPagVCgb5Gzg8Q1yt0o8A**4641',
-        #     'tcxcxversion': '6.5.3',
-        #     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a1b) XWEB/9129',
-        #     'xweb_xhr': '1',
-        # }
-
         # 4|历史收益 2|桌面奖励 12|首页来访 7|度假收益 11|社群奖励
         # 12|travelCenter
         json_data = {
@@ -274,23 +242,6 @@ class TCLX():
 
     # 收取添加桌面奖励
     def receive_integral_desktop(self):
-        # headers = {
-        #     'Host': 'wx.17u.cn',
-        #     'Connection': 'keep-alive',
-        #     # 'Content-Length': '745',
-        #     'TCxcxVersion': '6.5.4',
-        #     'TC-MALL-PLATFORM-CODE': 'WX_MP',
-        #     'TCPrivacy': '1',
-        #     'content-type': 'application/json',
-        #     'TCReferer': 'page%2FAC%2Fsign%2Fmsindex%2Fmsindex',
-        #     'TC-MALL-USER-TOKEN': 'ZfOeS2YX9IStsHx-3-C4u8860gYPCWGdNOOveOywDWN9vDae6yYp1vfKE2BcsboSTNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYxSL8GQrMVbTIZRutBK4_mj6DonvE3sZ478jikU0Ww2TQ**4641',
-        #     'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406132101|962313',
-        #     'TCSecTk': 'ZfOeS2YX9IStsHx-3-C4u8860gYPCWGdNOOveOywDWN9vDae6yYp1vfKE2BcsboSTNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYxSL8GQrMVbTIZRutBK4_mj6DonvE3sZ478jikU0Ww2TQ**4641',
-        #     # 'Accept-Encoding': 'gzip,compress,br,deflate',
-        #     'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.49(0x18003134) NetType/WIFI Language/zh_CN',
-        #     'Referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/638/page-frame.html',
-        # }
-
         json_data = {
             'unionId': 'ohmdTt1TSce70l1uL1U2DGcZmGVU',
             'openId': 'o498X0eXH7H5mw5wfFUeTtw6XrbM',
@@ -355,7 +306,6 @@ class TCLX():
             'TCReferer': 'page%2FAC%2Fsign%2Fmsindex%2Fmsindex',
             'wxapp': '0',
             'sectoken': self.token,
-            # 'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406132207|058830',
             'TCSecTk': self.token,
             'Accept-Encoding': 'gzip,compress,br,deflate',
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.49(0x18003134) NetType/WIFI Language/zh_CN',
@@ -481,10 +431,9 @@ class TCLX():
             'TCPrivacy': '1',
             'TCReferer': 'page%2FAC%2Fsign%2Fmsindex%2Fmsindex',
             'wxapp': '0',
-            'sectoken': 'ZfOeS2YX9IStsHx-3-C4uzaKRqKfsCt_P2QXR3xGqRIJ2iimxyYlpj6RxxtHG7UlTNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYwrLFg-jDj0B34F1YDOJw4KXuFvHBF6R7Mwl69DSObOAQ**4641',
+            'sectoken': self.token,
             'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406140048|506020',
-            'TCSecTk': 'ZfOeS2YX9IStsHx-3-C4uzaKRqKfsCt_P2QXR3xGqRIJ2iimxyYlpj6RxxtHG7UlTNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYwrLFg-jDj0B34F1YDOJw4KXuFvHBF6R7Mwl69DSObOAQ**4641',
-            # 'Accept-Encoding': 'gzip,compress,br,deflate',
+            'TCSecTk': self.token,
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.49(0x18003134) NetType/WIFI Language/zh_CN',
             'Referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/638/page-frame.html',
         }
@@ -497,8 +446,6 @@ class TCLX():
         print("校验是否绑定的结果：", response.text)
 
     def is_from_desktop(self):
-        import requests
-
         headers = {
             'Host': 'wx.17u.cn',
             'Connection': 'keep-alive',
@@ -508,9 +455,9 @@ class TCLX():
             'TCPrivacy': '1',
             'content-type': 'application/json',
             'TCReferer': 'page%2FAC%2Fsign%2Fmsindex%2Fmsindex',
-            'TC-MALL-USER-TOKEN': 'ZfOeS2YX9IStsHx-3-C4uzaKRqKfsCt_P2QXR3xGqRIJ2iimxyYlpj6RxxtHG7UlTNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYwrLFg-jDj0B34F1YDOJw4KXuFvHBF6R7Mwl69DSObOAQ**4641',
+            'TC-MALL-USER-TOKEN': self.token,
             'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406140048|554351',
-            'TCSecTk': 'ZfOeS2YX9IStsHx-3-C4uzaKRqKfsCt_P2QXR3xGqRIJ2iimxyYlpj6RxxtHG7UlTNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYwrLFg-jDj0B34F1YDOJw4KXuFvHBF6R7Mwl69DSObOAQ**4641',
+            'TCSecTk': self.token,
             # 'Accept-Encoding': 'gzip,compress,br,deflate',
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.49(0x18003134) NetType/WIFI Language/zh_CN',
             'Referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/638/page-frame.html',
@@ -541,7 +488,6 @@ class TCLX():
             'TCReferer': 'page%2Factivetemplate%2FzqLite%2Findex',
             'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406142203|668468',
             'TCSecTk': self.token,
-            # 'Accept-Encoding': 'gzip,compress,br,deflate',
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.49(0x18003134) NetType/4G Language/zh_CN',
             'Referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/639/page-frame.html',
         }
@@ -665,14 +611,13 @@ class TCLX():
         headers = {
             'Host': 'wx.17u.cn',
             'Connection': 'keep-alive',
-            # 'Content-Length': '0',
             'TCxcxVersion': '6.5.5',
             'TCPrivacy': '1',
             'content-type': 'application/json',
             'TCReferer': 'page%2Factivetemplate%2FzqLite%2Findex',
-            'sectoken': 'ZfOeS2YX9IStsHx-3-C4u25Bx24HrA1vx7ZKxzwcSX8k_kDys3oBM8mfQu-acZwsTNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYzXgl2eYpzBUYqG8KmEfga0V2YJu0B303Y4vEe2m4sSHQ**4641',
+            'sectoken': self.token,
             'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406152325|965590',
-            'TCSecTk': 'ZfOeS2YX9IStsHx-3-C4u25Bx24HrA1vx7ZKxzwcSX8k_kDys3oBM8mfQu-acZwsTNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYzXgl2eYpzBUYqG8KmEfga0V2YJu0B303Y4vEe2m4sSHQ**4641',
+            'TCSecTk': self.token,
             # 'Accept-Encoding': 'gzip,compress,br,deflate',
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.49(0x18003135) NetType/4G Language/zh_CN',
             'Referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/639/page-frame.html',
@@ -703,6 +648,11 @@ class TCLX():
         # 天天领钱-每日签到【未实现】
         # self.sign_cash()
 
+
+        self.check_isbind()
+        self.add_desktop()
+        self.is_from_desktop()
+
         print(f"\n======== ▷ 悬浮气泡任务 ◁ ========")
         # 悬浮倒计时领钱
         while True:
@@ -723,7 +673,7 @@ class TCLX():
 if __name__ == '__main__':
     env_name = 'TCLX_TOKEN'
     tokenStr = os.getenv(env_name)
-    tokenStr = 'ZfOeS2YX9IStsHx-3-C4u2V1eYDi03wbVoTDcqcIjPy5QcHX_ijtiG12PqsFFP89TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYyUAbD5ssyzet5H_8XMpwAv2XSslFv0jFPUniEOyJLf3Q**4641'
+    tokenStr = 'ZfOeS2YX9IStsHx-3-C4uxbmAms8Bwph9r2lmbVUD-eFW-PtV2ue9FyE2o2YihOuTNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYwt4YZL_Qpw_L7XjlVDqkhJs3wYZfKsfi2TEqA_NwPplw**4641'
     if not tokenStr:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)
