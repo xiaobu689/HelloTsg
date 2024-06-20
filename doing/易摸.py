@@ -122,7 +122,7 @@ class NOYM():
             print("签到异常：", response.text)
             return
         response_json = response.json()
-        if response_json['errcode'] == 0:
+        if response_json['errcode'] == '0':
             print(f'✅签到成功 | +{response_json["data"]["fixedReward"]["points"]}')
         else:
             print(f'❌签到失败：{response_json["errmsg"]}')

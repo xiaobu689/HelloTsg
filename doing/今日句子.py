@@ -226,8 +226,8 @@ class JRJZ():
                         nickName, openid = jrjz_instance.my_info()
 
                         # 长按图片识别浏览
-                        # jrjz_instance.sentence_share_callback(sid)
-                        # time.sleep(random.randint(20, 30))
+                        jrjz_instance.sentence_share_callback(sid)
+                        time.sleep(random.randint(20, 30))
 
                         # 点赞|每个用户每天只能给其他人点赞一次
                         jrjz_instance.sentence_like(sid, nickName)

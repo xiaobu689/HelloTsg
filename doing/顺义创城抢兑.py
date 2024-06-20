@@ -22,7 +22,6 @@ async def trigger_at_specific_millisecond(hour, minute, second, millisecond):
         now = datetime.now()
         current_time = now.hour * 60 * 60 * 1000 + now.minute * 60 * 1000 + now.second * 1000 + now.microsecond // 1000
         if current_time >= target_time:
-            print(f"目标时间已到达: {now.hour}:{now.minute}:{now.second}.{now.microsecond // 1000}")
             break
         # else:
         #     print(f"当前时间: {now.hour}:{now.minute}:{now.second}.{now.microsecond // 1000}")
@@ -56,9 +55,9 @@ async def cashout(x_applet_token):
 
                 data = await response.json()
                 if data.get('success'):
-                    message = f"✅ 提现成功，{data['message']} | 响应时间: {duration_ms:.2f} ms | 接收到响应时间：{end_response.strftime('%H:%M:%S.%f')[:-3]}"
+                    message = f"✅ 提现成功 | {data['message']} | 耗时: {duration_ms:.2f} ms | 响应时间：{end_response.strftime('%H:%M:%S.%f')[:-3]}"
                 else:
-                    message = f"❌ 提现失败，{data['message']}，响应时间：{duration_ms:.2f} ms | 接收到响应时间：{end_response.strftime('%H:%M:%S.%f')[:-3]}"
+                    message = f"❌ 提现失败 | {data['message']} | 耗时：{duration_ms:.2f} ms | 响应时间：{end_response.strftime('%H:%M:%S.%f')[:-3]}"
                 print(message)
                 return message
         except Exception as e:
@@ -82,7 +81,7 @@ async def main():
     else:
         print("⚠️ 当前时间不在抢购时间段内。")
         return
-    await trigger_at_specific_millisecond(target_hour, 59, 59, 700)
+    await trigger_at_specific_millisecond(target_hour, 59, 59, 830)
 
     tasks = [cashout(SY_token) for _ in range(10)]
     results = await asyncio.gather(*tasks)

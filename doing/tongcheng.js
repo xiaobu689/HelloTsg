@@ -15,14 +15,14 @@ saveSign: function (t, e, a) {
           c.version = s,
           c.encryptedData = n,
           console.log("签到加密数据：" + JSON.stringify(c) + " ;version:" + s),
-          i.DesktopReward(t, e, a, c)
+          DesktopReward(t, e, a, c)
         })).catch((function (t) {
           console.log("签到加密失败：" + t), h.showToast("签到失败，稍后重试", "none")
         })))
       }))
 }
 
-DesktopReward: function (t, e, a, i) {
+function DesktopReward (t, e, a, i) {
       var o = this;
       w((function (n, s, r, d) {
         m({
