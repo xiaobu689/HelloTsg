@@ -167,13 +167,6 @@ async function main() {
                 }
             }
         }
-        //兑换列表
-        console.log("————————————")
-        console.log("兑换列表")
-        let goodsList = await commonGet('/v3/goods.list?scope=0&page=1&perPage=1000&filter[goodsType]=0&filter[saleStatus]=2',getSign('GET','/api/v3/goods.list',{"filter[goodsType]":0,"filter[saleStatus]":2,"page":1,"perPage":1000,"scope":0}));
-        for (const goods of goodsList.Data.list) {
-            console.log(`商品：${goods.goods_name} 库存：${goods.goods_stock}`)
-        }
         //查询酷币
         console.log("————————————")
         console.log("查询酷币")

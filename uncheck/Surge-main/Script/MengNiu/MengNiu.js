@@ -4,7 +4,7 @@ let notice = ''
 let Authorization = ''
 let activeid = '64faa53e8844970001e64920'
 const CryptoJS = createCryptoJS()
-let MengNiu = ($.isNode() ? process.env.MengNiu : $.getjson("MengNiu")) || [];
+let MengNiu = ($.isNode() ? JSON.parse(process.env.MengNiu) : $.getjson("MengNiu")) || [];
 let timestamp = Math.round(new Date().getTime() / 1000).toString();
 var t = timestampToTime(timestamp)
 var iv = md5(t + timestamp + 'tMFw=RXrEF7y^=7QXy2h2C_g_^').toString().substring(8, 24)
@@ -64,105 +64,105 @@ async function main() {
             console.log(`任务：${task.title} id：${task.id} 奖励：${task.value}`)
         }
         //快乐连蒙
-        console.log("————————————")
-        console.log("快乐连蒙")
-        let gameLogin = await mcommonPost("/xcx/open/game_login",encrypt({"game_type":"SpeedLinkup","share_params":{"type":"SpeedLinkup"},"open_id":"oSRTN4kuq6xcFgHUHMvdbgaRuF58","token":token,"b":2617,"lng":"118.3471240234375","lat":"32.3110400390625"}))
-        const urlStr = gameLogin.data.login_link.split('?')[1];
-        let result = {};
-        let paramsArr = urlStr.split('&')
-        for(let i = 0,len = paramsArr.length;i < len;i++){
-            let arr = paramsArr[i].split('=')
-            result[arr[0]] = arr[1];
-        }
-        let Code2 = {"uid":`${userId}`,"lng":"118.3471240234375","lat":"32.3110400390625"}
-        let login1 = await commonPost1("/user/login",{"Code":result.code,"Code2":JSON.stringify(Code2),"activeid":activeid,"channel":"40"})
-        Authorization = login1.token
-        id = login1.id
-
-        console.log("开始游戏")
-        login1.serverTime = Date.now()
-        let logincheck = await commonPost1("/game/game/local/logincheck",{"activeid":activeid,"info":login1})
-        let code = 0
-        while (code == 0) {
-            let startgame = await commonPost1('/game/game/local/startgame',{"activeId":activeid,"gameId":logincheck.role.gameId})
-            //console.log(startgame.singleGameLock)
-            let endGameByMengniu = await commonPost1('/game/game/local/endGameByMengniu',{"activeId":activeid,"gameId":logincheck.role.gameId,"singleGameLock":startgame.singleGameLock,"score":14.547999999998833})
-            if (endGameByMengniu.code == 0) {
-                console.log(`获得：${endGameByMengniu.platInfo.res.awardName}`)
-            } else {
-                console.log(endGameByMengniu.errMsg)
-            }
-            code = endGameByMengniu.code
-        }
-        console.log("开始任务")
-        let taskList1 = await commonPost1('/task/user/v1/list',{"roleId":id,"sActiveId":activeid,"taskGroup":1})
-        for (const task of taskList1.task) {
-            console.log(`任务：${task.name} id：${task.taskId}`)
-            if (task.refreshCycles[0].curRefreshValue <= task.refreshCycles[0].maxRefreshTimes && task.taskId == "T201") {
-                //let doEventTask = await commonPost('/task/user/v1/doEventTask',{"taskId":"T201","opValue":1,"opType":"add","group":null,"sActiveId":activeid,"roleId":id,"fromClient":true,"judgeValue":null})
-                //console.log(doEventTask)
-            }
-            if (task.refreshCycles[0].curRefreshValue < task.refreshCycles[0].maxRefreshTimes && task.taskId == "T003") {
-                for (let i = task.refreshCycles[0].curRefreshValue; i < task.refreshCycles[0].maxRefreshTimes; i++) {
-                    let decUserItem = await commonPost1('/item/user/v1/decUserItem',{"sActiveId":activeid,"sUserId":id,"sItemId":"d004","iCount":10,"params":"","negative":false})
-                    console.log(decUserItem)
-                    let finishTask = await commonPost1('/task/user/v1/finishTask',{"taskId":task.taskId,"sActiveId":activeid,"roleId":id})
-                    console.log(finishTask)
-                }
-            }
-        }
-        code = 0
-        while (code == 0) {
-            let startgame = await commonPost1('/game/game/local/startgame',{"activeId":activeid,"gameId":logincheck.role.gameId})
-            console.log(startgame.singleGameLock)
-            let endGameByMengniu = await commonPost1('/game/game/local/endGameByMengniu',{"activeId":activeid,"gameId":logincheck.role.gameId,"singleGameLock":startgame.singleGameLock,"score":14.547999999998833})
-            if (endGameByMengniu.code == 0) {
-                console.log(`获得：${endGameByMengniu.platInfo.res.awardName}`)
-            } else {
-                console.log(endGameByMengniu.errMsg)
-            }
-            code = endGameByMengniu.code
-        }
-        //画龙领福气
-        console.log("————————————")
-        console.log("画龙领福气")
-        let login = await commonPost("Login",`UID=${userId}`)
-        for (let i = 0; i < login.result.GameCount; i++) {
-            let login = await commonPost("Login",`UID=${userId}`)
-            console.log(login)
-            let GameRecord = await commonPost("GameRecord",`UID=${userId}&Difficulty=${Number(login.result.Difficulty) + 1}&IsSuccess=1&ActivityTimeID=106`)
-            //console.log(GameRecord)
-            let Luckdraw = await commonPost("Luckdraw",`UID=${userId}&ActivityTimeID=106`)
-            if (Luckdraw.errcode == 0) {
-                console.log(`获得：${Luckdraw.result.PrizeName}`)
-            } else {
-                console.log(Luckdraw.errmsg)
-            }
-        }
-        //抽奖多一次
-        let Luckdraw = await commonPost("Luckdraw",`UID=${userId}&ActivityTimeID=106`)
-        if (Luckdraw.errcode == 0) {
-            console.log(`获得：${Luckdraw.result.PrizeName}`)
-        } else {
-            console.log(Luckdraw.errmsg)
-        }
+        // console.log("————————————")
+        // console.log("快乐连蒙")
+        // let gameLogin = await mcommonPost("/xcx/open/game_login",encrypt({"game_type":"SpeedLinkup","share_params":{"type":"SpeedLinkup"},"open_id":"oSRTN4kuq6xcFgHUHMvdbgaRuF58","token":token,"b":2617,"lng":"118.3471240234375","lat":"32.3110400390625"}))
+        // const urlStr = gameLogin.data.login_link.split('?')[1];
+        // let result = {};
+        // let paramsArr = urlStr.split('&')
+        // for(let i = 0,len = paramsArr.length;i < len;i++){
+        //     let arr = paramsArr[i].split('=')
+        //     result[arr[0]] = arr[1];
+        // }
+        // let Code2 = {"uid":`${userId}`,"lng":"118.3471240234375","lat":"32.3110400390625"}
+        // let login1 = await commonPost1("/user/login",{"Code":result.code,"Code2":JSON.stringify(Code2),"activeid":activeid,"channel":"40"})
+        // Authorization = login1.token
+        // id = login1.id
+        //
+        // console.log("开始游戏")
+        // login1.serverTime = Date.now()
+        // let logincheck = await commonPost1("/game/game/local/logincheck",{"activeid":activeid,"info":login1})
+        // let code = 0
+        // while (code == 0) {
+        //     let startgame = await commonPost1('/game/game/local/startgame',{"activeId":activeid,"gameId":logincheck.role.gameId})
+        //     //console.log(startgame.singleGameLock)
+        //     let endGameByMengniu = await commonPost1('/game/game/local/endGameByMengniu',{"activeId":activeid,"gameId":logincheck.role.gameId,"singleGameLock":startgame.singleGameLock,"score":14.547999999998833})
+        //     if (endGameByMengniu.code == 0) {
+        //         console.log(`获得：${endGameByMengniu.platInfo.res.awardName}`)
+        //     } else {
+        //         console.log(endGameByMengniu.errMsg)
+        //     }
+        //     code = endGameByMengniu.code
+        // }
+        // console.log("开始任务")
+        // let taskList1 = await commonPost1('/task/user/v1/list',{"roleId":id,"sActiveId":activeid,"taskGroup":1})
+        // for (const task of taskList1.task) {
+        //     console.log(`任务：${task.name} id：${task.taskId}`)
+        //     if (task.refreshCycles[0].curRefreshValue <= task.refreshCycles[0].maxRefreshTimes && task.taskId == "T201") {
+        //         //let doEventTask = await commonPost('/task/user/v1/doEventTask',{"taskId":"T201","opValue":1,"opType":"add","group":null,"sActiveId":activeid,"roleId":id,"fromClient":true,"judgeValue":null})
+        //         //console.log(doEventTask)
+        //     }
+        //     if (task.refreshCycles[0].curRefreshValue < task.refreshCycles[0].maxRefreshTimes && task.taskId == "T003") {
+        //         for (let i = task.refreshCycles[0].curRefreshValue; i < task.refreshCycles[0].maxRefreshTimes; i++) {
+        //             let decUserItem = await commonPost1('/item/user/v1/decUserItem',{"sActiveId":activeid,"sUserId":id,"sItemId":"d004","iCount":10,"params":"","negative":false})
+        //             console.log(decUserItem)
+        //             let finishTask = await commonPost1('/task/user/v1/finishTask',{"taskId":task.taskId,"sActiveId":activeid,"roleId":id})
+        //             console.log(finishTask)
+        //         }
+        //     }
+        // }
+        // code = 0
+        // while (code == 0) {
+        //     let startgame = await commonPost1('/game/game/local/startgame',{"activeId":activeid,"gameId":logincheck.role.gameId})
+        //     console.log(startgame.singleGameLock)
+        //     let endGameByMengniu = await commonPost1('/game/game/local/endGameByMengniu',{"activeId":activeid,"gameId":logincheck.role.gameId,"singleGameLock":startgame.singleGameLock,"score":14.547999999998833})
+        //     if (endGameByMengniu.code == 0) {
+        //         console.log(`获得：${endGameByMengniu.platInfo.res.awardName}`)
+        //     } else {
+        //         console.log(endGameByMengniu.errMsg)
+        //     }
+        //     code = endGameByMengniu.code
+        // }
+        // //画龙领福气
+        // console.log("————————————")
+        // console.log("画龙领福气")
+        // let login = await commonPost("Login",`UID=${userId}`)
+        // for (let i = 0; i < login.result.GameCount; i++) {
+        //     let login = await commonPost("Login",`UID=${userId}`)
+        //     console.log(login)
+        //     let GameRecord = await commonPost("GameRecord",`UID=${userId}&Difficulty=${Number(login.result.Difficulty) + 1}&IsSuccess=1&ActivityTimeID=106`)
+        //     //console.log(GameRecord)
+        //     let Luckdraw = await commonPost("Luckdraw",`UID=${userId}&ActivityTimeID=106`)
+        //     if (Luckdraw.errcode == 0) {
+        //         console.log(`获得：${Luckdraw.result.PrizeName}`)
+        //     } else {
+        //         console.log(Luckdraw.errmsg)
+        //     }
+        // }
+        // //抽奖多一次
+        // let Luckdraw = await commonPost("Luckdraw",`UID=${userId}&ActivityTimeID=106`)
+        // if (Luckdraw.errcode == 0) {
+        //     console.log(`获得：${Luckdraw.result.PrizeName}`)
+        // } else {
+        //     console.log(Luckdraw.errmsg)
+        // }
         //狂欢派兑
-        console.log("————————————")
-        console.log("开始狂欢派兑抽奖")
-        let flag = 0;
-        while(flag == 0) {
-            let doLottery = await mcommonPost("/xcx/v2/do_lottery",encrypt({"lottery_id":2405,"token":token,"b":2617,"lat":"32.31101209852431","lng":"118.34711615668402"}))
-            if (doLottery.flag == 0) {
-                console.log(`抽奖获得：${doLottery.data.name}`)
-                if (doLottery.data.type != 22) {
-                    $.msg($.name, `用户：${userId}`, `抽奖获得: ${doLottery.data.name}`);
-                }
-            } else {
-                console.log(doLottery.msg)
-            }
-            flag = doLottery.flag
-            await $.wait(2000);
-        }
+        // console.log("————————————")
+        // console.log("开始狂欢派兑抽奖")
+        // let flag = 0;
+        // while(flag == 0) {
+        //     let doLottery = await mcommonPost("/xcx/v2/do_lottery",encrypt({"lottery_id":2405,"token":token,"b":2617,"lat":"32.31101209852431","lng":"118.34711615668402"}))
+        //     if (doLottery.flag == 0) {
+        //         console.log(`抽奖获得：${doLottery.data.name}`)
+        //         if (doLottery.data.type != 22) {
+        //             $.msg($.name, `用户：${userId}`, `抽奖获得: ${doLottery.data.name}`);
+        //         }
+        //     } else {
+        //         console.log(doLottery.msg)
+        //     }
+        //     flag = doLottery.flag
+        //     await $.wait(2000);
+        // }
         //提现
         console.log("————————————")
         console.log("开始提现")

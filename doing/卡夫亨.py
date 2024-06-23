@@ -19,7 +19,7 @@ share_records = []
 
 
 class JSB():
-    name = "杰士邦"
+    name = "卡夫亨"
 
     def __init__(self, token):
         self.token = token
@@ -91,7 +91,6 @@ class JSB():
             print("获取分享cookBook失败")
             return
         response_json = response.json()
-        print(response_json)
         if response_json["error_code"] == 0:
             code_url = response_json['data']['code_url'].replace("https://kraftheinzcrm-uat.kraftheinz.net.cn/?", "")
             print(f"获取分享文章链接成功: {code_url}")
@@ -113,7 +112,6 @@ class JSB():
                 }
                 response = requests.post(url['url'], headers=url['headers'], data=url['body'])
                 result = response.json()
-                print(result)
                 if response and response.status_code == 200 and result.get('error_code') == 0:
                     if i + 1 == len(tokens):
                         print(f"账号最后一位助力首账号成功: {result['msg']}")
@@ -124,6 +122,22 @@ class JSB():
                 time.sleep(1)
         except Exception as e:
             print(f"Exception in recordshare function: {str(e)}")
+
+    def exchange_reward(self):
+        data = {
+            'value': '全网10元话费',
+            'phone': '17854279565',
+            'type': '话费',
+            'memberId': '302061',
+        }
+
+        response = requests.post(
+            'https://kraftheinzcrm-uat.kraftheinz.net.cn/crm/public/index.php/api/v1/exchangeIntegralNew',
+            headers=self.headers,
+            data=data,
+        )
+        print(response.text)
+
 
     def main(self):
         self.user_info()

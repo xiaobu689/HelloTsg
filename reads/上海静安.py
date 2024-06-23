@@ -89,14 +89,10 @@ class SHJA():
             print(f'❌今日积分获取失败：{response}')
 
     def task_list(self):
-        sign_days_str = ''
-        today_scores = ''
-        jobs = []
         json_data = {'id': 'string'}
         url = 'https://jaapi.shmedia.tech/media-basic-port/api/app/personal/score/info'
         response = make_request(url, json_data=json_data, method='post', headers=self.headers)
         if response and response['code'] == 0:
-            sign_days_str = response["data"]["signTitle"]
             today_scores = response["data"]["todayPoint"]
             jobs = response["data"]["jobs"]
             print("-----------------------")
@@ -109,7 +105,6 @@ class SHJA():
                 print(f'👻{i["title"]}: {"已完成" if i["status"] == "1" else now_pro}')
             print("-----------------------")
             print(f'👀今日新增积分: {today_scores}')
-            print(f'👀{sign_days_str}')
 
         return response
 
@@ -124,7 +119,6 @@ class SHJA():
         }
         url = 'https://jaapi.shmedia.tech/media-basic-port/api/app/news/content/list'
         response = make_request(url, json_data=json_data, method='post', headers=self.headers)
-        print(response)
         if response and response['code'] == 0:
             return response["data"]["records"]
         else:
@@ -287,15 +281,15 @@ class SHJA():
     def main(self):
         counter = 0
         self.userinfo()
-        # self.sign()
-        # for i in range(5):
-        #     self.video_view_task()
-        #     time.sleep(random.randint(20, 30))
+        self.sign()
+        for i in range(5):
+            self.video_view_task()
+            time.sleep(random.randint(20, 30))
         article_list = self.article_list()
         for i in range(10):
             article_id = random.choice(article_list)["id"]
             print('--------------------------------------------------------------------')
-            print(f'🐹随机抓取到文章{article_id}，开始做任务啦......')
+            print(f'🐹随机抓取到文章{article_id}，开始任务......')
             self.article_read_task(article_id)
             time.sleep(random.randint(20, 30))
             self.article_share_task(article_id)
@@ -305,7 +299,7 @@ class SHJA():
                     self.article_comment_task(article_id)
                     time.sleep(random.randint(20, 40))
                 else:
-                    print("未开启自动评论, 如要开启，请更改环境变量配置")
+                    print("⛔️未开启自动评论, 如要开启，请更改环境变量配置")
                     time.sleep(random.randint(10, 25))
                 self.article_favor_task(article_id)
                 time.sleep(random.randint(10, 20))
@@ -319,7 +313,6 @@ class SHJA():
 if __name__ == '__main__':
     env_name = 'SHJA_TOKEN'
     tokenStr = os.getenv(env_name)
-    tokenStr = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1MWU4MTI2ODQ5MDE0ZDFiOWFjMTUzMGEzNDQ3ODg5OTQ0NzQ7MzEwMTA2IiwiaWF0IjoxNzE2MTQ0NzM5LCJleHAiOjI3NTI5NDQ3Mzl9.nIKZe0brX3t8ww-O8lAVU17XIoPQ5qoHZy2fwrIEz1r52tprZG07AwLzUSODTgf7OGZ1nW7oyxziLA7Fb3RxKg#0'
     if not tokenStr:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)

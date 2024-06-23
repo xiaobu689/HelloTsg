@@ -17,6 +17,10 @@ async function main() {
         openId = item.openId;
         console.log(`用户：${id}开始任务`)
         let getMemberInfo = await commonPost("/user/member/info",{});
+        if (getMemberInfo.status == 401) {
+            $.msg($.name, `用户：${id}`, `token已过期，请重新获取`);
+            continue
+        }
         let memberId = getMemberInfo.data.memberId;
         //签到
         console.log("开始签到")

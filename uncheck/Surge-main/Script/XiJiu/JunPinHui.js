@@ -1,73 +1,101 @@
 const $ = new Env('君品荟');
-const JunPinHui = ($.isNode() ? JSON.parse(process.env.JunPinHui) : $.getjson("JunPinHui")) || [];
+const JunPinHui = ($.isNode() ? process.env.JunPinHui : $.getdata("JunPinHui")) || '';
+let appkey = 'OzVFDV3c6omb';
+let actId = '20240611587';
+let Utils = undefined;
+let token = '';
 let notice = '';
 !(async () => {
-    if (typeof $request != "undefined") {
-        await getCookie();
-    } else {
-        await main();
-    }
+    await main();
 })().catch((e) => {$.log(e)}).finally(() => {$.done({});});
 
 async function main() {
     console.log('作者：@xzxxn777\n频道：https://t.me/xzxxn777\n群组：https://t.me/xzxxn7777\n自用机场推荐：https://xn--diqv0fut7b.com\n')
-    for (const item of JunPinHui) {
-        id = item.id;
-        token = item.token;
-        console.log(`用户：${id}开始任务`)
+    Utils = await loadUtils();
+    if (!JunPinHui) {
+        console.log("先去boxjs填写账号密码")
+        $.msg($.name, '先去boxjs填写账号密码');
+        return
+    }
+    let arr = JunPinHui.split(" ");
+    for (const item of arr) {
+        phone = item.split("&")[0]
+        pwd = item.split("&")[1]
+        console.log(`用户：${phone}开始任务`)
+        const encryptor = new (Utils.loadJSEncrypt());
+        const pubKey
+            = 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZxexT+63AFID2lykG6jVmZpVkW6IitJjWukMmBGA8hR7qSTIsDKTQ'
+            + 'DjzKAnTgD3Zn3sNQlqQCxpyTNTP2T+/OZxet1nrbbOAPAi4TrEA61wMO+dnP7IbONmCqg3lDcgiu+b7imOjPxNOGMoeTHGVD2L7tq4S9HuC01Ru3WprVRwIDAQAB'
+        encryptor.setPublicKey(pubKey);
+        const encrypted = encryptor.encrypt(pwd)
+        let login = await commonPost('/api/login/phoneLogin', {"phone": phone, "channelCode": "xj_mall_wx_applet", "password": encrypted});
+        if (login.code != 10000) {
+            $.msg($.name, `用户：${phone}`, login.message);
+            continue
+        }
+        token = login.data.token;
         //签到
         console.log("开始签到")
-        let checkTodaySignIn = await commonPost(`/customer/daily/checkTodaySignIn`,{})
-        if (checkTodaySignIn.data) {
-            console.log("已签到")
+        let signIn = await commonPost(`/api/customer/daily/signIn`,{"channelCode":"xj_mall_wx_applet"})
+        if (signIn.data.pointValue) {
+            console.log(`签到获得：${signIn.data.pointValue}积分`)
         } else {
-            let sign = await commonPost(`/customer/daily/signIn`,{"channelCode":"xj_mall_wx_applet"})
-            console.log(`签到获得：${sign.data.pointValue}积分`)
+            console.log("今日已签到")
+        }
+        //关注
+        let follow = await commonPost(`/media/video/addInterest`,{"shopId":206})
+        console.log(follow.success)
+        //抽奖
+        console.log("————————————")
+        console.log("开始抽奖")
+        let time = (new Date).valueOf();
+        let sign = getSign(time,{"wxToken":token,"actId":actId})
+        let getId = await drawPost(`/activity/user/get/by/token?mix_nick=${token}`,{"jsonRpc":"2.0","params":{"commonParameter":{"appkey":appkey,"sign":sign,"timestamp":time},"admJson":{"wxToken":token,"actId":actId}}})
+        time = (new Date).valueOf();
+        sign = getSign(time,{"id":getId.data.data.id,"actId":actId})
+        let taskList = await drawPost(`/mission/completeState?mix_nick=${token}`,{"jsonRpc":"2.0","params":{"commonParameter":{"appkey":appkey,"sign":sign,"timestamp":time},"admJson":{"id":getId.data.data.id,"actId":actId}}})
+        for (const task of taskList.data.data) {
+            console.log(`任务：${task.missionName}`)
+            if (task.isComplete) {
+                console.log("已完成")
+            } else {
+                time = (new Date).valueOf();
+                sign = getSign(time,{"missionType":task.type,"id":getId.data.data.id,"actId":actId})
+                let completeMission = await drawPost(`/mission/completeMission?mix_nick=${token}`,{"jsonRpc":"2.0","params":{"commonParameter":{"appkey":appkey,"sign":sign,"timestamp":time},"admJson":{"missionType":task.type,"id":getId.data.data.id,"actId":actId}}})
+                if (completeMission.data.status == 200) {
+                    console.log(completeMission.data.data.remark)
+                } else {
+                    console.log(completeMission.data.msg)
+                }
+            }
+        }
+        while (true) {
+            time = (new Date).valueOf();
+            sign = getSign(time,{"id":getId.data.data.id,"actId":actId})
+            let draw = await drawPost(`/awards/draw?mix_nick=${token}`,{"jsonRpc":"2.0","params":{"commonParameter":{"appkey":appkey,"sign":sign,"timestamp":time},"admJson":{"id":getId.data.data.id,"actId":actId}}})
+            if (draw.data.status == 200) {
+                console.log(`抽奖获得：${draw.data.data.awardName}`)
+            } else {
+                console.log(draw.data.msg)
+                break
+            }
         }
         //查询积分
         console.log("————————————")
         console.log("查询积分")
-        let getMemberInfo = await commonPost("/customer/accoutInter/token",{"checkLevelExist":true});
+        let getMemberInfo = await commonPost("/api/customer/accoutInter/token",{"checkLevelExist":true});
         console.log(`拥有积分：${getMemberInfo.data.points}\n`)
-        notice += `用户：${id} 积分：${getMemberInfo.data.points}\n`
+        notice += `用户：${phone} 积分：${getMemberInfo.data.points}\n`
     }
     if (notice) {
         $.msg($.name, '', notice);
     }
 }
 
-async function getCookie() {
-    const token = $request.headers["X-access-token"];
-    if (!token) {
-        return
-    }
-    const body = $.toObj($response.body);
-    if (!body.data || !body.data.phone) {
-        return
-    }
-    const id = body.data.phone;
-    const newData = {"id": id, "token": token}
-    const index = JunPinHui.findIndex(e => e.id == newData.id);
-    if (index !== -1) {
-        if (JunPinHui[index].token == newData.token) {
-            return
-        } else {
-            JunPinHui[index] = newData;
-            console.log(newData.token)
-            $.msg($.name, `🎉用户${newData.id}更新token成功!`, ``);
-        }
-    } else {
-        JunPinHui.push(newData)
-        console.log(newData.token)
-        $.msg($.name, `🎉新增用户${newData.id}成功!`, ``);
-    }
-    $.setjson(JunPinHui, "JunPinHui");
-}
-
 async function commonPost(url,body = {}) {
     return new Promise(resolve => {
         const options = {
-            url: `https://fm.exijiu.com/api${url}`,
+            url: `https://fm.exijiu.com${url}`,
             headers : {
                 'Connection': 'keep-alive',
                 'dataType': 'json',
@@ -100,6 +128,72 @@ async function commonPost(url,body = {}) {
             } finally {
                 resolve();
             }
+        })
+    })
+}
+
+async function drawPost(url,body = {}) {
+    return new Promise(resolve => {
+        const options = {
+            url: `https://junpinhui-service-api.exijiu.com/jph-draw${url}`,
+            headers : {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) XWEB/9129',
+                'Content-Type': 'application/json',
+                'Accept': 'application/json, text/plain, */*',
+                'Origin': 'https://mall.exijiu.com',
+                'Sec-Fetch-Site': 'same-site',
+                'Sec-Fetch-Mode': 'cors',
+                'Sec-Fetch-Dest': 'empty',
+                'Referer': 'https://mall.exijiu.com/',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Accept-Language': 'zh-CN,zh;q=0.9'
+            },
+            body: JSON.stringify(body),
+        }
+        $.post(options, async (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(`${$.name} API请求失败，请检查网路重试`)
+                } else {
+                    await $.wait(6000);
+                    resolve(JSON.parse(data));
+                }
+            } catch (e) {
+                $.logErr(e, resp)
+            } finally {
+                resolve();
+            }
+        })
+    })
+}
+
+function getSign(t,e) {
+    const n = JSON.stringify(e);
+    let r = encodeURIComponent(n);
+    const s = new RegExp("'", "g")
+        , i = new RegExp("~", "g");
+    return r = r.replace(s, "%27"),
+        r = r.replace(i, "%7E"),
+        Utils.md5(`${appkey}admjson${r}appkey${appkey}timestamp${t}6bz4j2YWIawCuBOzkxtbUpZfadpx2tlJarcw3E`.toLowerCase())
+}
+
+async function loadUtils() {
+    let code = ($.isNode() ? process.env.Utils_Code : $.getdata('Utils_Code')) || '';
+    if (code && Object.keys(code).length) {
+        console.log(`✅ ${$.name}: 缓存中存在Utils代码, 跳过下载`)
+        eval(code)
+        return creatUtils();
+    }
+    console.log(`🚀 ${$.name}: 开始下载Utils代码`)
+    return new Promise(async (resolve) => {
+        $.getScript(
+            'https://cdn.jsdelivr.net/gh/xzxxn777/Surge@main/Utils/Utils.js'
+        ).then((fn) => {
+            $.setdata(fn, "Utils_Code")
+            eval(fn)
+            console.log(`✅ Utils加载成功, 请继续`)
+            resolve(creatUtils())
         })
     })
 }

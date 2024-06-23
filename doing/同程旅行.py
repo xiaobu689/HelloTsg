@@ -172,7 +172,6 @@ class TCLX():
         list = self.suspend_integral_list()
         if list:
             for item in list:
-                print(item)
                 # 昨日收益
                 #  and item["state"] == 1
                 if item["type"] == 3:
@@ -189,10 +188,10 @@ class TCLX():
                 #  and item["state"] == 1
                 elif item["type"] == 2:
                     print("✈️开始领取桌面奖励......")
-                    self.check_isbind()
-                    self.is_from_desktop()
-                    self.receive_integral_desktop()
-                    time.sleep(random.randint(30, 40))
+                    # self.check_isbind()
+                    # self.is_from_desktop()
+                    # self.receive_integral_desktop()
+                    # time.sleep(random.randint(30, 40))
                 # 度假收益
                 # 社群奖励
 
@@ -671,7 +670,6 @@ class TCLX():
 if __name__ == '__main__':
     env_name = 'TCLX_TOKEN'
     tokenStr = os.getenv(env_name)
-    tokenStr = 'ZfOeS2YX9IStsHx-3-C4u-VCXnmjNxMw0HyA02Uy6GCqGRpLSjAOyIdA0d-Hb4fPTNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYxcPAEzfRYtlpHBJjtiq-Gnzf67SD673GygFrHQiOtmUw**4641'
     if not tokenStr:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)

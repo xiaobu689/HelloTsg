@@ -43,8 +43,14 @@ class JRJZ():
     def get_no_repeat_sentence(self):
         while True:
             time.sleep(random.randint(20, 30))
-            quote = daily_one_word()
-            # quote = get_163music_comments
+            quote = ''
+            ids = [2]
+            if random.choice(ids) == 1:
+                print("🐱本次句子来源----【每日一句】")
+                quote = daily_one_word()
+            elif random.choice(ids) == 2:
+                print("🐱本次句子来源----【网易云音乐热评】")
+                quote = get_163music_comments()
             if not quote:
                 continue
             data = {'juzi': quote}
@@ -263,6 +269,7 @@ class JRJZ():
 if __name__ == '__main__':
     env_name = 'JRJZ_TOKEN'
     tokenStr = os.getenv(env_name)
+    tokenStr = 'AVZXVwgAAARUDgVTVFcAVwVWDgdTBgoGAlMBXVVUVAE=&CwEHVw5WUlwCXVtWVAFWCwcKDgNXBwEFBwZVC1RXUFU=&DgJXVAoABQcCW1MFVVFQBAVSD1VSAFtUVAYOXlpZUQY=&DwBXXFhWUFYBC1QAAVdVVgAHX1JXVAtTW1MADlsHAQw=&WwFSBg1RUQNTC1VWUVVQA1ELC1BVVQEJUFNTDlsFWwA=&WlFTUQkCAgADDwEEVgdTUgBVXwJSBwwDAFdSCVVQVFE='
     if not tokenStr:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)

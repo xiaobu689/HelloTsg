@@ -4,7 +4,7 @@ ZS信诺
 抓任意包请求头 Authorization
 变量名: ZSXN_TOKEN
 
-cron: 0 0 * * *
+cron: 0 0,6,12,18 * * *
 const $ = new Env("ZS信诺");
 """
 import os
@@ -13,7 +13,6 @@ import re
 import time
 import requests
 from urllib3.exceptions import InsecureRequestWarning, InsecurePlatformWarning
-
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
 
@@ -65,7 +64,7 @@ class ZSXN():
             # 'Content-Length': '0',
             'X-Request-Version': '5.24.10',
             'Connection': 'keep-alive',
-            'Authorization': 'Bearer_eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M',
+            'Authorization': self.token,
             'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
             'Accept': 'application/json, text/plain, */*',
             'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
@@ -73,7 +72,6 @@ class ZSXN():
         }
 
         response = requests.post('https://hms.cignacmb.com/activity/appCheck/appCheckIn', headers=headers)
-        print(response.text)
         if not response or response.status_code != 200:
             print("签到异常：", response.text)
             return
@@ -87,7 +85,7 @@ class ZSXN():
         headers = {
             'Host': 'member.cignacmb.com',
             'Accept': 'application/json, text/plain, */*',
-            'Authorization': 'Bearer_eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M',
+            'Authorization': self.token,
             'X-Requested-With': 'XMLHttpRequest',
             'Sec-Fetch-Site': 'same-origin',
             'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
@@ -112,7 +110,7 @@ class ZSXN():
             headers=headers,
             data=data,
         )
-        print(response.text)
+
         if not response or response.status_code != 200:
             print("抽奖基础信息异常：", response.text)
             return
@@ -120,7 +118,7 @@ class ZSXN():
         if response_json['respCode'] == '00':
             lottery_count = response_json['respData']['lotteryCount']
             self.lottery_count = lottery_count
-            print(f'现有积分: {response_json["respData"]["integral"]} | 今日剩余抽奖次数: {lottery_count}')
+            print(f'🐱现有积分: {response_json["respData"]["integral"]} | 🐶今日剩余抽奖次数: {lottery_count}')
         else:
             print(f'❌抽奖失败基础信息获取失败：{response_json["respDesc"]}')
 
@@ -128,7 +126,7 @@ class ZSXN():
         headers = {
             'Host': 'member.cignacmb.com',
             'Accept': 'application/json, text/plain, */*',
-            'Authorization': 'Bearer_eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M',
+            'Authorization': self.token,
             'X-Requested-With': 'XMLHttpRequest',
             'Sec-Fetch-Site': 'same-origin',
             'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
@@ -167,7 +165,7 @@ class ZSXN():
         headers = {
             'Host': 'member.cignacmb.com',
             'Accept': 'application/json, text/plain, */*',
-            'Authorization': 'Bearer_eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M',
+            'Authorization': self.token,
             'X-Requested-With': 'XMLHttpRequest',
             'Sec-Fetch-Site': 'same-origin',
             'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
@@ -192,14 +190,14 @@ class ZSXN():
             headers=headers,
             data=data,
         )
-        print(response.text)
+
         if not response or response.status_code != 200:
             print('获取积分信息失败')
             return
         response_json = response.json()
         if response_json['respCode'] == '00':
             print(
-                f'💰总积分: {response_json["respData"]["totalScore"]} | 💰已使用积分: {response_json["respData"]["expenseScore"]}')
+                f'💰总积分: {response_json["respData"]["totalScore"]}')
         else:
             print(f'获取积分信息失败: {response_json["respDesc"]}')
 
@@ -208,11 +206,10 @@ class ZSXN():
     def user_task_list(self):
         headers = {
             'Host': 'hms.cignacmb.com',
-            'Authorization': 'Bearer_eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M',
+            'Authorization': self.token,
             'userId': '7181805',
             'Sec-Fetch-Site': 'same-origin',
             'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
-            # 'Accept-Encoding': 'gzip, deflate, br',
             'Sec-Fetch-Mode': 'cors',
             'Accept': 'application/json, text/plain, */*',
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;hmsapp/5.24.10;HMS_APP_SESSIONID/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M;',
@@ -251,28 +248,26 @@ class ZSXN():
             if task['taskName'] == '实名认证' or task['taskName'] == '完善个人信息':
                 continue
             # 执行任务
-            # -1|待完成， 1|已完成
-            if task['status'] != -1:
+            # -1|待完成， 1|已完成 0|待领取
+            if task['status'] == 1:
                 continue
-            self.update_task_status(task["taskCode"])
+            self.update_task_status(task["taskCode"], task['taskName'])
             time.sleep(random.randint(15, 20))
             recordId = self.get_task_recordId(task["taskCode"])
             if recordId != 0:
                 self.receive_candy(recordId)
 
-    def update_task_status(self, taskCode):
+    def update_task_status(self, taskCode, taskName):
         headers = {
             'Host': 'hms.cignacmb.com',
             'Accept': 'application/json, text/plain, */*',
-            'Authorization': 'Bearer_eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M',
+            'Authorization': self.token,
             'userId': '7181805',
             'Sec-Fetch-Site': 'same-origin',
             'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
-            # 'Accept-Encoding': 'gzip, deflate, br',
             'Sec-Fetch-Mode': 'cors',
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             'Origin': 'https://hms.cignacmb.com',
-            # 'Content-Length': '12',
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;hmsapp/5.24.10;HMS_APP_SESSIONID/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M;',
             'Referer': 'https://hms.cignacmb.com/hms-act/nurturing_game_reset/index.html?appVersion=5.24.10&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M',
             'Connection': 'keep-alive',
@@ -291,23 +286,21 @@ class ZSXN():
             return
         response_json = response.json()
         if response_json['statusCode'] == '0':
-            print('更新任务状态成功')
+            print(f'✅{taskName} | 状态更新成功')
         else:
-            print('更新任务状态失败')
+            print('❌更新任务状态失败')
 
     def receive_candy(self, recordId):
         headers = {
             'Host': 'hms.cignacmb.com',
             'Accept': 'application/json, text/plain, */*',
-            'Authorization': 'Bearer_eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M',
+            'Authorization': self.token,
             'userId': '7181805',
             'Sec-Fetch-Site': 'same-origin',
             'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
-            # 'Accept-Encoding': 'gzip, deflate, br',
             'Sec-Fetch-Mode': 'cors',
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             'Origin': 'https://hms.cignacmb.com',
-            # 'Content-Length': '17',
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;hmsapp/5.24.10;HMS_APP_SESSIONID/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M;',
             'Referer': 'https://hms.cignacmb.com/hms-act/nurturing_game_reset/index.html?appVersion=5.24.10&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M',
             'Connection': 'keep-alive',
@@ -325,14 +318,201 @@ class ZSXN():
             print('领取糖果异常')
             return
         response_json = response.json()
+        print(response_json)
         if response_json['statusCode'] == '0':
-            print(f'领取糖果成功 | 糖果+{response_json["data"]["disposableCandyNum"]}')
+            print(f'✅领取糖果成功 | 糖果+{response_json["data"][0]["disposableCandyNum"]}')
         else:
-            print('领取糖果失败，', response_json['msg'])
+            print('❌领取糖果失败，', response_json['msg'])
+
+    def invest_candy(self):
+        headers = {
+            'Host': 'hms.cignacmb.com',
+            'Authorization': self.token,
+            'userId': '7181805',
+            'Sec-Fetch-Site': 'same-origin',
+            'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
+            'Sec-Fetch-Mode': 'cors',
+            'Accept': 'application/json, text/plain, */*',
+            'Origin': 'https://hms.cignacmb.com',
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;hmsapp/5.24.10;HMS_APP_SESSIONID/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M;',
+            'Referer': 'https://hms.cignacmb.com/hms-act/nurturing_game_reset/index.html?appVersion=5.24.10&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M',
+            'Connection': 'keep-alive',
+            'Sec-Fetch-Dest': 'empty',
+            # 'Cookie': 'GPHMS=SV-HMS-80-02; sajssdk_2015_cross_new_user=1; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%2219036f099cdb7-0e6e561b1c29dc-2702704-329160-19036f099ce43e%22%2C%22first_id%22%3A%22%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMTkwMzZmMDk5Y2RiNy0wZTZlNTYxYjFjMjlkYy0yNzAyNzA0LTMyOTE2MC0xOTAzNmYwOTljZTQzZSJ9%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%22%2C%22value%22%3A%22%22%7D%2C%22%24device_id%22%3A%2219036f099cdb7-0e6e561b1c29dc-2702704-329160-19036f099ce43e%22%7D',
+        }
+
+        response = requests.post('https://hms.cignacmb.com/activity/cignaInvestment/investCandy',
+                                headers=headers)
+        if not response or response.status_code != 200:
+            print('领取糖果异常')
+            return
+        response_json = response.json()
+        print(response_json)
+        if response_json['statusCode'] == '0':
+            print("✅成功投喂糖果")
+        else:
+            print("❌投喂糖果失败，", response_json['msg'])
+
+    def init_user_info(self):
+        headers = {
+            'Host': 'hms.cignacmb.com',
+            'Authorization': self.token,
+            'userId': '7181805',
+            'Sec-Fetch-Site': 'same-origin',
+            'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
+            'Sec-Fetch-Mode': 'cors',
+            'Accept': 'application/json, text/plain, */*',
+            'Origin': 'https://hms.cignacmb.com',
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;hmsapp/5.24.10;HMS_APP_SESSIONID/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M;',
+            'Referer': 'https://hms.cignacmb.com/hms-act/nurturing_game_reset/index.html?appVersion=5.24.10&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M',
+            'Connection': 'keep-alive',
+            'Sec-Fetch-Dest': 'empty',
+            # 'Cookie': 'sajssdk_2015_cross_new_user=1; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%2219038b338ebba7-03118eecaf953ee-2702704-329160-19038b338ec9df%22%2C%22first_id%22%3A%22%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMTkwMzhiMzM4ZWJiYTctMDMxMThlZWNhZjk1M2VlLTI3MDI3MDQtMzI5MTYwLTE5MDM4YjMzOGVjOWRmIn0%3D%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%22%2C%22value%22%3A%22%22%7D%2C%22%24device_id%22%3A%2219038b338ebba7-03118eecaf953ee-2702704-329160-19038b338ec9df%22%7D',
+        }
+
+        response = requests.post(
+            'https://hms.cignacmb.com/activity/cignaInvestment/initializeUserInfo',
+            headers=headers,
+        )
+        if not response or response.status_code != 200:
+            print('获取用户信息异常')
+            return
+        response_json = response.json()
+        if response_json['statusCode'] == '0':
+            candy_num = response_json['data']['candyNum']
+            growth_level = response_json['data']['growthLevel']
+            growth_level_candy_num = response_json['data']['growthLevelCandyNum']
+            received_naomi_num = response_json['data']['receivedNaomiNum'] # 27%
+            print(f'✅当前进度: {received_naomi_num}')
+            print(f"✅用户信息获取成功 | 当前等级：{growth_level} | 当前糖果：{candy_num} | 当前等级成长值：{growth_level_candy_num}")
+        else:
+            print("❌获取用户信息失败，", response_json['msg'])
+
+    # 健康任务
+    def healthy_task(self):
+        headers = {
+            'Host': 'hms.cignacmb.com',
+            'userId': '7181805',
+            'Referer': 'https://hms.cignacmb.com/wmpages/app-rest/module/healthfile/index.html?appVersion=5.24.10&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M&isNewHealthRecords=Y',
+            # 'Cookie': 'sajssdk_2015_cross_new_user=1; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%221903a207d171d0c-00cc4ef12e489f-2702704-329160-1903a207d18251a%22%2C%22first_id%22%3A%22%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMTkwM2EyMDdkMTcxZDBjLTAwY2M0ZWYxMmU0ODlmLTI3MDI3MDQtMzI5MTYwLTE5MDNhMjA3ZDE4MjUxYSJ9%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%22%2C%22value%22%3A%22%22%7D%2C%22%24device_id%22%3A%221903a207d171d0c-00cc4ef12e489f-2702704-329160-1903a207d18251a%22%7D',
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;hmsapp/5.24.10;HMS_APP_SESSIONID/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M;',
+            'X-Request-Platform': 'web',
+            'X-Device-Id': '123456',
+            'Origin': 'https://hms.cignacmb.com',
+            'Sec-Fetch-Dest': 'empty',
+            'Sec-Fetch-Site': 'same-origin',
+            'X-Request-Version': '5.24.10',
+            'Connection': 'keep-alive',
+            'Authorization': self.token,
+            'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+            'Sec-Fetch-Mode': 'cors',
+        }
+        data = {
+            'lastTaskId': '',
+        }
+        response = requests.post('https://hms.cignacmb.com/health/nuo/queryHealthTaskList',
+                                 headers=headers, data=data)
+        if not response or response.status_code != 200:
+            print('获取健康任务异常')
+            return
+        response_json = response.json()
+        if response_json['statusCode'] == '0':
+            list = response_json['data']
+            for task in list:
+                # taskState 02|未完成 03|已完成
+                if task["taskState"] == '02':
+                    taskId = task['id']
+                    taskName = task['taskName']
+                    taskType = task['taskType']
+                    receiveAward = task['awardNum']
+                    taskCode = task['taskCode']
+                    self.do_health_task(taskId, taskType, receiveAward, taskCode, taskName)
+                    time.sleep(random.randint(15, 20))
+                    self.receive_helth_task(taskId, taskType)
+
+        else:
+            print("❌获取健康任务失败，", response_json['msg'])
+
+    def do_health_task(self, taskId, taskType, receiveAward, taskCode, taskName):
+        headers = {
+            'Host': 'hms.cignacmb.com',
+            'userId': '7181805',
+            'Referer': 'https://hms.cignacmb.com/wmpages/app-rest/module/healthfile/index.html?appVersion=5.24.10&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M&isNewHealthRecords=Y',
+            # 'Cookie': 'GPHMS=SV-HMS-80-02; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%221903a207d171d0c-00cc4ef12e489f-2702704-329160-1903a207d18251a%22%2C%22first_id%22%3A%22%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMTkwM2EyMDdkMTcxZDBjLTAwY2M0ZWYxMmU0ODlmLTI3MDI3MDQtMzI5MTYwLTE5MDNhMjA3ZDE4MjUxYSJ9%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%22%2C%22value%22%3A%22%22%7D%2C%22%24device_id%22%3A%221903a207d171d0c-00cc4ef12e489f-2702704-329160-1903a207d18251a%22%7D; sajssdk_2015_cross_new_user=1',
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;hmsapp/5.24.10;HMS_APP_SESSIONID/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M;',
+            'X-Request-Platform': 'web',
+            'X-Device-Id': '163CBC75-91C1-4DC0-8EA4-C3286B29C51E',
+            'Origin': 'https://hms.cignacmb.com',
+            'Sec-Fetch-Dest': 'empty',
+            'Sec-Fetch-Site': 'same-origin',
+            # 'Content-Length': '48',
+            'X-Request-Version': '5.24.10',
+            'Connection': 'keep-alive',
+            'Authorization': self.token,
+            'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+            # 'Accept-Encoding': 'gzip, deflate, br',
+            'Sec-Fetch-Mode': 'cors',
+        }
+        data = {
+            'taskId': taskId,
+            'taskType': taskType,
+            'receiveAward': receiveAward,
+            'taskCode': taskCode,
+        }
+        response = requests.post('https://hms.cignacmb.com/health/nuo/toComplete', headers=headers,
+                                 data=data)
+        if not response or response.status_code != 200:
+            print('获取健康任务异常')
+            return
+        response_json = response.json()
+        if response_json['statusCode'] == '0':
+            print(f"✅任务完成 | {taskName}")
+        else:
+            print("❌任务完成失败", response_json['msg'])
+
+    def receive_helth_task(self, id, taskType):
+        headers = {
+            'Host': 'hms.cignacmb.com',
+            'userId': '7181805',
+            'Referer': 'https://hms.cignacmb.com/wmpages/app-rest/module/healthfile/index.html?appVersion=5.24.10&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M&isNewHealthRecords=Y',
+            # 'Cookie': 'GPHMS=SV-HMS-80-02; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%221903a207d171d0c-00cc4ef12e489f-2702704-329160-1903a207d18251a%22%2C%22first_id%22%3A%22%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMTkwM2EyMDdkMTcxZDBjLTAwY2M0ZWYxMmU0ODlmLTI3MDI3MDQtMzI5MTYwLTE5MDNhMjA3ZDE4MjUxYSJ9%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%22%2C%22value%22%3A%22%22%7D%2C%22%24device_id%22%3A%221903a207d171d0c-00cc4ef12e489f-2702704-329160-1903a207d18251a%22%7D; sajssdk_2015_cross_new_user=1',
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;hmsapp/5.24.10;HMS_APP_SESSIONID/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWduRGF0YSI6IjA2MDY1QjhFMzNEMDg0MzRBNkZGQ0E2MTE5RENBNUJBODIxMTcxIiwibG9naW5UaW1lIjoiMTcxODg3NzgxMTk2OCIsIm5iZiI6MTcxODg3NzgxMSwiZXhwdCI6MTcxODk2NDIxMTk2OCwiaXNzIjoiSldUIiwiZnJvbSI6IkFQUCIsImV4cCI6MTcyMDA4NzQxMSwidXNlcklkIjoiNzE4MTgwNSIsImlhdCI6MTcxODg3NzgxMX0.ZpbJfVcqx3AlDiZt99XUTpbvpSOoGCHigHfXhdeyS7M;',
+            'X-Request-Platform': 'web',
+            'X-Device-Id': '163CBC75-91C1-4DC0-8EA4-C3286B29C51E',
+            'Origin': 'https://hms.cignacmb.com',
+            'Sec-Fetch-Dest': 'empty',
+            'Sec-Fetch-Site': 'same-origin',
+            # 'Content-Length': '15',
+            'X-Request-Version': '5.24.10',
+            'Connection': 'keep-alive',
+            'Authorization': self.token,
+            'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+            # 'Accept-Encoding': 'gzip, deflate, br',
+            'Sec-Fetch-Mode': 'cors',
+        }
+        data = {
+            'id': id,
+            'taskType': taskType,
+        }
+        response = requests.post('https://hms.cignacmb.com/health/nuo/claimYourReward',
+                                 headers=headers, data=data)
+        if not response or response.status_code != 200:
+            print('领取失败')
+            return
+        response_json = response.json()
+        if response_json['statusCode'] == '0':
+            print('✅健康任务奖励领取成功')
+        else:
+            print('❌健康任务奖励领取失败, ', response_json['msg'])
+
 
     def main(self):
-        # self.user_info()
-        # time.sleep(random.randint(15, 30))
         self.points_info()
         self.init_lottery()
 
@@ -347,6 +527,12 @@ class ZSXN():
 
         # 一诺庄园
         self.do_candy_task()
+
+        # 投喂糖果
+        self.invest_candy()
+        self.init_user_info()
+
+        self.healthy_task()
 
 
 if __name__ == '__main__':

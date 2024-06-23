@@ -5,6 +5,8 @@ import random
 import re
 import time
 from http import HTTPStatus
+from sys import stdout
+
 import dashscope
 import requests
 
@@ -87,7 +89,9 @@ def daily_one_word():
 # 随机一句网易云热评
 def get_163music_comments():
     comments = []
-    keywords_to_filter = ['苏苏', '这首', '歌', '听', '发行', '编曲', '曲', '唱', '生日快乐', '生日', '中考', '高考', '加油', '小猫']
+    keywords_to_filter = ['苏苏', '这首', '歌', '听', '发行', '编曲', '曲', '唱', '生日快乐', '生日', '中考',
+                          '高考', '加油', '小猫', '西子', '好听',
+                          ]
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36',
     }
@@ -112,7 +116,7 @@ def get_163music_comments():
         if any(keyword in content for keyword in keywords_to_filter):
             print("包含关键词，跳过")
             continue
-        if len(content) <= 50:
+        if len(content) <= 60:
             continue
         # 定义一个正则表达式模式，用于匹配表情符号
         emoji_pattern = re.compile(

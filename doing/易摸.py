@@ -13,6 +13,7 @@ import re
 import time
 import requests
 from urllib3.exceptions import InsecureRequestWarning, InsecurePlatformWarning
+
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
 
@@ -82,7 +83,6 @@ class NOYM():
             print("获取用户信息失败")
             return
         response_json = response.json()
-        print(response_json)
         if response_json['errcode'] == '0':
             print(f'🐶{response_json["data"]["sumTotalPoint"]}积分\n')
 
@@ -127,16 +127,56 @@ class NOYM():
         else:
             print(f'❌签到失败：{response_json["errmsg"]}')
 
+    def get_sign_days(self):
+        json_data = {
+            'basicInfo': {
+                'vid': 6016606679517,
+                'vidType': 2,
+                'bosId': 4021996812517,
+                'productId': 146,
+                'productInstanceId': 14309764517,
+                'productVersionId': '10003',
+                'merchantId': 2000354510517,
+                'cid': 761291517,
+                'tcode': 'weimob',
+            },
+            'extendInfo': {
+                'source': 0,
+                'channelsource': 5,
+            },
+            'queryParameter': None,
+            'i18n': {
+                'language': 'zh',
+                'timezone': '8',
+            },
+            'customInfo': {
+                'source': 0,
+                'wid': 11179209591,
+            },
+        }
+        response = requests.post(
+            'https://761291517.crm.n.weimob.com/api3/onecrm/mactivity/sign/misc/sign/activity/c/signMainInfo',
+            headers=self.headers,
+            json=json_data,
+        )
+        if not response or response.status_code != 200:
+            print("获取签到天数失败")
+            return
+        response_json = response.json()
+        if response_json['errcode'] == '0':
+            month_sign_days = response_json["data"]["monthCumulativeSignDays"]
+            print(f'🐶本月已连续签到: {month_sign_days}天')
+
     def main(self):
         self.user_info()
-        time.sleep(random.randint(15, 30))
+        time.sleep(random.randint(15, 20))
         self.sign()
+        self.get_sign_days()
 
 
 if __name__ == '__main__':
     env_name = 'NOYM_TOKEN'
     tokenStr = os.getenv(env_name)
-    # tokenStr = 'rprm_appShowId2=-lxkrrrg25b3mnha7hf4; rprm_cuid=8737230478iekkcdlifs; rprm_cuid_time=1718737230478; rprm_session_id=; rprm_uuid=8737230478iekkcdlifs; tgw_l7_route=87c01adfd751837e97228403e5b95cec; bos.h5.session=s%3Aa6wFT0xpa4fN_xnvyFdbZeWoJNm6peic.wQQLQU32b4476CDBtmvfL2lDlXCcGC26EYdg0mww7do'
     if not tokenStr:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)

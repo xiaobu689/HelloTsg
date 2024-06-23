@@ -8,10 +8,10 @@
 
 ---------------------------------
 20240610 新增每日签到、浏览商场任务
-20240601 抽奖活动下线
+20240601 抽奖活动下线移除
 20240529 新增当日首次登陆、游戏成就分享
 ---------------------------------
-定时设置：每天1次就行吧，时间随意
+定时设置：每天1次，时间随意
 cron: 0 0 * * *
 const $ = new Env("随申行");
 """
@@ -132,7 +132,7 @@ class SSX():
                 if i["adoptionValue"] == 2:
                     self.adoptingName = i["gameName"]
                     break
-            msg = f'---------- 🐹任务列表🐹 ----------\n'
+            msg = f'\n---------- 🐹任务列表🐹 ----------\n'
             for i in response['data']['userActivityMessages']:
                 if "用户注册" in i["name"] or "用户实名" in i["name"] or "用户首单" in i["name"] or "打车出行" in i[
                     "name"]:
@@ -161,7 +161,7 @@ class SSX():
         url = 'https://api.shmaas.net/cap/base/credits/queryNowAdoptInfo'
         data = {"language": "zh-cn"}
         response = requests.post(url, headers=self.headers, json=data).json()
-        msg = f'-----------------------------------\n'
+        msg = f'\n-----------------------------------\n'
         msg += f'✅领养物: {self.adoptingName}\n'
         msg += f'✅当前等级：{response["data"]["feedUserGameNew"]["level"]}\n'
         msg += f'✅喂养进度：{response["data"]["feedUserGameNew"]["nowScore"]}/{response["data"]["feedUserGameNew"]["needScore"]}\n'
@@ -283,7 +283,7 @@ class SSX():
         if response and response.status_code == 200:
             response_json = response.json()
             if response_json['errCode'] == 0:
-                msg = f'✅游戏成就分享成功, 兜豆+{response_json["data"]["rewardValue"]}'
+                msg = f'✅游戏成就分享成功, 兜豆+{response_json["data"]["rewardValue"]}\n'
             else:
                 msg = f'❌分享失败，{response_json["errMsg"]}'
         else:

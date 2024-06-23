@@ -160,7 +160,6 @@ class CST():
                         self.recordNo = task["recordNo"]
 
     def receive_task(self):
-        import requests
         headers = {
             'Host': 'cvg.17usoft.com',
             'Connection': 'keep-alive',
@@ -405,7 +404,6 @@ class CST():
 
     # 抽奖
     def lucky_draw(self):
-        import requests
         headers = {
             'Host': 'wxxcx.17u.cn',
             'Connection': 'keep-alive',
@@ -491,7 +489,7 @@ class CST():
 
         # 签到
         self.sign()
-        time.sleep(random.randint(30, 40))
+        time.sleep(random.randint(15, 20))
 
         print(f"\n============ ▷ 开始积分任务 ◁ ===========\n")
         # 领积分任务、看视频
