@@ -927,8 +927,81 @@ function iGotNotify(text, desp, params = {}) {
   });
 }
 
+// function pushPlusNotify(text, desp) {
+//   return new Promise((resolve) => {
+//     if (PUSH_PLUS_TOKEN) {
+//       desp = desp.replace(/[\n\r]/g, '<br>'); // 默认为html, 不支持plaintext
+//       const body = {
+//         token: `${PUSH_PLUS_TOKEN}`,
+//         title: `${text}`,
+//         content: `${desp}`,
+//         topic: `${PUSH_PLUS_USER}`,
+//       };
+//       const options = {
+//         url: `https://www.pushplus.plus/send`,
+//         body: JSON.stringify(body),
+//         headers: {
+//           'Content-Type': ' application/json',
+//         },
+//         timeout,
+//       };
+//       $.post(options, (err, resp, data) => {
+//         try {
+//           if (err) {
+//             console.log(
+//               `push+发送${
+//                 PUSH_PLUS_USER ? '一对多' : '一对一'
+//               }通知消息失败！！\n`,
+//             );
+//             console.log(err);
+//           } else {
+//             data = JSON.parse(data);
+//             if (data.code === 200) {
+//               console.log(
+//                 `push+发送${
+//                   PUSH_PLUS_USER ? '一对多' : '一对一'
+//                 }通知消息完成。\n`,
+//               );
+//             } else {
+//               console.log(
+//                 `push+发送${
+//                   PUSH_PLUS_USER ? '一对多' : '一对一'
+//                 }通知消息失败：${data.msg}\n`,
+//               );
+//             }
+//           }
+//         } catch (e) {
+//           $.logErr(e, resp);
+//         } finally {
+//           resolve(data);
+//         }
+//       });
+//     } else {
+//       resolve();
+//     }
+//   });
+// }
 function pushPlusNotify(text, desp) {
   return new Promise((resolve) => {
+    // 获取环境变量中的过滤关键词数组
+    const filterKeywordsEnv = process.env.JS_MSG_FILTER_KEYWORDS;
+    const filterKeywords = filterKeywordsEnv ? filterKeywordsEnv.split(',') : [];
+
+    // 检查标题和内容是否包含过滤关键词
+    const shouldFilter = filterKeywords.some(keyword => text.includes(keyword) || desp.includes(keyword));
+
+    // 如果需要过滤，则直接返回，不执行推送操作
+    // if (shouldFilter) {
+    //   console.log(`即将取消推送，因为标题或内容包含过滤关键词。\n`);
+    //   resolve();
+    //   return;
+    // }
+    // 如果需要过滤，则记录日志并修改内容
+    if (shouldFilter) {
+      console.log(`即将推送，但标题或内容包含过滤关键词。\n`);
+      desp = `注意：标题或内容包含过滤关键词。\n\n${desp}`; // 在内容前添加提示信息
+    }
+
     if (PUSH_PLUS_TOKEN) {
       desp = desp.replace(/[\n\r]/g, '<br>'); // 默认为html, 不支持plaintext
       const body = {
@@ -981,6 +1054,8 @@ function pushPlusNotify(text, desp) {
     }
   });
 }
+
+
 
 function aibotkNotify(text, desp) {
   return new Promise((resolve) => {
