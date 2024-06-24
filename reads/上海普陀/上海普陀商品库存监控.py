@@ -14,7 +14,8 @@ from common import make_request
 from sendNotify import send
 
 keywords_to_filter = ['数据线', '徽章', '明信片', '跳绳', '折叠椅', '吊床', '露营车', '帐篷',
-                      '帆布包', '笔记本', '手机支架', '漱口水',
+                      '帆布包', '笔记本', '手机支架', '漱口水', '文创', '新普陀报', '帆布购物袋',
+                      '飞盘', '折叠购物手拉车',
                       ]
 env_name_kc = 'SHPTKC_TOKEN'
 env_name = 'SHPT_TOKEN'

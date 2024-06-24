@@ -91,7 +91,7 @@ async def main():
         messages.append(result)
 
     # 消息推送
-    send("顺义创城枪兑失败通知", "\n".join(messages))
+    send("顺义创城枪兑结果通知", "\n".join(messages))
 
 
 if __name__ == '__main__':

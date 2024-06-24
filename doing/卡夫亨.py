@@ -4,7 +4,7 @@
 抓任意包请求头 token
 变量名: KFH_TOKEN
 
-cron: 50 5 * * *
+cron: 52 5 * * *
 const $ = new Env("卡夫亨");
 """
 import os
