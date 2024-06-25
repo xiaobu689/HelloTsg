@@ -1,15 +1,21 @@
 """
 顺义创城抢兑
 
+【单账号版】
 抓任意包请求头 x_applet_token
 变量名: SYCC_TOKEN
 
 cron: 58 7,11,19 * * *
 const $ = new Env("顺义创城抢兑");
 """
+
+print("多账号抢购版本测试中......")
+exit(0)
+
 import datetime
 import asyncio
 import os
+import re
 import time
 from datetime import datetime
 import aiohttp
@@ -23,8 +29,8 @@ async def trigger_at_specific_millisecond(hour, minute, second, millisecond):
         current_time = now.hour * 60 * 60 * 1000 + now.minute * 60 * 1000 + now.second * 1000 + now.microsecond // 1000
         if current_time >= target_time:
             break
-        # else:
-        #     print(f"当前时间: {now.hour}:{now.minute}:{now.second}.{now.microsecond // 1000}")
+        else:
+            print(f"当前时间: {now.hour}:{now.minute}:{now.second}.{now.microsecond // 1000}")
         await asyncio.sleep(0)  # 让出控制权给其他任务
 
 
@@ -36,18 +42,17 @@ async def cashout(x_applet_token):
         'content-type': 'application/json',
         'Accept-Encoding': 'gzip,compress,br,deflate',
         'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.49(0x1800312c) NetType/WIFI Language/zh_CN',
-        'Referer': 'https://servicewechat.com/wx0a035430a2e3a465/154/page-frame.html'
     }
     url = 'https://admin.shunyi.wenming.city/jeecg-boot/applet/award/exchangeAward'
     start_time = time.time()  # 记录开始发送请求的时间
     # 1562334019131645953|2元
     # 1788826595521810434|1元
     # 请求体
-    body = '{"awardIds":["1562334019131645953"],"phone":"17854279565"}'
+    body = '{"awardIds":["1788826595521810434"],"phone":"17854279565"}'
     async with aiohttp.ClientSession(headers=headers) as session:
         try:
             async with session.post(url, data=body) as response:
-                response.raise_for_status()
+                # response.raise_for_status()
 
                 # 计算接收响应的时间
                 end_time = time.time()
@@ -76,7 +81,6 @@ async def main():
     messages = []  # 用于存储每次提现操作的消息
 
     now = datetime.now()
-    # 根据当前小时设置目标时间
     if now.hour in [7, 11, 19]:
         target_hour = now.hour
     else:

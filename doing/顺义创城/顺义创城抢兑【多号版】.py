@@ -1,24 +1,13 @@
 """
-好奇车生活抢兑
+顺义创城抢兑
 
-【单账号版】
+【多账号版】
 抓任意包请求头 x_applet_token
 变量名: SYCC_TOKEN
 
-cron: 58 17 * * *
-const $ = new Env("好奇车生活抢兑");
+cron: 58 7,11,19 * * *
+const $ = new Env("顺义创城抢兑");
 """
-
-"""
-🌼兑换商品：京东E卡18元          | id:792556957722198016 兑换所需积分：1800
-🌼兑换商品：美团外卖代金券 10 元① | id:792556468305641472 兑换所需积分：750
-🌼兑换商品：3.88元红包①         | id:754493262869991424 兑换所需积分：588
-🌼兑换商品：5.88元红包①         | id:754493011522113536 兑换所需积分：888
-🌼兑换商品：1.08元红包①         | id:754492665391370240 兑换所需积分：188
-🌼兑换商品：单次洗车券③          | id:812852940045557760 兑换所需积分：3000
-🌼兑换商品：高德打车5元代金券①    | id:792555679986204672 兑换所需积分：375
-"""
-
 import datetime
 import asyncio
 import os
@@ -41,33 +30,33 @@ async def trigger_at_specific_millisecond(hour, minute, second, millisecond):
         await asyncio.sleep(0)  # 让出控制权给其他任务
 
 
-async def exchange(accountId):
+async def cashout(x_applet_token):
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF',
-        'tenantId': '619669306447261696',
-        'activityId': '621950054462152705',
-        'accountId': accountId,
+        'Host': 'admin.shunyi.wenming.city',
+        'Connection': 'keep-alive',
+        'X-Applet-Token': x_applet_token,
+        'content-type': 'application/json',
+        'Accept-Encoding': 'gzip,compress,br,deflate',
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.49(0x1800312c) NetType/WIFI Language/zh_CN',
     }
-
-    # 构造参数
-    pointsMallCardId = '754493011522113536'
-    exchangeCount = 1
-    exchangeType = 0
-    exchangeNeedPoints = 888
-    exchangeNeedMoney = 0
-
-    url = f'https://channel.cheryfs.cn/archer/activity-api/pointsmall/exchangeCard?pointsMallCardId=${pointsMallCardId}&exchangeCount=${exchangeCount}&mallOrderInputVoStr=%7B%22person%22:%22%22,%22phone%22:%22%22,%22province%22:%22%22,%22city%22:%22%22,%22area%22:%22%22,%22address%22:%22%22,%22remark%22:%22%22%7D&channel=1&exchangeType=${exchangeType}&exchangeNeedPoints=${exchangeNeedPoints}&exchangeNeedMoney=${exchangeNeedMoney}&cardGoodsItemIds='
-    start_time = time.time()
+    url = 'https://admin.shunyi.wenming.city/jeecg-boot/applet/award/exchangeAward'
+    start_time = time.time()  # 记录开始发送请求的时间
+    # 1562334019131645953|2元
+    # 1788826595521810434|1元
+    # 请求体
+    body = '{"awardIds":["1788826595521810434"],"phone":"17854279565"}'
     async with aiohttp.ClientSession(headers=headers) as session:
         try:
-            async with session.get(url) as response:
+            async with session.post(url, data=body) as response:
+                # response.raise_for_status()
+
                 # 计算接收响应的时间
                 end_time = time.time()
                 end_response = datetime.now()  # 记录收到响应的当前时间
                 duration_ms = (end_time - start_time) * 1000
 
                 data = await response.json()
-                if data["code"] == 200:
+                if data.get('success'):
                     message = f"✅ 提现成功 | {data['message']} | 耗时: {duration_ms:.2f} ms | 响应时间：{end_response.strftime('%H:%M:%S.%f')[:-3]}"
                 else:
                     message = f"❌ 提现失败 | {data['message']} | 耗时：{duration_ms:.2f} ms | 响应时间：{end_response.strftime('%H:%M:%S.%f')[:-3]}"
@@ -85,8 +74,6 @@ async def main():
         print(f'⛔️未获取到ck变量：请检查变量 {SY_token} 是否填写')
         return
 
-    openId, accountId = SY_token.split('#')
-
     messages = []  # 用于存储每次提现操作的消息
 
     now = datetime.now()
@@ -95,16 +82,22 @@ async def main():
     else:
         print("⚠️ 当前时间不在抢购时间段内。")
         return
-    await trigger_at_specific_millisecond(target_hour, 59, 59, 830)
+    await trigger_at_specific_millisecond(target_hour, 18, 59, 800)
 
-    tasks = [exchange(accountId) for _ in range(10)]
+    tokens = re.split(r'&', SY_token)
+
+    tasks = []
+    for token in tokens:
+        for _ in range(10):  # 每个账号同时执行10次请求
+            tasks.append(cashout(token))
+
     results = await asyncio.gather(*tasks)
 
     for result in results:
         messages.append(result)
 
     # 消息推送
-    send("好奇车生活抢兑结果通知", "\n".join(messages))
+    send("顺义创城枪兑结果通知", "\n".join(messages))
 
 
 if __name__ == '__main__':

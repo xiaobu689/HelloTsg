@@ -1,65 +1,118 @@
 /**
- * 好奇车生活
+ * 云筑工匠
+ * 
+ * 需要实名认证
+ * 抓任意请求头 Cookie
+ * 变量名: YZGJ
+ * 变量格式：cookie1&cookie2
 
- * 变量名: hqcsh_data
- * 变量格式：openId#accountId
- * 多账号用&分割
-
- * cron: 26 8 * * *
- * const $ = new Env("好奇车生活");
+ * cron: 45 6 * * *
+ * const $ = new Env("云筑工匠");
  */
 
-const $ = new Env('好奇车生活兑换')
-const Cheryfs = ($.isNode() ? JSON.parse(process.env.Cheryfs) : $.getjson("Cheryfs")) || "";
-const accountIds = Cheryfs.split('&');
-let accountId = ''
+const $ = new Env('云筑工匠')
+let YZGJ = ($.isNode() ? process.env.YZGJ : $.getjson("YZGJ")) || '';
+const cookies = YZGJ.split('&');
+let cookie = ''
+let notice = '';
 !(async () => {
     await main();
 })().catch((e) => { $.log(e) }).finally(() => { $.done({}); });
 
 async function main() {
-    accountId = accountIds[0];
-    console.log(`用户：${accountId}开始兑换`)
-    let queryPointsMallCardList = await commonGet('/pointsmall/queryPointsMallCardList?isGroup=false')
-    console.log("-----------111111111111111111111list=", queryPointsMallCardList)
-    for (const item of queryPointsMallCardList.result['全部']) {
-        console.log('🌼兑换商品：' + item.cardName + 'id:' + item.id + ' 兑换所需积分：' + item.exchangePointsValue + ' 兑换所需金额：' + item.exchangeMoneyValue)
+    for (const _cookie of cookies) {
+        // id = item.id;
+        id = "骑狗跨大海"
+        cookie = _cookie;
+        console.log(`用户：${id}开始任务`)
+        while (true) {
+            let record = await commonPost('/record', { "adId": "adunit-9827a6d4b25ac116", "adKey": "" });
+            if (record.code === 200) {
+                console.log(`获得金砖：${record.data.coinAmount}`)
+                await $.wait(15000)
+            } else {
+                console.log(record.message)
+                break
+            }
+        }
+        console.log("————————————")
+        console.log("账号查询")
+        let info = await commonGet();
+        console.log(`拥有金砖：${info.data.coinIncome} 现金：${info.data.cashIncome}\n`)
+        notice += `用户：${id} 拥有金砖：${info.data.coinIncome} 现金：${info.data.cashIncome}\n`
+        if (info.data.cashIncome >= 1) {
+            console.log("余额大于1元，开始提现")
+            let withdraw = await commonPost('/withdraw', { "value": 1 });
+            console.log(withdraw.message)
+        }
     }
-    // 兑换
-    // for (const accountId of accountIds) {
-    //     try {
-    //         let pointsMallCardId = Cheryfs_GIFTID;
-    //         let queryByPointsMallCardId = await commonGet(`/pointsmall/queryByPointsMallCardId?pointsMallCardId=${pointsMallCardId}`)
-    //         console.log(`开始兑换${queryByPointsMallCardId.result.cardName}`)
-    //         let exchangeCount = 1;
-    //         let exchangeType = queryByPointsMallCardId.result.exchangeType;
-    //         let exchangeNeedPoints = queryByPointsMallCardId.result.exchangePointsValue;
-    //         let exchangeNeedMoney = queryByPointsMallCardId.result.exchangeMoneyValue;
-    //         for (let i = 0; i < 20; i++) {
-    //             for (let j = 0; j < 2; j++) {
-    //                 let exchange = commonGet(`/pointsmall/exchangeCard?pointsMallCardId=${pointsMallCardId}&exchangeCount=${exchangeCount}&mallOrderInputVoStr=%7B%22person%22:%22%22,%22phone%22:%22%22,%22province%22:%22%22,%22city%22:%22%22,%22area%22:%22%22,%22address%22:%22%22,%22remark%22:%22%22%7D&channel=1&exchangeType=${exchangeType}&exchangeNeedPoints=${exchangeNeedPoints}&exchangeNeedMoney=${exchangeNeedMoney}&cardGoodsItemIds=`)
-    //             }
-    //             await $.wait(100)
-    //         }
-    //     } catch (error) {
-    //         console.error(`处理用户 ${accountId} 时出错:`, error);
-    //     }
-    //     await $.wait(60000)
-    // }
-
-    console.log("\n💌该脚本备用，暂不做兑换，优先抢购......")
+    if (notice) {
+        $.msg($.name, '', notice);
+    }
 }
 
-async function commonGet(url) {
+async function commonPost(url, body) {
     return new Promise(resolve => {
         const options = {
-            url: `https://channel.cheryfs.cn/archer/activity-api${url}`,
+            url: `https://db-api.yzw.cn/appc/v1/activity/ad${url}`,
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF',
-                'tenantId': '619669306447261696',
-                'activityId': '621950054462152705',
-                'accountId': accountId,
+                'x-application-type': 'miniapp',
+                'accept': 'application/json, text/plain, */*',
+                'x-yz-mobile-cookie': cookie,
+                'content-type': 'application/json',
+                'xweb_xhr': '1',
+                'x-device': '',
+                'x-device-id': '',
+                'x-application-package-name': 'cn.yzw.laborx',
+                'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 MicroMessenger/6.8.0(0x16080000) NetType/WIFI MiniProgramEnv/Mac MacWechat/WMPF MacWechat/3.8.7(0x13080712) XWEB/1191',
+                'Sec-Fetch-Site': 'cross-site',
+                'Sec-Fetch-Mode': 'cors',
+                'Sec-Fetch-Dest': 'empty',
+                'Referer': `https://servicewechat.com/wxd584ae81c1286a82/76/page-frame.html`,
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Accept-Language': 'zh-CN,zh;q=0.9',
             },
+            body: JSON.stringify(body)
+        }
+        $.post(options, async (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(`${$.name} API请求失败，请检查网路重试`)
+                } else {
+                    await $.wait(4000)
+                    resolve(JSON.parse(data));
+                }
+            } catch (e) {
+                $.logErr(e, resp)
+            } finally {
+                resolve();
+            }
+        })
+    })
+}
+
+async function commonGet() {
+    return new Promise(resolve => {
+        const options = {
+            url: `https://db-api.yzw.cn/appc/v1/activity/ad/index`,
+            headers: {
+                'x-application-type': 'miniapp',
+                'accept': 'application/json, text/plain, */*',
+                'x-yz-mobile-cookie': cookie,
+                'content-type': 'application/json',
+                'xweb_xhr': '1',
+                'x-device': '',
+                'x-device-id': '',
+                'x-application-package-name': '',
+                'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 MicroMessenger/6.8.0(0x16080000) NetType/WIFI MiniProgramEnv/Mac MacWechat/WMPF MacWechat/3.8.7(0x13080712) XWEB/1191',
+                'Sec-Fetch-Site': 'cross-site',
+                'Sec-Fetch-Mode': 'cors',
+                'Sec-Fetch-Dest': 'empty',
+                'Referer': `https://servicewechat.com/wx1342c59a70c7a94f/253/page-frame.html`,
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Accept-Language': 'zh-CN,zh;q=0.9',
+            }
         }
         $.get(options, async (err, resp, data) => {
             try {
@@ -67,9 +120,8 @@ async function commonGet(url) {
                     console.log(`${JSON.stringify(err)}`)
                     console.log(`${$.name} API请求失败，请检查网路重试`)
                 } else {
-                    data = JSON.parse(data)
-                    console.log(data)
-                    resolve(data);
+                    await $.wait(4000)
+                    resolve(JSON.parse(data));
                 }
             } catch (e) {
                 $.logErr(e, resp)

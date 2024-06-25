@@ -12,9 +12,7 @@ import random
 import re
 import time
 import requests
-from bs4 import BeautifulSoup
 from urllib3.exceptions import InsecureRequestWarning, InsecurePlatformWarning
-from common import qianwen_messages, make_request, get_current_timestamp_milliseconds
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
 
