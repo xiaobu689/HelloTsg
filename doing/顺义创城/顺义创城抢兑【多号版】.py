@@ -8,6 +8,10 @@
 cron: 58 7,11,19 * * *
 const $ = new Env("顺义创城抢兑");
 """
+
+print("单账号抢购版本测试中......")
+exit(0)
+
 import datetime
 import asyncio
 import os
@@ -82,7 +86,7 @@ async def main():
     else:
         print("⚠️ 当前时间不在抢购时间段内。")
         return
-    await trigger_at_specific_millisecond(target_hour, 18, 59, 800)
+    await trigger_at_specific_millisecond(target_hour, 59, 59, 800)
 
     tokens = re.split(r'&', SY_token)
 

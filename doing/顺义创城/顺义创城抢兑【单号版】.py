@@ -9,8 +9,8 @@ cron: 58 7,11,19 * * *
 const $ = new Env("顺义创城抢兑");
 """
 
-print("多账号抢购版本测试中......")
-exit(0)
+# print("多账号抢购版本测试中......")
+# exit(0)
 
 import datetime
 import asyncio
@@ -48,7 +48,7 @@ async def cashout(x_applet_token):
     # 1562334019131645953|2元
     # 1788826595521810434|1元
     # 请求体
-    body = '{"awardIds":["1788826595521810434"],"phone":"17854279565"}'
+    body = '{"awardIds":["1562334019131645953"],"phone":"17854279565"}'
     async with aiohttp.ClientSession(headers=headers) as session:
         try:
             async with session.post(url, data=body) as response:
@@ -73,12 +73,15 @@ async def cashout(x_applet_token):
 
 
 async def main():
+    messages = []  # 用于存储每次提现操作的消息
     SY_token = os.getenv('SYCC_TOKEN')
     if not SY_token:
         print(f'⛔️未获取到ck变量：请检查变量 {SY_token} 是否填写')
         return
 
-    messages = []  # 用于存储每次提现操作的消息
+    # 第一个参与抢兑
+    tokens = re.split(r'&', SY_token)
+    sycc_token = tokens[0]
 
     now = datetime.now()
     if now.hour in [7, 11, 19]:
@@ -88,7 +91,7 @@ async def main():
         return
     await trigger_at_specific_millisecond(target_hour, 59, 59, 800)
 
-    tasks = [cashout(SY_token) for _ in range(10)]
+    tasks = [cashout(sycc_token) for _ in range(10)]
     results = await asyncio.gather(*tasks)
 
     for result in results:
