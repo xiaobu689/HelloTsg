@@ -11,11 +11,9 @@
 
 const $ = new Env('好奇车生活')
 const Cheryfs = ($.isNode() ? JSON.parse(process.env.Cheryfs) : $.getjson("Cheryfs")) || "";
-const accountIds = Cheryfs.split('&');
-// const Cheryfs = [
-//     { "accountId": "ed0293e05e0c07db8a9187c95f837431adf9f0cca066368bb53d2b111b1fa8e2" }
-// ]
+const accounts = Cheryfs.split('&');
 let accountId = ''
+let openId = ''
 let notice = ''
 let taskItemIdArr = [
     { "676992242694664192": "申贷赢好礼" },
@@ -44,8 +42,14 @@ let time_out = 60000
 })().catch((e) => { $.log(e) }).finally(() => { $.done({}); });
 
 async function main() {
-    for (const item of accountIds) {
-        accountId = item;
+    for (const item of accounts) {
+        const parts = item.split('#');
+        if (parts.length !== 2) {
+            console.error(`账号信息格式不正确：${item}`);
+            continue;
+        }
+        openId = parts[0];
+        accountId = parts[1];
         console.log(`用户：${accountId}开始任务`)
         console.log('开始签到')
         let sign = await signGet('/signinact/signin')
@@ -68,6 +72,9 @@ async function main() {
                                     console.log(luckydrawResult.result.result)
                                 }
                             }
+                            // 增加随机等待时间
+                            DD = RT(5000, 15000)
+                            await $.wait(DD)
                         }
                     }
                 }
@@ -105,12 +112,20 @@ async function main() {
                 let act = await commonGet(`/taskItem/achieve?taskItemId=${taskItemId}`)
                 console.log(act.message)
             }
+            // 增加随机等待时间
+            DD = RT(10000, 20000)
+            await $.wait(DD)
         }
         console.log("————————————")
         console.log("查询积分")
-        let point = await commonGet('/common/accountPointLeft?pointId=620415610219683840')
+        let point = await commonGet(`/cherycar/pointleft?openId=${openId}`)
         console.log(`拥有积分：${point.result}\n`)
         notice += `用户：${accountId} 拥有积分: ${point.result}\n`
+
+        // 增加随机等待时间
+        DD = RT(10000, 20000)
+        await $.wait(DD)
+        console.log("----- 开始下一个账号 -----")
     }
     if (notice) {
         $.msg($.name, '', notice);
@@ -235,6 +250,17 @@ async function signLuckyDrawGet(url) {
             }
         })
     })
+}
+
+/**
+ * 随机整数生成
+ */
+
+function RT(X, Y) {
+    do rt = Math.round(Math.random() * Y);
+    while (rt < X)
+    console.log(`随机等待${DD}ms`);
+    return rt;
 }
 
 // prettier-ignore

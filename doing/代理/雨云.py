@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 # @Time: 2023年04月23日21时26分
+import os
+import re
+
 import requests
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -29,10 +32,10 @@ warnings.filterwarnings('ignore')
 
 class RainYun():
 
-    def __init__(self, user: str, pwd: str) -> None:
+    def __init__(self, account) -> None:
         # 认证信息
-        self.user = user.lower()
-        self.pwd = pwd
+        self.user = account.split('#')[0]
+        self.pwd = account.split('#')[1]
         self.json_data = json.dumps({
             "field": self.user,
             "password": self.pwd,
@@ -134,14 +137,14 @@ class RainYun():
 
 
 if __name__ == '__main__':
-    accounts = [
-        {
-            "user": "",  # 账户
-            "password": ""  # 密码
-        }
-    ]
-    for acc in accounts:
-        ry = RainYun(acc["user"], acc["password"])  # 实例
+    env_name = 'yuyun'
+    accountStr = os.getenv(env_name)
+    if not accountStr:
+        print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
+        exit(0)
+    accounts = re.split(r'&', accountStr)
+    for account in accounts:
+        ry = RainYun(account)  # 实例
         ry.login()  # 登录
         ry.signin()  # 签到
         ry.query()  # 查询积分

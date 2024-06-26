@@ -8,7 +8,7 @@
 抓任意包请求头 sectoken
 变量名: TCLX_TOKEN
 
-cron: 0 0 * * *
+cron: 0 0,15 * * *
 const $ = new Env("同程旅行");
 """
 import os
@@ -190,7 +190,7 @@ class TCLX():
                     print("✈️开始领取桌面奖励......")
                     # self.check_isbind()
                     # self.is_from_desktop()
-                    # self.receive_integral_desktop()
+                    self.receive_integral_desktop()
                     # time.sleep(random.randint(30, 40))
                 # 度假收益
                 # 社群奖励
@@ -199,7 +199,7 @@ class TCLX():
     def lottery(self):
         headers = {
             'Host': 'wx.17u.cn',
-            'Cookie': '__tctmb=217272534.4204815072036401.1718273729830.1718273744139.12; __tctmc=217272534.252338255; __tctmd=217272534.252338255; __tctma=217272534.1718190554968783.1718190554193.1718256006750.1718273615042.5; __tctmu=217272534.0.0; __tctmz=217272534.1718273615042.5.1.utmccn=(direct)|utmcsr=(direct)|utmcmd=(none); __tctrack=0; longKey=1718190554968783; CooperateTcWxUser=CooperateUserId=oOCyauMrN8McvBov2-A7Fn-P6atM&openid=oOCyauMrN8McvBov2-A7Fn-P6atM&MemberId=H9DxzH0N%2fUoKfYX95mXgIQ%3d%3d&token=81_wFx61YZeksNHBp98sLKp8D_wvZfIxwlMaW1pwhbtiv9256eoBJhcI-akJae9pluZVS8cqBD-_H9pds4t8iJMrqmIheLDxsV5og-uHBPEVTU&MemberSysId=33&Key=YHEW%2fC%2b75WV4GhUCKq5332GzraFYXCsDKujxpGISJc5nnMEX%2fAg6xg%3d%3d&unionid=ohmdTt1TSce70l1uL1U2DGcZmGVU; CooperateWxUser=CooperateUserId=oOCyauMrN8McvBov2-A7Fn-P6atM&openid=oOCyauMrN8McvBov2-A7Fn-P6atM&MemberId=H9DxzH0N%2fUoKfYX95mXgIQ%3d%3d&token=81_wFx61YZeksNHBp98sLKp8D_wvZfIxwlMaW1pwhbtiv9256eoBJhcI-akJae9pluZVS8cqBD-_H9pds4t8iJMrqmIheLDxsV5og-uHBPEVTU&MemberSysId=33&Key=YHEW%2fC%2b75WV4GhUCKq5332GzraFYXCsDKujxpGISJc5nnMEX%2fAg6xg%3d%3d&unionid=ohmdTt1TSce70l1uL1U2DGcZmGVU; TcHomeElInfo=; WxAppScene=wxappscene=1089; WxUser=openid=oOCyauMrN8McvBov2-A7Fn-P6atM&token=81_wFx61YZeksNHBp98sLKp8D_wvZfIxwlMaW1pwhbtiv9256eoBJhcI-akJae9pluZVS8cqBD-_H9pds4t8iJMrqmIheLDxsV5og-uHBPEVTU&userid=H9DxzH0N/UoKfYX95mXgIQ==&unionid=ohmdTt1TSce70l1uL1U2DGcZmGVU&sectoken=ZfOeS2YX9IStsHx-3-C4u0EUvGZ8AWFrUMY9ZOnDcyxvZhv76ID2gHtLqrzQV-593nhEifURu7LSo_espjTiuodztoTIvzEsQgFljpRXreBs6lXHgW54FtHZaOGDZDEZpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYyDx_8emvgaEjCQCJIOfF5ZmThIaY9ysHNjxrrLYAXK3g**4641&refreshtoken=81_i31kLjReSbYP8c585VIsVRkV4dqNJ3OHwtGUJlXiERG4fcPxf9FwIeCr433qOlPPQK19Nz9S3SeCbgj1NyHsz3UUNF86-V4RWSg7bJxwByg&wxtcinfo=S2rQcjjs24Gvx6HJqQtXMPmKzfcYWl%252fR3lhM4SdfekV5t%252f1s9tdhN2fFpwDPdT1nJqebikw9B1JK0lX9Efk0wuFPONK7y30l%252fbJq6%252fIS%252fclrUysf6%252bYu8iDPo%252bb9IRzN; cookieOpenSource=openid=oOCyauMrN8McvBov2-A7Fn-P6atM&token=81_wFx61YZeksNHBp98sLKp8D_wvZfIxwlMaW1pwhbtiv9256eoBJhcI-akJae9pluZVS8cqBD-_H9pds4t8iJMrqmIheLDxsV5og-uHBPEVTU; ASP.NET_SessionId=0c1st0t2b23yhewdh4mrp5dc; route=5ab0c3cebdd1b5723181f27cdf5cc159',
+            #'Cookie': '__tctmb=217272534.4204815072036401.1718273729830.1718273744139.12; __tctmc=217272534.252338255; __tctmd=217272534.252338255; __tctma=217272534.1718190554968783.1718190554193.1718256006750.1718273615042.5; __tctmu=217272534.0.0; __tctmz=217272534.1718273615042.5.1.utmccn=(direct)|utmcsr=(direct)|utmcmd=(none); __tctrack=0; longKey=1718190554968783; CooperateTcWxUser=CooperateUserId=oOCyauMrN8McvBov2-A7Fn-P6atM&openid=oOCyauMrN8McvBov2-A7Fn-P6atM&MemberId=H9DxzH0N%2fUoKfYX95mXgIQ%3d%3d&token=81_wFx61YZeksNHBp98sLKp8D_wvZfIxwlMaW1pwhbtiv9256eoBJhcI-akJae9pluZVS8cqBD-_H9pds4t8iJMrqmIheLDxsV5og-uHBPEVTU&MemberSysId=33&Key=YHEW%2fC%2b75WV4GhUCKq5332GzraFYXCsDKujxpGISJc5nnMEX%2fAg6xg%3d%3d&unionid=ohmdTt1TSce70l1uL1U2DGcZmGVU; CooperateWxUser=CooperateUserId=oOCyauMrN8McvBov2-A7Fn-P6atM&openid=oOCyauMrN8McvBov2-A7Fn-P6atM&MemberId=H9DxzH0N%2fUoKfYX95mXgIQ%3d%3d&token=81_wFx61YZeksNHBp98sLKp8D_wvZfIxwlMaW1pwhbtiv9256eoBJhcI-akJae9pluZVS8cqBD-_H9pds4t8iJMrqmIheLDxsV5og-uHBPEVTU&MemberSysId=33&Key=YHEW%2fC%2b75WV4GhUCKq5332GzraFYXCsDKujxpGISJc5nnMEX%2fAg6xg%3d%3d&unionid=ohmdTt1TSce70l1uL1U2DGcZmGVU; TcHomeElInfo=; WxAppScene=wxappscene=1089; WxUser=openid=oOCyauMrN8McvBov2-A7Fn-P6atM&token=81_wFx61YZeksNHBp98sLKp8D_wvZfIxwlMaW1pwhbtiv9256eoBJhcI-akJae9pluZVS8cqBD-_H9pds4t8iJMrqmIheLDxsV5og-uHBPEVTU&userid=H9DxzH0N/UoKfYX95mXgIQ==&unionid=ohmdTt1TSce70l1uL1U2DGcZmGVU&sectoken=ZfOeS2YX9IStsHx-3-C4u0EUvGZ8AWFrUMY9ZOnDcyxvZhv76ID2gHtLqrzQV-593nhEifURu7LSo_espjTiuodztoTIvzEsQgFljpRXreBs6lXHgW54FtHZaOGDZDEZpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYyDx_8emvgaEjCQCJIOfF5ZmThIaY9ysHNjxrrLYAXK3g**4641&refreshtoken=81_i31kLjReSbYP8c585VIsVRkV4dqNJ3OHwtGUJlXiERG4fcPxf9FwIeCr433qOlPPQK19Nz9S3SeCbgj1NyHsz3UUNF86-V4RWSg7bJxwByg&wxtcinfo=S2rQcjjs24Gvx6HJqQtXMPmKzfcYWl%252fR3lhM4SdfekV5t%252f1s9tdhN2fFpwDPdT1nJqebikw9B1JK0lX9Efk0wuFPONK7y30l%252fbJq6%252fIS%252fclrUysf6%252bYu8iDPo%252bb9IRzN; cookieOpenSource=openid=oOCyauMrN8McvBov2-A7Fn-P6atM&token=81_wFx61YZeksNHBp98sLKp8D_wvZfIxwlMaW1pwhbtiv9256eoBJhcI-akJae9pluZVS8cqBD-_H9pds4t8iJMrqmIheLDxsV5og-uHBPEVTU; ASP.NET_SessionId=0c1st0t2b23yhewdh4mrp5dc; route=5ab0c3cebdd1b5723181f27cdf5cc159',
             'userToken': self.token,
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.49(0x18003134) NetType/WIFI Language/zh_CN miniProgram/wx336dcaf6a1ecf632',
             'openId': 'oOCyauMrN8McvBov2-A7Fn-P6atM',
@@ -232,8 +232,7 @@ class TCLX():
             'taskNo': '',
         }
 
-        response = requests.post('https://wx.17u.cn/wcrewardshopapiv2/roulette/lottery',
-                                 headers=headers, json=json_data)
+        response = requests.post('https://wx.17u.cn/wcrewardshopapiv2/roulette/lottery', headers=headers, json=json_data)
         if not response or response.status_code != 200:
             print(response.text)
             return
@@ -557,20 +556,18 @@ class TCLX():
             print("领取更多现金任务列表失败")
             return
         response_json = response.json()
-        if response_json and response_json['code'] == 0:
-            for task in response_json['data']:
-                print(f'🐹{task["guid"]} | {task["title"]} | {task["subTitle"]} | {task["taskPrizes"][0]["prizeName"]}')
-                if task["title"] == "成功浏览视频赚赏金":
-                    for i in range(3):
-                        self.check_status()
-                        time.sleep(random.randint(5, 10))
-                        self.more_daily_cash_receive(task["guid"])
-                        time.sleep(random.randint(15, 20))
-                elif task["title"] == "浏览查看电影票频道":
-                    self.more_daily_cash_receive(task["guid"])
-                    time.sleep(random.randint(15, 20))
-        else:
+        if response_json and response_json['code'] != 0:
             print("领取更多现金任务列表失败: ", response_json['msg'])
+            return
+        for task in response_json['data']:
+            print(f'🐹{task["guid"]} | {task["title"]} | {task["subTitle"]} | {task["taskPrizes"][0]["prizeName"]}')
+            count = task["cycle"]
+            for i in range(count):
+                self.check_status()
+                time.sleep(random.randint(5, 10))
+                self.more_daily_cash_receive(task["guid"])
+                time.sleep(random.randint(5, 10))
+
 
     def more_daily_cash_receive(self, guid):
         headers = {
@@ -594,7 +591,7 @@ class TCLX():
             'xweb_xhr': '1',
         }
         json_data = {
-            'guid': "tc65u81bc5707c1548d4",
+            'guid': guid,
         }
         print(json_data)
         response = requests.post('https://wx.17u.cn/platformflowpool/task/rec/reward', headers=headers, json=json_data)
@@ -628,27 +625,362 @@ class TCLX():
         response = requests.get('https://wx.17u.cn/appapi/wxuser/checkstatus', headers=headers)
         print("检查状态：", response.text)
 
+    def cash_info(self):
+        import requests
+        headers = {
+            'authority': 'wx.17u.cn',
+            'accept': '*/*',
+            'accept-language': 'zh-CN,zh;q=0.9',
+            'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406262214|719330',
+            'content-type': 'application/json',
+            'referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/640/page-frame.html',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'cross-site',
+            'tc-os-type': '0',
+            'tc-platform-code': 'WX_MP',
+            'tc-user-token': token,
+            'tcprivacy': '1',
+            'tcreferer': 'page%2Factivetemplate%2FzqLite%2Findex',
+            'tcsectk': token,
+            'tcxcxversion': '6.5.6',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a1b) XWEB/9129',
+            'xweb_xhr': '1',
+        }
+        response = requests.get('https://wx.17u.cn/platformflowpool/assets/balance/cash', headers=headers)
+        if not response or response.status_code != 200:
+            print("❌获取现金信息失败")
+            return 0
+        response_json = response.json()
+        print(response_json)
+        if response_json['code'] == 0 and response_json['data']:
+            money = response_json['data']
+            print(f"✅余额: {money}元")
+            return money
+        else:
+            print("❌领取观看视频现金任务失败: ", response_json['msg'])
+            return 0
+
+    # 从桌面进入行为
+    def desktop_action_task(self):
+        print("开始记录桌面进入行为......")
+        headers = {
+            'authority': 'wx.17u.cn',
+            'accept': '*/*',
+            'accept-language': 'zh-CN,zh;q=0.9',
+            'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406262226|718450',
+            'content-type': 'application/json',
+            'referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/640/page-frame.html',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'cross-site',
+            'sectoken': token,
+            'tcprivacy': '1',
+            'tcreferer': 'page%2Factivetemplate%2FzqLite%2Findex',
+            'tcsectk': token,
+            'tcxcxversion': '6.5.6',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a1b) XWEB/9129',
+            'xweb_xhr': '1',
+        }
+        json_data = {
+            'unionId': 'ohmdTt1TSce70l1uL1U2DGcZmGVU',
+            'openId': 'o498X0eXH7H5mw5wfFUeTtw6XrbM',
+        }
+        response_1 = requests.post('https://wx.17u.cn/platformpubapi/userDesk/addDesk', headers=headers, json=json_data)
+        print("🌼response_1=", response_1.text)
+        # ------------------------------------
+        headers = {
+            'authority': 'wx.17u.cn',
+            'accept': '*/*',
+            'accept-language': 'zh-CN,zh;q=0.9',
+            'accountsystem': '1',
+            'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406262226|530268',
+            'content-type': 'application/json',
+            'openid': 'o498X0eXH7H5mw5wfFUeTtw6XrbM',
+            'platform': 'WX_MP',
+            'referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/640/page-frame.html',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'cross-site',
+            'tcprivacy': '1',
+            'tcreferer': 'page%2Factivetemplate%2FzqLite%2Findex',
+            'tcsectk': 'ZfOeS2YX9IStsHx-3-C4uzTWpFSzAvXgolgVQRm_W2syGfftNoMogtgZD4_gSZd4TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYz933PeAOzZtXGZwtyuXnWzm73QIyu_1482S5UR6_n9wg**4641',
+            'tcxcxversion': '6.5.6',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a1b) XWEB/9129',
+            'userkey': 'ohmdTt1TSce70l1uL1U2DGcZmGVU',
+            'usertoken': 'ZfOeS2YX9IStsHx-3-C4uzTWpFSzAvXgolgVQRm_W2syGfftNoMogtgZD4_gSZd4TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYz933PeAOzZtXGZwtyuXnWzm73QIyu_1482S5UR6_n9wg**4641',
+            'usertokenmode': '1',
+            'xweb_xhr': '1',
+        }
+        json_data = {
+            'channelGuid': 'bfc3bb87fc90481eb2d4e6fa87fc73d1',
+            'schGuid': '27e1a18e3d7448a7b1042db7839b59f3',
+            'hasTomorrowGroup': '0',
+            'filterFurion': 0,
+        }
+        response_2 = requests.post('https://wx.17u.cn/seckill/dundunseckill/getlist', headers=headers, json=json_data)
+        print("🌼response_2=", response_2.text)
+        # ------------------------------------
+        headers = {
+            'authority': 'wx.17u.cn',
+            'accept': '*/*',
+            'accept-language': 'zh-CN,zh;q=0.9',
+            'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406262226|722450',
+            'content-type': 'application/json',
+            'referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/640/page-frame.html',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'cross-site',
+            'tc-os-type': '0',
+            'tc-platform-code': 'WX_MP',
+            'tc-user-token': 'ZfOeS2YX9IStsHx-3-C4uzTWpFSzAvXgolgVQRm_W2syGfftNoMogtgZD4_gSZd4TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYz933PeAOzZtXGZwtyuXnWzm73QIyu_1482S5UR6_n9wg**4641',
+            'tcprivacy': '1',
+            'tcreferer': 'page%2Factivetemplate%2FzqLite%2Findex',
+            'tcsectk': 'ZfOeS2YX9IStsHx-3-C4uzTWpFSzAvXgolgVQRm_W2syGfftNoMogtgZD4_gSZd4TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYz933PeAOzZtXGZwtyuXnWzm73QIyu_1482S5UR6_n9wg**4641',
+            'tcxcxversion': '6.5.6',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a1b) XWEB/9129',
+            'xweb_xhr': '1',
+        }
+
+        response_3 = requests.get('https://wx.17u.cn/platformflowpool/assets/help/progress', headers=headers)
+        print("🌼response_3=", response_3.text)
+        # ------------------------------------
+        headers = {
+            'authority': 'wx.17u.cn',
+            'accept': '*/*',
+            'accept-language': 'zh-CN,zh;q=0.9',
+            'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406262226|419045',
+            'content-type': 'application/json',
+            'referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/640/page-frame.html',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'cross-site',
+            'tc-os-type': '0',
+            'tc-platform-code': 'WX_MP',
+            'tc-user-token': 'ZfOeS2YX9IStsHx-3-C4uzTWpFSzAvXgolgVQRm_W2syGfftNoMogtgZD4_gSZd4TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYz933PeAOzZtXGZwtyuXnWzm73QIyu_1482S5UR6_n9wg**4641',
+            'tcprivacy': '1',
+            'tcreferer': 'page%2Factivetemplate%2FzqLite%2Findex',
+            'tcsectk': 'ZfOeS2YX9IStsHx-3-C4uzTWpFSzAvXgolgVQRm_W2syGfftNoMogtgZD4_gSZd4TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYz933PeAOzZtXGZwtyuXnWzm73QIyu_1482S5UR6_n9wg**4641',
+            'tcxcxversion': '6.5.6',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a1b) XWEB/9129',
+            'xweb_xhr': '1',
+        }
+        response_4 = requests.get('https://wx.17u.cn/platformflowpool/assets/home', headers=headers)
+        print("🌼response_4=", response_4.text)
+        # ------------------------------------
+        headers = {
+            'authority': 'wx.17u.cn',
+            'accept': '*/*',
+            'accept-language': 'zh-CN,zh;q=0.9',
+            'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406262226|861705',
+            # Already added when you pass json=
+            # 'content-type': 'application/json',
+            'referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/640/page-frame.html',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'cross-site',
+            'tc-os-type': '0',
+            'tc-platform-code': 'WX_MP',
+            'tc-user-token': 'ZfOeS2YX9IStsHx-3-C4uzTWpFSzAvXgolgVQRm_W2syGfftNoMogtgZD4_gSZd4TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYz933PeAOzZtXGZwtyuXnWzm73QIyu_1482S5UR6_n9wg**4641',
+            'tcprivacy': '1',
+            'tcreferer': 'page%2Factivetemplate%2FzqLite%2Findex',
+            'tcsectk': 'ZfOeS2YX9IStsHx-3-C4uzTWpFSzAvXgolgVQRm_W2syGfftNoMogtgZD4_gSZd4TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYz933PeAOzZtXGZwtyuXnWzm73QIyu_1482S5UR6_n9wg**4641',
+            'tcxcxversion': '6.5.6',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a1b) XWEB/9129',
+            'xweb_xhr': '1',
+        }
+        json_data = {}
+        response_5 = requests.post('https://wx.17u.cn/platformflowpool/task/list', headers=headers, json=json_data)
+        print("🌼response=", response_5.text)
+        # ------------------------------------
+        headers = {
+            'authority': 'wx.17u.cn',
+            'accept': '*/*',
+            'accept-language': 'zh-CN,zh;q=0.9',
+            'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406262226|901471',
+            'content-type': 'application/json',
+            'referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/640/page-frame.html',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'cross-site',
+            'tcprivacy': '1',
+            'tcreferer': 'page%2Factivetemplate%2FzqLite%2Findex',
+            'tcsectk': 'ZfOeS2YX9IStsHx-3-C4uzTWpFSzAvXgolgVQRm_W2syGfftNoMogtgZD4_gSZd4TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYz933PeAOzZtXGZwtyuXnWzm73QIyu_1482S5UR6_n9wg**4641',
+            'tcxcxversion': '6.5.6',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a1b) XWEB/9129',
+            'xweb_xhr': '1',
+        }
+        response_6 = requests.get(
+            'https://wx.17u.cn/abtesting/wxsvc/shunt/all?unionId=ohmdTt1TSce70l1uL1U2DGcZmGVU&platform=Android&area=%E4%B8%AD%E5%9B%BD|%E4%B8%8A%E6%B5%B7%E5%B8%82|%E4%B8%8A%E6%B5%B7%E5%B8%82',
+            headers=headers,
+        )
+        print("🌼response_6=", response_6.text)
+        # ------------------------------------
+        headers = {
+            'authority': 'wx.17u.cn',
+            'accept': '*/*',
+            'accept-language': 'zh-CN,zh;q=0.9',
+            'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406262226|925184',
+            'content-type': 'application/json',
+            'referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/640/page-frame.html',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'cross-site',
+            'tcprivacy': '1',
+            'tcreferer': 'page%2Factivetemplate%2FzqLite%2Findex',
+            'tcsectk': token,
+            'tcxcxversion': '6.5.6',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a1b) XWEB/9129',
+            'xweb_xhr': '1',
+        }
+        json_data = {
+            'apis': [
+                {
+                    'method': 'opeicon',
+                    'data': {
+                        'projectId': '280',
+                    },
+                },
+            ],
+            'data': {
+                'openId': 'o498X0eXH7H5mw5wfFUeTtw6XrbM',
+                'unionId': 'ohmdTt1TSce70l1uL1U2DGcZmGVU',
+                'encryopenid': 'b6e847d55a8b7bbbb8a0b350899a1f10',
+                'memberId': 'kg2jQVLfmT81ENKKRnAYxg==',
+                'refId': '319527329',
+                'wallet': 1,
+                'scene': 1023,
+                'cityId': '321',
+                'cityName': '上海',
+                'provinceID': '25',
+                'provinceName': '上海市',
+                'PermanentCityId': '321',
+                'PermanentCityName': '上海',
+                'PermanentProvinceId': '25',
+                'PermanentProvinceName': '上海市',
+                'PermanentLon': 121.5440902709961,
+                'PermanentLat': 31.221139907836914,
+                'XCXVersion': '6.5.6',
+                'CurrentCardNo': '240000000441412455',
+            },
+        }
+        response_7 = requests.post('https://wx.17u.cn/xcxhomeapi/aggregator/index', headers=headers, json=json_data)
+        print("🌼response_7=", response_7.text)
+        # ------------------------------------
+        headers = {
+            'authority': 'wx.17u.cn',
+            'accept': '*/*',
+            'accept-language': 'zh-CN,zh;q=0.9',
+            'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406262226|539196',
+            'content-type': 'application/json',
+            'referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/640/page-frame.html',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'cross-site',
+            'tc-os-type': '0',
+            'tc-platform-code': 'WX_MP',
+            'tc-user-token': 'ZfOeS2YX9IStsHx-3-C4uzTWpFSzAvXgolgVQRm_W2syGfftNoMogtgZD4_gSZd4TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYz933PeAOzZtXGZwtyuXnWzm73QIyu_1482S5UR6_n9wg**4641',
+            'tcprivacy': '1',
+            'tcreferer': 'page%2Factivetemplate%2FzqLite%2Findex',
+            'tcsectk': 'ZfOeS2YX9IStsHx-3-C4uzTWpFSzAvXgolgVQRm_W2syGfftNoMogtgZD4_gSZd4TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYz933PeAOzZtXGZwtyuXnWzm73QIyu_1482S5UR6_n9wg**4641',
+            'tcxcxversion': '6.5.6',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a1b) XWEB/9129',
+            'xweb_xhr': '1',
+        }
+        response_8 = requests.get('https://wx.17u.cn/platformflowpool/sign/cash/calendar', headers=headers)
+        print("🌼response_8=", response_8.text)
+        # ------------------------------------
+        headers = {
+            'authority': 'wx.17u.cn',
+            'accept': '*/*',
+            'accept-language': 'zh-CN,zh;q=0.9',
+            'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406262226|154594',
+            # Already added when you pass json=
+            # 'content-type': 'application/json',
+            'referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/640/page-frame.html',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'cross-site',
+            'tc-os-type': '0',
+            'tc-platform-code': 'WX_MP',
+            'tc-user-token': 'ZfOeS2YX9IStsHx-3-C4uzTWpFSzAvXgolgVQRm_W2syGfftNoMogtgZD4_gSZd4TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYz933PeAOzZtXGZwtyuXnWzm73QIyu_1482S5UR6_n9wg**4641',
+            'tcprivacy': '1',
+            'tcreferer': 'page%2Factivetemplate%2FzqLite%2Findex',
+            'tcsectk': 'ZfOeS2YX9IStsHx-3-C4uzTWpFSzAvXgolgVQRm_W2syGfftNoMogtgZD4_gSZd4TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYz933PeAOzZtXGZwtyuXnWzm73QIyu_1482S5UR6_n9wg**4641',
+            'tcxcxversion': '6.5.6',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a1b) XWEB/9129',
+            'xweb_xhr': '1',
+        }
+        json_data = {}
+        response_9 = requests.post('https://wx.17u.cn/platformflowpool/reward/first', headers=headers, json=json_data)
+        print("🌼response_9=", response_9.text)
+        # ------------------------------------
+        headers = {
+            'authority': 'wx.17u.cn',
+            'accept': '*/*',
+            'accept-language': 'zh-CN,zh;q=0.9',
+            'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406262226|228995',
+            # Already added when you pass json=
+            # 'content-type': 'application/json',
+            'referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/640/page-frame.html',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'cross-site',
+            'sectoken': 'ZfOeS2YX9IStsHx-3-C4uzTWpFSzAvXgolgVQRm_W2syGfftNoMogtgZD4_gSZd4TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYz933PeAOzZtXGZwtyuXnWzm73QIyu_1482S5UR6_n9wg**4641',
+            'tcprivacy': '1',
+            'tcreferer': 'page%2Factivetemplate%2FzqLite%2Findex',
+            'tcsectk': 'ZfOeS2YX9IStsHx-3-C4uzTWpFSzAvXgolgVQRm_W2syGfftNoMogtgZD4_gSZd4TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYz933PeAOzZtXGZwtyuXnWzm73QIyu_1482S5UR6_n9wg**4641',
+            'tcxcxversion': '6.5.6',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a1b) XWEB/9129',
+            'xweb_xhr': '1',
+        }
+        json_data = {}
+        response_10 = requests.post('https://wx.17u.cn/appapi/wxuser/checkstatus', headers=headers, json=json_data)
+        print("🌼response_10=", response_10.text)
+        # -------------------------------------
+        headers = {
+            'authority': 'wx.17u.cn',
+            'accept': '*/*',
+            'accept-language': 'zh-CN,zh;q=0.9',
+            'apmat': 'o498X0eXH7H5mw5wfFUeTtw6XrbM|202406262226|772599',
+            'content-type': 'application/json',
+            'referer': 'https://servicewechat.com/wx336dcaf6a1ecf632/640/page-frame.html',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'cross-site',
+            'tc-os-type': '0',
+            'tc-platform-code': 'WX_MP',
+            'tc-user-token': 'ZfOeS2YX9IStsHx-3-C4uzTWpFSzAvXgolgVQRm_W2syGfftNoMogtgZD4_gSZd4TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYz933PeAOzZtXGZwtyuXnWzm73QIyu_1482S5UR6_n9wg**4641',
+            'tcprivacy': '1',
+            'tcreferer': 'page%2Factivetemplate%2FzqLite%2Findex',
+            'tcsectk': 'ZfOeS2YX9IStsHx-3-C4uzTWpFSzAvXgolgVQRm_W2syGfftNoMogtgZD4_gSZd4TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYz933PeAOzZtXGZwtyuXnWzm73QIyu_1482S5UR6_n9wg**4641',
+            'tcxcxversion': '6.5.6',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a1b) XWEB/9129',
+            'xweb_xhr': '1',
+        }
+        response_11 = requests.get('https://wx.17u.cn/platformflowpool/assets/share/user', headers=headers)
+        print("🌼response_11=", response_11.text)
+
+
     def main(self):
         self.user_info()
         self.point_info()
+        self.desktop_action_task()
 
         print(f"\n======== ▷ 签到抽奖任务 ◁ ========")
         self.sign()
         time.sleep(random.randint(30, 40))
 
         # TODO 添加桌面进入，抽奖次数+1
-        # self.lottery()
-        # time.sleep(random.randint(30, 40))
+        self.lottery()
+        time.sleep(random.randint(5, 10))
 
         self.suspend_integral_task()
-        time.sleep(random.randint(15, 30))
+        time.sleep(random.randint(10, 15))
 
         print(f"\n======== ▷ 更多积分任务 ◁ ========")
         # 每日任务
         self.more_integral_daily_task()
-
-        # 天天领钱-每日签到【未实现】
-        # self.sign_cash()
 
         print(f"\n======== ▷ 悬浮气泡任务 ◁ ========")
         # 悬浮倒计时领钱
@@ -663,13 +995,23 @@ class TCLX():
             else:
                 break
 
-        # time.sleep(random.randint(10, 15))
-        # self.more_daily_cash_task()
+        # 天天领钱-每日签到【未实现】
+        self.sign_cash()
+        time.sleep(random.randint(5, 10))
+
+        # 做任务赚现金
+        time.sleep(random.randint(5, 10))
+        self.more_daily_cash_task()
+
+        # 余额查询
+        self.cash_info()
+
 
 
 if __name__ == '__main__':
     env_name = 'TCLX_TOKEN'
     tokenStr = os.getenv(env_name)
+    tokenStr = 'ZfOeS2YX9IStsHx-3-C4uzTWpFSzAvXgolgVQRm_W2syGfftNoMogtgZD4_gSZd4TNm3bBq0ymLe2HluCZA4FEyG2HmPsTbvL0Cy8PTaQsAz5qmrMQtiAzhiLhXRsY8WpxPh196mvKyGfXncqS3qw9ETiLz06ENAOtW1BKeyXYz933PeAOzZtXGZwtyuXnWzm73QIyu_1482S5UR6_n9wg**4641'
     if not tokenStr:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)

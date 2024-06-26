@@ -1,15 +1,19 @@
 """
 好奇车生活抢兑
 
-【单账号版】
-抓任意包请求头 x_applet_token
-变量名: SYCC_TOKEN
+【单号版】
+抓任意包请求头 openId 和 accountId
+变量名:  Cheryfs
+变量格式：openId#accountId
+多账号用&分割
 
 cron: 58 17 * * *
 const $ = new Env("好奇车生活抢兑");
 """
 
 """
+限时福利（每天18:00开抢）
+--------------------
 🌼兑换商品：京东E卡18元          | id:792556957722198016 兑换所需积分：1800
 🌼兑换商品：美团外卖代金券 10 元① | id:792556468305641472 兑换所需积分：750
 🌼兑换商品：3.88元红包①         | id:754493262869991424 兑换所需积分：588
@@ -41,12 +45,12 @@ async def trigger_at_specific_millisecond(hour, minute, second, millisecond):
         await asyncio.sleep(0)  # 让出控制权给其他任务
 
 
-async def exchange(accountId):
+async def exchange(account_id):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF',
         'tenantId': '619669306447261696',
         'activityId': '621950054462152705',
-        'accountId': accountId,
+        'accountId': account_id,
     }
 
     # 构造参数
@@ -80,24 +84,28 @@ async def exchange(accountId):
 
 
 async def main():
-    SY_token = os.getenv('SYCC_TOKEN')
-    if not SY_token:
-        print(f'⛔️未获取到ck变量：请检查变量 {SY_token} 是否填写')
+    messages = []  # 用于存储每次提现操作的消息
+    cheryfs = os.getenv('Cheryfs')
+    cheryfs = 'oqX_y5Y_FfcApLTeAcmHX4R_kQ6E#efddacbbbdd70a7f2f77498ed59afe298c5b7e31489a3a4ca5beeffceafcd63f'
+    if not cheryfs:
+        print(f'⛔️未获取到ck变量：请检查变量 {cheryfs} 是否填写')
         return
 
-    openId, accountId = SY_token.split('#')
-
-    messages = []  # 用于存储每次提现操作的消息
+    # 第一个参与抢兑
+    tokens = re.split(r'&', cheryfs)
+    _token = tokens[0]
+    account_id = re.split(r'#', _token)[1]
 
     now = datetime.now()
-    if now.hour in [7, 11, 19]:
+    if now.hour in [17]:
         target_hour = now.hour
     else:
         print("⚠️ 当前时间不在抢购时间段内。")
         return
+
     await trigger_at_specific_millisecond(target_hour, 59, 59, 830)
 
-    tasks = [exchange(accountId) for _ in range(10)]
+    tasks = [exchange(account_id) for _ in range(10)]
     results = await asyncio.gather(*tasks)
 
     for result in results:

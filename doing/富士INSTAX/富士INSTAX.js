@@ -1,5 +1,5 @@
 /**
- * 富士instax玩拍由我俱乐部
+ * 富士INSTAX
 
  * 抓任意请求头 Authorization
  * 变量名: INSTAX
@@ -7,10 +7,10 @@
  * 多账号用&分割
 
  * cron: 33 8 * * *
- * const $ = new Env("富士instax玩拍由我俱乐部");
+ * const $ = new Env("富士INSTAX玩拍由我俱乐部");
  */
 
-const $ = new Env('富士instax玩拍由我俱乐部');
+const $ = new Env('富士INSTAX');
 // let INSTAX = ($.isNode() ? JSON.parse(process.env.INSTAX) : $.getjson("INSTAX")) || '';
 let INSTAX = 'Bearer ba1e26de2f7638ea712807caf68b62ceba0df60fe49daa1df4c80e63254f7927'
 const tokens = INSTAX.split('&');

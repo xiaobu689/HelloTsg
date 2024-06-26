@@ -9,7 +9,7 @@ cron: 58 7,11,19 * * *
 const $ = new Env("顺义创城抢兑");
 """
 
-print("单账号抢购版本测试中......")
+print("单账号抢购版本测试中，多账号版本考虑使用代理......")
 exit(0)
 
 import datetime

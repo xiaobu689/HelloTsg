@@ -101,6 +101,7 @@ class ZGRB():
             headers=self.headers,
             json=json_data,
         )
+        print(response.text)
         if not response or response.status_code != 200:
             print('获取积分信息异常')
             return
