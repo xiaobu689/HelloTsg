@@ -1,12 +1,12 @@
 /**
- * 好奇车生活
+ * 好奇车生活兑换
 
  * 变量名: Cheryfs
  * 变量格式：openId#accountId
  * 多账号用&分割
 
  * cron: 26 8 * * *
- * const $ = new Env("好奇车生活");
+ * const $ = new Env("好奇车生活兑换");
  */
 
 const $ = new Env('好奇车生活兑换')

@@ -79,7 +79,7 @@ async def main():
         print(f'⛔️未获取到ck变量：请检查变量 {SY_token} 是否填写')
         return
 
-    # 第一个参与抢兑
+    # 第一个账号参与抢兑
     tokens = re.split(r'&', SY_token)
     sycc_token = tokens[0]
 
@@ -89,6 +89,7 @@ async def main():
     else:
         print("⚠️ 当前时间不在抢购时间段内。")
         return
+
     await trigger_at_specific_millisecond(target_hour, 59, 59, 800)
 
     tasks = [cashout(sycc_token) for _ in range(10)]
